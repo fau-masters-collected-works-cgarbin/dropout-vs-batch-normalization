@@ -21,7 +21,7 @@ experiments <-
 # 0 for no logging to stdout
 # 1 for progress bar logging
 # 2 for one log line per epoch <-- this may work better for the produced .html
-keras_verbose <- 1
+keras_verbose <- 2
 
 tic("Load data test and training data")
 mnist <- dataset_mnist()
@@ -56,19 +56,15 @@ run_experiment_mnist <- function(model) {
   # To get repeatable results with random numbers
   set.seed(123)
 
-  tic(cat("Training"))
-  epochs <- 1
+  tic("Training")
+  epochs <- 20
   batch_size <- 64
-  model %>% fit(
-    train_images,
-    train_labels,
-    epochs = epochs,
-    batch_size = batch_size,
+  model %>% fit( train_images, train_labels, epochs = epochs, batch_size = batch_size,
     verbose = keras_verbose
   )
   toc()
 
-  tic(cat("Evaluation"))
+  tic("Evaluation")
   evaluation <- model %>% evaluate(test_images, test_labels)
   toc()
 
@@ -90,14 +86,9 @@ model <- keras_model_sequential() %>%
 
 results <- run_experiment_mnist(model)
 experiments[nrow(experiments) + 1, ] <- list(
-  "Standard network, 2 layers, 1024 nodes",
-  "MNIST",
-  results$evaluation$loss,
-  results$evaluation$acc,
-  results$epochs,
-  results$batch_size,
-  model_to_json(model)
-)
+  "Standard network, 2 layers, 1024 nodes", "MNIST",
+  results$evaluation$loss, results$evaluation$acc,
+  results$epochs, results$batch_size, model_to_json(model))
 toc()
 
 # Dropout network ----------------------------------------------------------------------------------
@@ -106,21 +97,31 @@ toc()
 # See https://keras.rstudio.com/reference/layer_dropout.html
 
 tic("Dropout network, 2 layers, 1024 neurons")
+dropout_rate = 0.5
 model <- keras_model_sequential() %>%
-  layer_dense( units = 1024, activation = "relu", input_shape = c(28 * 28)) %>%
-  layer_dropout(0.5) %>%
+  layer_dense(units = 1024, activation = "relu", input_shape = c(28 * 28)) %>%
+  layer_dropout(dropout_rate) %>%
   layer_dense(units = 1024, activation = "relu") %>%
   layer_dense(units = 10, activation = "softmax")
 
 results <- run_experiment_mnist(model)
 experiments[nrow(experiments) + 1, ] <- list(
-  "Dropout network, 2 layers, 1024 nodes",
-  "MNIST",
-  results$evaluation$loss,
-  results$evaluation$acc,
-  results$epochs,
-  results$batch_size,
-  model_to_json(model)
-)
+  "Dropout network, 2 layers, 1024 nodes", "MNIST",
+  results$evaluation$loss, results$evaluation$acc,
+  results$epochs, results$batch_size, model_to_json(model))
 toc()
 
+tic("Dropout network with adjusted input units, 2 layers, 1024 neurons")
+dropout_rate = 0.5
+model <- keras_model_sequential() %>%
+  layer_dense( units = 1024 * dropout_rate, activation = "relu", input_shape = c(28 * 28)) %>%
+  layer_dropout(dropout_rate) %>%
+  layer_dense(units = 1024, activation = "relu") %>%
+  layer_dense(units = 10, activation = "softmax")
+
+results <- run_experiment_mnist(model)
+experiments[nrow(experiments) + 1, ] <- list(
+  "Dropout network with adjusted input units, 2 layers, 1024 nodes", "MNIST",
+  results$evaluation$loss, results$evaluation$acc,
+  results$epochs, results$batch_size, model_to_json(model) )
+toc()
