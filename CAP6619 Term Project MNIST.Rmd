@@ -1,0 +1,248 @@
+---
+title: "CAP-6619 Term project - MNIST"
+author: Christian Garbin
+date: Fall 2018
+note: This code follows the tidyverse styleguide http://style.tidyverse.org/ (except when using
+      snippets from other sources)
+output: html_notebook
+---
+
+This is the MNIST experiments for the CAP-6619 Fall 2018 term project.
+
+Setup the environment.
+
+```{r error=TRUE, warning=TRUE}
+# Always start with a clean environment to avoid subtle bugs
+rm(list = ls())
+
+setwd("~/fau/cap6619/termproject")
+
+library(keras)
+library(tictoc)
+```
+
+Store results from experiments.
+
+```{r error=TRUE, warning=TRUE}
+experiments <- data.frame(matrix(ncol = 4, nrow = 0))
+colnames(experiments) <- c("Experiment", "Data set", "Model", "Results")
+```
+
+Control Keras' progress reporting. Adjust this to reduce the amount of progress displayed
+to clean up the resulting .html file a bit.
+
+```{r error=TRUE, warning=TRUE}
+# 0 for no logging to stdout
+# 1 for progress bar logging
+# 2 for one log line per epoch <-- this may work better for the produced .html
+keras_verbose = 1
+```
+
+# Load and prepare the data
+
+```{r error=TRUE, warning=TRUE}
+tic("Load data test and training data")
+mnist <- dataset_mnist()
+toc()
+
+# Encode the labels in categories
+train_labels <- to_categorical(mnist$train$y)
+test_labels <- to_categorical(mnist$test$y)
+```
+
+# Baseline: simple network from Deep Learning with R
+
+This code is based on the code from Deep Learning with R (Chollet, 2018), chapter 2.
+
+It uses a conventional neural network.
+
+Reshape the data to the format the input layer needs it.
+
+```{r error=TRUE, warning=TRUE}
+# Reshape and scale the data in the format that matches the netowrk we will use
+# Before: integer array of shape (60000, 28, 28) and interval [0, 255]
+# After: double array of shape (60000, 28 * 28) and interval [0, 1]
+tic("Baseline: reshape data")
+train_images <- array_reshape(mnist$train$x, c(60000, 28 * 28))
+train_images <- train_images / 255
+test_images <- array_reshape(mnist$test$x, c(10000, 28 * 28))
+test_images <- test_images / 255
+toc()
+```
+
+Create and compile the network.
+
+```{r error=TRUE, warning=TRUE}
+model <- keras_model_sequential() %>%
+  layer_dense(units = 512, activation = "relu", input_shape = c(28 * 28)) %>%
+  layer_dense(units = 10, activation = "softmax")
+
+model %>% compile(
+  optimizer = "rmsprop",
+  loss = "categorical_crossentropy",
+  metrics = c("accuracy")
+)
+```
+
+Train the network
+
+```{r error=TRUE, warning=TRUE}
+# To get repeatable results with random numbers
+set.seed(123)
+
+tic("Baseline: train the network")
+model %>% fit(
+  train_images, train_labels,
+  epochs = 5, batch_size = 128, 
+  verbose = keras_verbose
+)
+toc()
+```
+
+Evaluate trained network on test data.
+
+```{r error=TRUE, warning=TRUE}
+tic("Baseline: evaluate trained network")
+results <- model %>% evaluate(test_images, test_labels)
+results
+toc()
+```
+
+# Baseline: CNN version of Deep Learning with R
+
+This code is based on the code from Deep Learning with R (Chollet, 2018), chapter 5.
+
+It uses a convolutional network (CNN).
+
+Reshape the data to the format the input layer needs it.
+
+```{r error=TRUE, warning=TRUE}
+# Reshape and scale the data in the format that matches the netowrk we will use
+tic("Baseline CNN: reshape data")
+train_images <- array_reshape(mnist$train$x, c(60000, 28, 28, 1))
+train_images <- train_images / 255
+test_images <- array_reshape(mnist$test$x, c(10000, 28, 28, 1))
+test_images <- test_images / 255
+toc()
+```
+
+Create and compile the network
+
+```{r error=TRUE, warning=TRUE}
+model <- keras_model_sequential() %>%
+  layer_conv_2d(filters = 32, kernel_size = c(3, 3), activation = "relu",
+  input_shape = c(28, 28, 1)) %>%
+  layer_max_pooling_2d(pool_size = c(2, 2)) %>%
+  layer_conv_2d(filters = 64, kernel_size = c(3, 3), activation = "relu") %>%
+  layer_max_pooling_2d(pool_size = c(2, 2)) %>%
+  layer_conv_2d(filters = 64, kernel_size = c(3, 3), activation = "relu")
+
+model <- model %>%
+  layer_flatten() %>%
+  layer_dense(units = 64, activation = "relu") %>%
+  layer_dense(units = 10, activation = "softmax")
+
+model %>% compile(
+  optimizer = "rmsprop",
+  loss = "categorical_crossentropy",
+  metrics = c("accuracy")
+)
+```
+
+Train the network
+
+```{r error=TRUE, warning=TRUE}
+# To get repeatable results with random numbers
+set.seed(123)
+
+tic("Baseline CNN: train the network")
+model %>% fit(
+  train_images, train_labels,
+  epochs = 5, batch_size = 64,
+  verbose = keras_verbose
+)
+toc()
+```
+
+Evaluate trained network on test data.
+
+```{r error=TRUE, warning=TRUE}
+tic("Baseline CNN: evaluate trained network")
+results <- model %>% evaluate(test_images, test_labels)
+results
+toc()
+```
+
+# From the dropout paper
+
+This section trains a network with the architecture the [dropout paper](http://jmlr.org/papers/volume15/srivastava14a.old/srivastava14a.pdf), section B.1.
+
+> _The architectures shown in Figure 4 include all combinations of 2, 3, and 4 layer networks
+> with 1024 and 2048 units in each layer. Thus, there are six architectures in all. For all the
+> architectures (including the ones reported in Table 2), we used p = 0.5 in all hidden layers
+> and p = 0.8 in the input layer. A final momentum of 0.95 and weight constraints with c = 2
+> was used in all the layers_
+
+Also, in section 6.1.1 is states:
+
+> All dropout nets use p = 0.5 for hidden units and p = 0.8 for input units. 
+
+Reshape the data to the format the input layer needs it.
+
+```{r error=TRUE, warning=TRUE}
+# Reshape and scale the data in the format that matches the netowrk we will use
+# Before: integer array of shape (60000, 28, 28) and interval [0, 255]
+# After: double array of shape (60000, 28 * 28) and interval [0, 1]
+tic("Baseline: reshape data")
+train_images <- array_reshape(mnist$train$x, c(60000, 28 * 28))
+train_images <- train_images / 255
+test_images <- array_reshape(mnist$test$x, c(10000, 28 * 28))
+test_images <- test_images / 255
+toc()
+```
+
+Auxiliary function to train and compute results of a given model.
+
+```{r error=TRUE, warning=TRUE}
+run_experiment_mnist <- function(model, description) {
+  model %>% compile(
+    optimizer = "rmsprop",
+    loss = "categorical_crossentropy",
+    metrics = c("accuracy")
+  )
+  
+  # To get repeatable results with random numbers
+  set.seed(123)
+  
+  tic(cat("Training:", description))
+  model %>% fit(
+    train_images, train_labels,
+    epochs = 5, batch_size = 64,
+    verbose = keras_verbose
+  )
+  toc()
+  
+  tic(cat("Evaluation:", description))
+  results <- model %>% evaluate(test_images, test_labels)
+  results
+  toc()
+  
+  experiments[nrow(experiments) + 1,] = list(description, "MNIST", model, results)
+}
+```
+
+## Two layers
+
+### 1024 units
+
+TODO: what error function?
+
+```{r error=TRUE, warning=TRUE}
+model <- keras_model_sequential() %>%
+  layer_dense(units = 1024, activation = "relu", input_shape = c(28 * 28)) %>%
+  layer_dropout(0.5) %>% 
+  layer_dense(units = 1024, activation = "relu") %>%
+  layer_dense(units = 10, activation = "softmax")
+
+run_experiment_mnist(model, "Dropout 1024 units")
+```
