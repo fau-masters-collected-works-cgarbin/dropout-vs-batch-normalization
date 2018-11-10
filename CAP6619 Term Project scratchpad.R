@@ -114,7 +114,7 @@ toc()
 tic("Dropout network with adjusted input units, 2 layers, 1024 neurons")
 dropout_rate = 0.5
 model <- keras_model_sequential() %>%
-  layer_dense( units = 1024 * dropout_rate, activation = "relu", input_shape = c(28 * 28)) %>%
+  layer_dense( units = 1024 / dropout_rate, activation = "relu", input_shape = c(28 * 28)) %>%
   layer_dropout(dropout_rate) %>%
   layer_dense(units = 1024, activation = "relu") %>%
   layer_dense(units = 10, activation = "softmax")
@@ -125,3 +125,4 @@ experiments[nrow(experiments) + 1, ] <- list(
   results$evaluation$loss, results$evaluation$acc,
   results$epochs, results$batch_size, model_to_json(model) )
 toc()
+
