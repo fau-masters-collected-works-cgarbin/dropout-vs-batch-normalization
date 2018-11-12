@@ -57,7 +57,7 @@ run_experiment_mnist <- function(model) {
   set.seed(123)
 
   tic("Training")
-  epochs <- 20
+  epochs <- 5
   batch_size <- 64
   model %>% fit( train_images, train_labels, epochs = epochs, batch_size = batch_size,
     verbose = keras_verbose
