@@ -8,7 +8,7 @@ library(tictoc)
 # Saves the network configuration used in experiments and the results
 experiments <-
   data.frame(
-    Experiment = character(), # Description of the experiment (network type, layers, etc.)
+    Description = character(), # Description of the experiment (network type, layers, etc.)
     DataSetName = character(), # Data set use for the experiment
     Loss = numeric(),
     Accuracy = numeric(),
