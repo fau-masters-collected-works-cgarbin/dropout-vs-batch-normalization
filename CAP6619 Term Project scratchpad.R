@@ -76,9 +76,9 @@ run_experiment_mnist <- function(model) {
 }
 
 
-# Regular network ----------------------------------------------------------------------------------
+# Standard network ----------------------------------------------------------------------------------
 
-tic("Regular network, 2 layers, 1024 neurons")
+tic("Standard network, 2 layers, 1024 neurons")
 model <- keras_model_sequential() %>%
   layer_dense(units = 1024, activation = "relu", input_shape = c(28 * 28)) %>%
   layer_dense(units = 1024, activation = "relu") %>%
