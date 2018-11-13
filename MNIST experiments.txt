@@ -1,2 +1,0 @@
-                                Description DataSetName  TestLoss  TestAccuracy Epochs BatchSize Optimizer ModelParamCount  TrainingCpuTime  TestCpuTime
-0  Dropout network not adjusted, 1024 nodes       MNIST  0.512814         0.874      1       128       sgd         1863690        47.679283     3.320332
