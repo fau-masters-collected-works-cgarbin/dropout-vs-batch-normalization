@@ -122,3 +122,6 @@ run_experiment("Dropout network all layers, 1024 nodes",
                model, epochs, optimizer)
 
 print(experiments)
+
+with open("MNIST experiments.txt", "w") as outfile:
+    experiments.to_string(outfile)
