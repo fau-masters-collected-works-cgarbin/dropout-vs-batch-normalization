@@ -29,6 +29,10 @@ def run_experiment(description, model):
     """Run an experiment: train and test the network, save results"""
     print(description)
 
+    model.compile(optimizer='rmsprop',
+                  loss='categorical_crossentropy',
+                  metrics=['accuracy'])
+
     start = time.process_time()
     epochs = 2
     batch_size = 128
@@ -62,11 +66,6 @@ model = models.Sequential()
 model.add(layers.Dense(1024, activation='relu', input_shape=(28 * 28,)))
 model.add(layers.Dense(1024, activation='relu'))
 model.add(layers.Dense(10, activation='softmax'))
-
-model.compile(optimizer='rmsprop',
-              loss='categorical_crossentropy',
-              metrics=['accuracy'])
-
 run_experiment("Standard network, 1024 nodes", model)
 
 # Dropout network, no adjustemt ----------------------------------------------
@@ -76,11 +75,6 @@ model.add(layers.Dense(1024, activation='relu', input_shape=(28 * 28,)))
 model.add(layers.Dropout(rate=dropout_rate))
 model.add(layers.Dense(1024, activation='relu'))
 model.add(layers.Dense(10, activation='softmax'))
-
-model.compile(optimizer='rmsprop',
-              loss='categorical_crossentropy',
-              metrics=['accuracy'])
-
 run_experiment("Dropout network not adjusted, 1024 nodes", model)
 
 # Dropout network adjusted before --------------------------------------------
@@ -90,11 +84,6 @@ model.add(layers.Dense(int(1024 / dropout_rate),
 model.add(layers.Dropout(rate=dropout_rate))
 model.add(layers.Dense(1024, activation='relu'))
 model.add(layers.Dense(10, activation='softmax'))
-
-model.compile(optimizer='rmsprop',
-              loss='categorical_crossentropy',
-              metrics=['accuracy'])
-
 run_experiment("Dropout network adjusted before, 1024 nodes", model)
 
 # Dropout network, adjusted after --------------------------------------------
@@ -103,11 +92,6 @@ model.add(layers.Dense(1024, activation='relu', input_shape=(28 * 28,)))
 model.add(layers.Dropout(rate=dropout_rate))
 model.add(layers.Dense(int(1024 / dropout_rate), activation='relu'))
 model.add(layers.Dense(10, activation='softmax'))
-
-model.compile(optimizer='rmsprop',
-              loss='categorical_crossentropy',
-              metrics=['accuracy'])
-
 run_experiment("Dropout network adjusted after, 1024 nodes", model)
 
 # Dropout network, adjusted all layers ---------------------------------------
@@ -117,11 +101,6 @@ model.add(layers.Dense(int(1024 / dropout_rate),
 model.add(layers.Dropout(rate=dropout_rate))
 model.add(layers.Dense(int(1024 / dropout_rate), activation='relu'))
 model.add(layers.Dense(10, activation='softmax'))
-
-model.compile(optimizer='rmsprop',
-              loss='categorical_crossentropy',
-              metrics=['accuracy'])
-
 run_experiment("Dropout network adjusted all, 1024 nodes", model)
 
 # Dropout network, dropout before output layer -------------------------------
@@ -132,11 +111,6 @@ model.add(layers.Dropout(rate=dropout_rate))
 model.add(layers.Dense(int(1024 / dropout_rate), activation='relu'))
 model.add(layers.Dropout(rate=dropout_rate))
 model.add(layers.Dense(10, activation='softmax'))
-
-model.compile(optimizer='rmsprop',
-              loss='categorical_crossentropy',
-              metrics=['accuracy'])
-
 run_experiment("Dropout network all layers, 1024 nodes", model)
 
 print(experiments)
