@@ -124,75 +124,18 @@ train_images = train_images.astype('float32') / 255
 test_images = test_images.reshape((10000, 28 * 28))
 test_images = test_images.astype('float32') / 255
 
-epochs = 2
-optimizer = 'sgd'
-number_of_nodes = 1024
+test_network_configurations(number_of_nodes=1024, epochs=2,
+                            optimizer="sgd",
+                            file_name="MNIST SGD 2 epochs.txt")
 
-# Standard network -----------------------------------------------------------
-model = models.Sequential()
-model.add(layers.Dense(number_of_nodes,
-                       activation='relu', input_shape=(28 * 28,)))
-model.add(layers.Dense(number_of_nodes, activation='relu'))
-model.add(layers.Dense(10, activation='softmax'))
-run_experiment("Standard network, 1024 nodes",
-               model, epochs, optimizer)
+test_network_configurations(number_of_nodes=1024, epochs=2,
+                            optimizer="rmsprop",
+                            file_name="MNIST RMSProp 2 epochs.txt")
 
-# Dropout network, no adjustemt ----------------------------------------------
-dropout_rate = 0.5
-model = models.Sequential()
-model.add(layers.Dense(number_of_nodes,
-                       activation='relu', input_shape=(28 * 28,)))
-model.add(layers.Dropout(rate=dropout_rate))
-model.add(layers.Dense(number_of_nodes, activation='relu'))
-model.add(layers.Dense(10, activation='softmax'))
-run_experiment("Dropout network not adjusted, 1024 nodes",
-               model, epochs, optimizer)
+test_network_configurations(number_of_nodes=1024, epochs=5,
+                            optimizer="sgd",
+                            file_name="MNIST SGD 5 epochs.txt")
 
-# Dropout network adjusted before --------------------------------------------
-model = models.Sequential()
-model.add(layers.Dense(int(number_of_nodes / dropout_rate),
-                       activation='relu', input_shape=(28 * 28,)))
-model.add(layers.Dropout(rate=dropout_rate))
-model.add(layers.Dense(number_of_nodes, activation='relu'))
-model.add(layers.Dense(10, activation='softmax'))
-run_experiment("Dropout network adjusted before, 1024 nodes",
-               model, epochs, optimizer)
-
-
-# Dropout network, adjusted after --------------------------------------------
-model = models.Sequential()
-model.add(layers.Dense(number_of_nodes,
-                       activation='relu', input_shape=(28 * 28,)))
-model.add(layers.Dropout(rate=dropout_rate))
-model.add(layers.Dense(int(number_of_nodes / dropout_rate), activation='relu'))
-model.add(layers.Dense(10, activation='softmax'))
-run_experiment("Dropout network adjusted after, 1024 nodes",
-               model, epochs, optimizer)
-
-
-# Dropout network, adjusted all layers ---------------------------------------
-model = models.Sequential()
-model.add(layers.Dense(int(number_of_nodes / dropout_rate),
-                       activation='relu', input_shape=(28 * 28,)))
-model.add(layers.Dropout(rate=dropout_rate))
-model.add(layers.Dense(int(number_of_nodes / dropout_rate), activation='relu'))
-model.add(layers.Dense(10, activation='softmax'))
-run_experiment("Dropout network adjusted all, 1024 nodes",
-               model, epochs, optimizer)
-
-
-# Dropout network, dropout before output layer -------------------------------
-model = models.Sequential()
-model.add(layers.Dense(int(number_of_nodes / dropout_rate),
-                       activation='relu', input_shape=(28 * 28,)))
-model.add(layers.Dropout(rate=dropout_rate))
-model.add(layers.Dense(int(number_of_nodes / dropout_rate), activation='relu'))
-model.add(layers.Dropout(rate=dropout_rate))
-model.add(layers.Dense(10, activation='softmax'))
-run_experiment("Dropout network all layers, 1024 nodes",
-               model, epochs, optimizer)
-
-print(experiments)
-
-with open("MNIST experiments.txt", "w") as outfile:
-    experiments.to_string(outfile)
+test_network_configurations(number_of_nodes=1024, epochs=5,
+                            optimizer="rmsprop",
+                            file_name="MNIST RMSProp 5 epochs.txt")
