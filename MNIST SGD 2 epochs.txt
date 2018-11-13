@@ -1,0 +1,7 @@
+                                   Description DataSetName  TestLoss  TestAccuracy NumeberOfNodes Epochs BatchSize Optimizer ModelParamCount  TrainingCpuTime  TestCpuTime
+0                 Standard network, 1024 nodes       MNIST  0.356414        0.9036           1024      2       128       sgd         1863690        87.767765     2.845449
+1     Dropout network not adjusted, 1024 nodes       MNIST  0.125596        0.9677           1024      2       128       sgd         1863690        99.889067     3.098166
+2  Dropout network adjusted before, 1024 nodes       MNIST  0.110263        0.9655           1024      2       128       sgd         3716106       209.261367     7.554318
+3   Dropout network adjusted after, 1024 nodes       MNIST  0.115600        0.9638           1024      2       128       sgd         2923530       169.814789     6.526998
+4     Dropout network adjusted all, 1024 nodes       MNIST  0.119427        0.9643           1024      2       128       sgd         5824522       346.740969    12.729587
+5       Dropout network all layers, 1024 nodes       MNIST  0.192987        0.9414           1024      2       128       sgd         5824522       326.108547    12.057678
