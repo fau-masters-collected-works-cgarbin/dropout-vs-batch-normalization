@@ -54,12 +54,14 @@ test_images = test_images.reshape((10000, 28 * 28))
 test_images = test_images.astype('float32') / 255
 
 epochs = 2
-optimizer = 'rmsprop'
+optimizer = 'sgd'
+number_of_nodes = 1024
 
 # Standard network -----------------------------------------------------------
 model = models.Sequential()
-model.add(layers.Dense(1024, activation='relu', input_shape=(28 * 28,)))
-model.add(layers.Dense(1024, activation='relu'))
+model.add(layers.Dense(number_of_nodes,
+                       activation='relu', input_shape=(28 * 28,)))
+model.add(layers.Dense(number_of_nodes, activation='relu'))
 model.add(layers.Dense(10, activation='softmax'))
 run_experiment("Standard network, 1024 nodes",
                model, epochs, optimizer)
@@ -67,19 +69,20 @@ run_experiment("Standard network, 1024 nodes",
 # Dropout network, no adjustemt ----------------------------------------------
 dropout_rate = 0.5
 model = models.Sequential()
-model.add(layers.Dense(1024, activation='relu', input_shape=(28 * 28,)))
+model.add(layers.Dense(number_of_nodes,
+                       activation='relu', input_shape=(28 * 28,)))
 model.add(layers.Dropout(rate=dropout_rate))
-model.add(layers.Dense(1024, activation='relu'))
+model.add(layers.Dense(number_of_nodes, activation='relu'))
 model.add(layers.Dense(10, activation='softmax'))
 run_experiment("Dropout network not adjusted, 1024 nodes",
                model, epochs, optimizer)
 
 # Dropout network adjusted before --------------------------------------------
 model = models.Sequential()
-model.add(layers.Dense(int(1024 / dropout_rate),
+model.add(layers.Dense(int(number_of_nodes / dropout_rate),
                        activation='relu', input_shape=(28 * 28,)))
 model.add(layers.Dropout(rate=dropout_rate))
-model.add(layers.Dense(1024, activation='relu'))
+model.add(layers.Dense(number_of_nodes, activation='relu'))
 model.add(layers.Dense(10, activation='softmax'))
 run_experiment("Dropout network adjusted before, 1024 nodes",
                model, epochs, optimizer)
@@ -87,9 +90,10 @@ run_experiment("Dropout network adjusted before, 1024 nodes",
 
 # Dropout network, adjusted after --------------------------------------------
 model = models.Sequential()
-model.add(layers.Dense(1024, activation='relu', input_shape=(28 * 28,)))
+model.add(layers.Dense(number_of_nodes,
+                       activation='relu', input_shape=(28 * 28,)))
 model.add(layers.Dropout(rate=dropout_rate))
-model.add(layers.Dense(int(1024 / dropout_rate), activation='relu'))
+model.add(layers.Dense(int(number_of_nodes / dropout_rate), activation='relu'))
 model.add(layers.Dense(10, activation='softmax'))
 run_experiment("Dropout network adjusted after, 1024 nodes",
                model, epochs, optimizer)
@@ -97,10 +101,10 @@ run_experiment("Dropout network adjusted after, 1024 nodes",
 
 # Dropout network, adjusted all layers ---------------------------------------
 model = models.Sequential()
-model.add(layers.Dense(int(1024 / dropout_rate),
+model.add(layers.Dense(int(number_of_nodes / dropout_rate),
                        activation='relu', input_shape=(28 * 28,)))
 model.add(layers.Dropout(rate=dropout_rate))
-model.add(layers.Dense(int(1024 / dropout_rate), activation='relu'))
+model.add(layers.Dense(int(number_of_nodes / dropout_rate), activation='relu'))
 model.add(layers.Dense(10, activation='softmax'))
 run_experiment("Dropout network adjusted all, 1024 nodes",
                model, epochs, optimizer)
@@ -108,10 +112,10 @@ run_experiment("Dropout network adjusted all, 1024 nodes",
 
 # Dropout network, dropout before output layer -------------------------------
 model = models.Sequential()
-model.add(layers.Dense(int(1024 / dropout_rate),
+model.add(layers.Dense(int(number_of_nodes / dropout_rate),
                        activation='relu', input_shape=(28 * 28,)))
 model.add(layers.Dropout(rate=dropout_rate))
-model.add(layers.Dense(int(1024 / dropout_rate), activation='relu'))
+model.add(layers.Dense(int(number_of_nodes / dropout_rate), activation='relu'))
 model.add(layers.Dropout(rate=dropout_rate))
 model.add(layers.Dense(10, activation='softmax'))
 run_experiment("Dropout network all layers, 1024 nodes",
