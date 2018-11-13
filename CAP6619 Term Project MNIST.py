@@ -24,8 +24,10 @@ def add_experiment(description, data_set_name, loss, accuracy, epochs,
     experiments.loc[len(experiments)] = new_row
 
 
-def run_experiment(model):
-    """Run an experiment: train and est the network"""
+def run_experiment(description, model):
+    """Run an experiment: train and test the network, save results"""
+    print(description)
+
     start = time.process_time()
     epochs = 2
     batch_size = 128
@@ -36,7 +38,8 @@ def run_experiment(model):
     test_loss, test_acc = model.evaluate(test_images, test_labels)
     test_time = time.process_time() - start
 
-    return test_loss, test_acc, epochs, batch_size, training_time, test_time
+    add_experiment(description, "MNIST", test_loss, test_acc,
+                   epochs, batch_size, training_time, test_time)
 
 
 # Load and prepare data
@@ -62,11 +65,7 @@ model.compile(optimizer='rmsprop',
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
-test_loss, test_acc, epochs, batch_size, training_time, test_time = \
-    run_experiment(model)
-
-add_experiment("Standard network, 1024 nodes", "MNIST", test_loss, test_acc,
-               epochs, batch_size, training_time, test_time)
+run_experiment("Standard network, 1024 nodes", model)
 
 # Dropout network, no adjustemt ----------------------------------------------
 dropout_rate = 0.5
@@ -80,13 +79,9 @@ model.compile(optimizer='rmsprop',
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
-test_loss, test_acc, epochs, batch_size, training_time, test_time = \
-    run_experiment(model)
+run_experiment("Dropout network not adjusted, 1024 nodes", model)
 
-add_experiment("Dropout network not adjusted, 1024 nodes", "MNIST", test_loss, test_acc,
-               epochs, batch_size, training_time, test_time)
-
-# Dropout network adjusted before -----------------------------------------------------
+# Dropout network adjusted before --------------------------------------------
 model = models.Sequential()
 model.add(layers.Dense(int(1024 / dropout_rate),
                        activation='relu', input_shape=(28 * 28,)))
@@ -98,12 +93,7 @@ model.compile(optimizer='rmsprop',
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
-test_loss, test_acc, epochs, batch_size, training_time, test_time = \
-    run_experiment(model)
-
-add_experiment("Dropout network adjusted before, 1024 nodes", "MNIST",
-               test_loss, test_acc, epochs, batch_size, training_time,
-               test_time)
+run_experiment("Dropout network adjusted before, 1024 nodes", model)
 
 # Dropout network, adjusted after --------------------------------------------
 model = models.Sequential()
@@ -116,12 +106,7 @@ model.compile(optimizer='rmsprop',
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
-test_loss, test_acc, epochs, batch_size, training_time, test_time = \
-    run_experiment(model)
-
-add_experiment("Dropout network adjusted after, 1024 nodes", "MNIST",
-               test_loss, test_acc, epochs, batch_size, training_time,
-               test_time)
+run_experiment("Dropout network adjusted after, 1024 nodes", model)
 
 # Dropout network, adjusted all layers ---------------------------------------
 model = models.Sequential()
@@ -135,11 +120,7 @@ model.compile(optimizer='rmsprop',
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
-test_loss, test_acc, epochs, batch_size, training_time, test_time = \
-    run_experiment(model)
-
-add_experiment("Dropout network adjusted all, 1024 nodes", "MNIST", test_loss,
-               test_acc, epochs, batch_size, training_time, test_time)
+run_experiment("Dropout network adjusted all, 1024 nodes", model)
 
 # Dropout network, dropout before output layer -------------------------------
 model = models.Sequential()
@@ -154,10 +135,6 @@ model.compile(optimizer='rmsprop',
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
-test_loss, test_acc, epochs, batch_size, training_time, test_time = \
-    run_experiment(model)
-
-add_experiment("Dropout network all layers, 1024 nodes", "MNIST", test_loss,
-               test_acc, epochs, batch_size, training_time, test_time)
+run_experiment("Dropout network all layers, 1024 nodes", model)
 
 print(experiments)
