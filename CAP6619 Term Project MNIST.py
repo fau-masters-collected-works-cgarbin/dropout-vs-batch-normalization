@@ -1,6 +1,6 @@
 """
 CAP-6619 Deep Learning Fall 2018 term project
-MNIST with regular model, dropout and batch normalization
+MNIST with standard model, dropout and batch normalization
 """
 
 import time
@@ -55,7 +55,7 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
     model.compile(optimizer=standard_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    run_experiment("Standard network, 1024 nodes",
+    run_experiment("Standard network",
                    model, number_of_nodes, epochs)
 
     # Dropout network, no adjustment
@@ -69,7 +69,7 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    run_experiment("Dropout network not adjusted, 1024 nodes",
+    run_experiment("Dropout network not adjusted",
                    model, number_of_nodes, epochs)
 
     # Dropout network adjusted before
@@ -82,7 +82,7 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    run_experiment("Dropout network adjusted before, 1024 nodes",
+    run_experiment("Dropout network adjusted before",
                    model, number_of_nodes, epochs)
 
     # Dropout network, adjusted after
@@ -96,7 +96,7 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    run_experiment("Dropout network adjusted after, 1024 nodes",
+    run_experiment("Dropout network adjusted after",
                    model, number_of_nodes, epochs)
 
     # Dropout network, adjusted all layers
@@ -110,7 +110,7 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    run_experiment("Dropout network adjusted all, 1024 nodes",
+    run_experiment("Dropout network adjusted all",
                    model, number_of_nodes, epochs)
 
     # Dropout network, dropout before output layer
@@ -125,7 +125,7 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    run_experiment("Dropout network all layers, 1024 nodes",
+    run_experiment("Dropout network all layers",
                    model, number_of_nodes, epochs)
 
     print(experiments)
