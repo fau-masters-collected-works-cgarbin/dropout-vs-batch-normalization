@@ -13,14 +13,15 @@ from keras.datasets import mnist
 # Store data from the experiments
 experiments = pd.DataFrame(columns=["Description", "DataSetName", "Loss",
                                     "Accuracy", "Epochs", "BatchSize",
-                                    "TrainingCpuTime", "TestCpuTime"])
+                                    "ModelParamCount", "TrainingCpuTime",
+                                    "TestCpuTime"])
 
 
 def add_experiment(description, data_set_name, loss, accuracy, epochs,
-                   batch_size, training_time, test_time):
+                   batch_size, model_param_count, training_time, test_time):
     """Add an entry to the dataframe that keeps track of experiments."""
     new_row = [description, data_set_name, loss, accuracy, epochs,
-               batch_size, training_time, test_time]
+               batch_size, model_param_count, training_time, test_time]
     experiments.loc[len(experiments)] = new_row
 
 
@@ -39,7 +40,8 @@ def run_experiment(description, model):
     test_time = time.process_time() - start
 
     add_experiment(description, "MNIST", test_loss, test_acc,
-                   epochs, batch_size, training_time, test_time)
+                   epochs, batch_size, model.count_params(),
+                   training_time, test_time)
 
 
 # Load and prepare data
