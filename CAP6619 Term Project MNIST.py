@@ -11,18 +11,10 @@ from keras.utils import to_categorical
 from keras.datasets import mnist
 
 # Store data from the experiments
-experiments = pd.DataFrame(columns=["Description", "DataSetName", "Loss",
-                                    "Accuracy", "Epochs", "BatchSize",
-                                    "ModelParamCount", "TrainingCpuTime",
-                                    "TestCpuTime"])
-
-
-def add_experiment(description, data_set_name, loss, accuracy, epochs,
-                   batch_size, model_param_count, training_time, test_time):
-    """Add an entry to the dataframe that keeps track of experiments."""
-    new_row = [description, data_set_name, loss, accuracy, epochs,
-               batch_size, model_param_count, training_time, test_time]
-    experiments.loc[len(experiments)] = new_row
+experiments = pd.DataFrame(columns=["Description", "DataSetName", "TestLoss",
+                                    "TestAccuracy", "Epochs", "BatchSize",
+                                    "Optimizer", "ModelParamCount",
+                                    "TrainingCpuTime", "TestCpuTime"])
 
 
 def run_experiment(description, model, epochs, optimizer):
@@ -42,9 +34,10 @@ def run_experiment(description, model, epochs, optimizer):
     test_loss, test_acc = model.evaluate(test_images, test_labels)
     test_time = time.process_time() - start
 
-    add_experiment(description, "MNIST", test_loss, test_acc,
-                   epochs, batch_size, model.count_params(),
-                   training_time, test_time)
+    experiments.loc[len(experiments)] = [description, "MNIST", test_loss,
+                                         test_acc, epochs, batch_size,
+                                         optimizer, model.count_params(),
+                                         training_time, test_time]
 
 
 # Load and prepare data
