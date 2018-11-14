@@ -174,22 +174,34 @@ optimizer_sgd_dropout = optimizers.SGD(lr=default_sgd_learning_rate * 10,
 # paper suggestion (multiply by 10 or 100), accuracy is much lower.
 optimizer_rmsprop_default = optimizers.RMSprop()
 
-test_network_configurations(number_of_nodes=1024, epochs=2,
+# Parameters to control the experiments.
+# Number of nodes in each layer (note that dropout layers are adjusted,
+# increasing the number of nodes).
+number_of_nodes = 1024
+# Number of epochs for the quick training pass - gives an idea of how the
+# experiment is going before we commit more time to it.
+epochs_low = 2
+# Number of epochs for the high(er) quality training pass - the one likely
+# to be used in real-life applications (more representative of the accuracy
+# we would expect from the network in actual applications).
+epochs_high = 5
+
+test_network_configurations(number_of_nodes=number_of_nodes, epochs=epochs_low,
                             standard_optimizer=optimizer_sgd_default,
                             dropout_optimizer=optimizer_sgd_dropout,
                             file_name="MNIST SGD 2 epochs.txt")
 
-test_network_configurations(number_of_nodes=1024, epochs=2,
+test_network_configurations(number_of_nodes=number_of_nodes, epochs=epochs_low,
                             standard_optimizer=optimizer_rmsprop_default,
                             dropout_optimizer=optimizer_rmsprop_default,
                             file_name="MNIST RMSProp 2 epochs.txt")
 
-test_network_configurations(number_of_nodes=1024, epochs=5,
+test_network_configurations(number_of_nodes=number_of_nodes, epochs=epochs_high,
                             standard_optimizer=optimizer_sgd_default,
                             dropout_optimizer=optimizer_sgd_dropout,
                             file_name="MNIST SGD 5 epochs.txt")
 
-test_network_configurations(number_of_nodes=1024, epochs=5,
+test_network_configurations(number_of_nodes=number_of_nodes, epochs=epochs_high,
                             standard_optimizer=optimizer_rmsprop_default,
                             dropout_optimizer=optimizer_rmsprop_default,
                             file_name="MNIST RMSProp 5 epochs.txt")
