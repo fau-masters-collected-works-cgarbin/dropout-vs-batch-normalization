@@ -10,6 +10,7 @@ from keras import layers
 from keras import optimizers
 from keras import backend
 from keras.utils import to_categorical
+from keras.constraints import max_norm
 from keras.datasets import mnist
 
 # Store data from the experiments
@@ -62,9 +63,11 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
     dropout_rate = 0.5
     model = models.Sequential()
     model.add(layers.Dropout(0.2, input_shape=(28 * 28,)))
-    model.add(layers.Dense(number_of_nodes, activation='relu'))
+    model.add(layers.Dense(number_of_nodes, activation='relu',
+                           kernel_constraint=max_norm(3)))
     model.add(layers.Dropout(rate=dropout_rate))
-    model.add(layers.Dense(number_of_nodes, activation='relu'))
+    model.add(layers.Dense(number_of_nodes, activation='relu',
+                           kernel_constraint=max_norm(3)))
     model.add(layers.Dense(10, activation='softmax'))
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
@@ -76,9 +79,10 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
     model = models.Sequential()
     model.add(layers.Dropout(0.2, input_shape=(28 * 28,)))
     model.add(layers.Dense(int(number_of_nodes / dropout_rate),
-                           activation='relu'))
+                           activation='relu', kernel_constraint=max_norm(3)))
     model.add(layers.Dropout(rate=dropout_rate))
-    model.add(layers.Dense(number_of_nodes, activation='relu'))
+    model.add(layers.Dense(number_of_nodes, activation='relu',
+                           kernel_constraint=max_norm(3)))
     model.add(layers.Dense(10, activation='softmax'))
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
@@ -89,10 +93,11 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
     # Dropout network, adjusted after
     model = models.Sequential()
     model.add(layers.Dropout(0.2, input_shape=(28 * 28,)))
-    model.add(layers.Dense(number_of_nodes, activation='relu'))
+    model.add(layers.Dense(number_of_nodes, activation='relu',
+                           kernel_constraint=max_norm(3)))
     model.add(layers.Dropout(rate=dropout_rate))
     model.add(layers.Dense(int(number_of_nodes / dropout_rate),
-                           activation='relu'))
+                           activation='relu', kernel_constraint=max_norm(3)))
     model.add(layers.Dense(10, activation='softmax'))
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
@@ -104,10 +109,10 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
     model = models.Sequential()
     model.add(layers.Dropout(0.2, input_shape=(28 * 28,)))
     model.add(layers.Dense(int(number_of_nodes / dropout_rate),
-                           activation='relu'))
+                           activation='relu', kernel_constraint=max_norm(3)))
     model.add(layers.Dropout(rate=dropout_rate))
     model.add(layers.Dense(int(number_of_nodes / dropout_rate),
-                           activation='relu'))
+                           activation='relu', kernel_constraint=max_norm(3)))
     model.add(layers.Dense(10, activation='softmax'))
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
@@ -119,10 +124,10 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
     model = models.Sequential()
     model.add(layers.Dropout(0.2, input_shape=(28 * 28,)))
     model.add(layers.Dense(int(number_of_nodes / dropout_rate),
-                           activation='relu'))
+                           activation='relu', kernel_constraint=max_norm(3)))
     model.add(layers.Dropout(rate=dropout_rate))
     model.add(layers.Dense(int(number_of_nodes / dropout_rate),
-                           activation='relu'))
+                           activation='relu', kernel_constraint=max_norm(3)))
     model.add(layers.Dropout(rate=dropout_rate))
     model.add(layers.Dense(10, activation='softmax'))
     model.compile(optimizer=dropout_optimizer,
@@ -179,12 +184,12 @@ test_network_configurations(number_of_nodes=1024, epochs=2,
                             dropout_optimizer=optimizer_rmsprop_default,
                             file_name="MNIST RMSProp 2 epochs.txt")
 
-test_network_configurations(number_of_nodes=1024, epochs=50,
+test_network_configurations(number_of_nodes=1024, epochs=5,
                             standard_optimizer=optimizer_sgd_default,
                             dropout_optimizer=optimizer_sgd_dropout,
                             file_name="MNIST SGD 5 epochs.txt")
 
-test_network_configurations(number_of_nodes=1024, epochs=50,
+test_network_configurations(number_of_nodes=1024, epochs=5,
                             standard_optimizer=optimizer_rmsprop_default,
                             dropout_optimizer=optimizer_rmsprop_default,
                             file_name="MNIST RMSProp 5 epochs.txt")
