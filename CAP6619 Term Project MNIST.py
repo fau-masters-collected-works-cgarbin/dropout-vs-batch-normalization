@@ -21,6 +21,13 @@ experiments = pd.DataFrame(columns=["Description", "DataSetName", "TestLoss",
                                     "TestCpuTime"])
 
 
+def save_experiments_results(file_name, display):
+    if display:
+        print(experiments)
+    with open(file_name, "w") as outfile:
+        experiments.to_string(outfile)
+
+
 def run_experiment(description, model, number_of_nodes, epochs):
     """Run an experiment: train and test the network, save results"""
     print(description)
@@ -45,7 +52,7 @@ def run_experiment(description, model, number_of_nodes, epochs):
 
 
 def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
-                                dropout_optimizer, file_name):
+                                dropout_optimizer):
     """Test all network configurations with the given parameters."""
     # Standard network
     model = models.Sequential()
@@ -136,11 +143,6 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
     run_experiment("Dropout network all layers",
                    model, number_of_nodes, epochs)
 
-    print(experiments)
-
-    with open(file_name, "w") as outfile:
-        experiments.to_string(outfile)
-
 
 # Load and prepare data
 start = time.process_time()
@@ -201,20 +203,20 @@ file_name = "MNSIT DNN nodes={} el={} eh={} dlrm={} dm={:.2f}.txt".format(
 
 test_network_configurations(number_of_nodes=number_of_nodes, epochs=epochs_low,
                             standard_optimizer=optimizer_sgd_default,
-                            dropout_optimizer=optimizer_sgd_dropout,
-                            file_name=file_name)
+                            dropout_optimizer=optimizer_sgd_dropout)
+save_experiments_results(file_name=file_name, display=True)
 
 test_network_configurations(number_of_nodes=number_of_nodes, epochs=epochs_low,
                             standard_optimizer=optimizer_rmsprop_default,
-                            dropout_optimizer=optimizer_rmsprop_default,
-                            file_name=file_name)
+                            dropout_optimizer=optimizer_rmsprop_default)
+save_experiments_results(file_name=file_name, display=True)
 
 test_network_configurations(number_of_nodes=number_of_nodes, epochs=epochs_high,
                             standard_optimizer=optimizer_sgd_default,
-                            dropout_optimizer=optimizer_sgd_dropout,
-                            file_name=file_name)
+                            dropout_optimizer=optimizer_sgd_dropout)
+save_experiments_results(file_name=file_name, display=True)
 
 test_network_configurations(number_of_nodes=number_of_nodes, epochs=epochs_high,
                             standard_optimizer=optimizer_rmsprop_default,
-                            dropout_optimizer=optimizer_rmsprop_default,
-                            file_name=file_name)
+                            dropout_optimizer=optimizer_rmsprop_default)
+save_experiments_results(file_name=file_name, display=True)
