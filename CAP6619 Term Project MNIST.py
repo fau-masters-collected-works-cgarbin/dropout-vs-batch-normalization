@@ -20,6 +20,7 @@ experiments = pd.DataFrame(columns=["Description", "DataSetName", "Optimizer",
                                     "NumberOfUnits", "DropoutRateInput",
                                     "DropoutRateHidden", "Epochs",
                                     "BatchSize", "LearningRate",
+                                    "MaxNorm", "Momentum",
                                     "ModelParamCount", "TrainingCpuTime",
                                     "TestCpuTime"])
 
@@ -48,6 +49,8 @@ def run_experiment(description, model, parameters, epochs):
                                          p.dropout_rate_input_layer,
                                          p.dropout_rate_hidden_layer,
                                          epochs, p.batch_size,
+                                         p.max_norm_max_value,
+                                         p.dropout_momentum,
                                          backend.eval(optimizer.lr),
                                          model.count_params(),
                                          training_time, test_time]
