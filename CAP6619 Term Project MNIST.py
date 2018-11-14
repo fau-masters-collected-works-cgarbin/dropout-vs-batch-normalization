@@ -194,6 +194,12 @@ dropout_momentum = 0.95
 # a range of 3 to 4 ("Typical values of c range from 3 to 4.")
 max_norm_max_value = 3
 
+# File where the results will be saved (the name encodes the parameters used
+# in the experiments)
+file_name = "MNSIT DNN nodes={} el={} eh={} dlrm={} dm={:.2f} mn={}.txt".format(
+    number_of_nodes, epochs_low, epochs_high, dropout_lr_multiplier,
+    dropout_momentum, max_norm_max_value)
+
 # SGD optimizers
 # The default one
 optimizer_sgd_default = optimizers.SGD()
@@ -208,15 +214,11 @@ optimizer_sgd_dropout = optimizers.SGD(
 # The paper doesn't mention what optimizer was used in the tests. It looks like
 # those tests were done with SGD. I tried RMSProp here because it's a popular
 # one nowadays and the one used in the Deep Learning With Python book. It
-# results in good accuracy with the default learning rate. If we apply the
-# paper suggestion (multiply by 10 or 100), accuracy is much lower.
+# results in good accuracy with the default learning rate.
 optimizer_rmsprop_default = optimizers.RMSprop()
-
-# File where the results will be saved (the name encode the parameters used
-# in the experiments)
-file_name = "MNSIT DNN nodes={} el={} eh={} dlrm={} dm={:.2f} mn={}.txt".format(
-    number_of_nodes, epochs_low, epochs_high, dropout_lr_multiplier,
-    dropout_momentum, max_norm_max_value)
+# Increasing the learn rate for the RMSProp optimizer resulted in much worse
+# accuracy. To prevent that we use the default optimizer for dropout.
+optimizer_rmsprop_dropout = optimizer_rmsprop_default
 
 
 def save_step():
@@ -233,7 +235,7 @@ test_network_configurations(number_of_nodes=number_of_nodes,
 test_network_configurations(number_of_nodes=number_of_nodes,
                             epochs=epochs_low,
                             standard_optimizer=optimizer_rmsprop_default,
-                            dropout_optimizer=optimizer_rmsprop_default,
+                            dropout_optimizer=optimizer_rmsprop_dropout,
                             max_norm_max_value=max_norm_max_value,
                             end_experiment_callback=save_step)
 
@@ -247,6 +249,6 @@ test_network_configurations(number_of_nodes=number_of_nodes,
 test_network_configurations(number_of_nodes=number_of_nodes,
                             epochs=epochs_high,
                             standard_optimizer=optimizer_rmsprop_default,
-                            dropout_optimizer=optimizer_rmsprop_default,
+                            dropout_optimizer=optimizer_rmsprop_dropout,
                             max_norm_max_value=max_norm_max_value,
                             end_experiment_callback=save_step)
