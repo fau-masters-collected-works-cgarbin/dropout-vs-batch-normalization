@@ -14,7 +14,7 @@ from keras.datasets import mnist
 
 # Store data from the experiments
 experiments = pd.DataFrame(columns=["Description", "DataSetName", "TestLoss",
-                                    "TestAccuracy", "NumeberOfNodes", "Epochs",
+                                    "TestAccuracy", "NumberOfNodes", "Epochs",
                                     "BatchSize", "Optimizer", "LearningRate",
                                     "ModelParamCount", "TrainingCpuTime",
                                     "TestCpuTime"])
