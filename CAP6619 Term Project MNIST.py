@@ -155,25 +155,6 @@ train_images = train_images.astype('float32') / 255
 test_images = test_images.reshape((10000, 28 * 28))
 test_images = test_images.astype('float32') / 255
 
-# SGD optimizers
-# The default one
-optimizer_sgd_default = optimizers.SGD()
-default_sgd_learning_rate = backend.eval(optimizer_sgd_default.lr)
-# The one recommended in the paper
-# "... dropout net should typically use 10-100 times the learning rate that was
-# optimal for a standard neural net."
-optimizer_sgd_dropout = optimizers.SGD(lr=default_sgd_learning_rate * 10,
-                                       momentum=0.95)
-
-# RMSProp optimizers
-# The default one
-# The paper doesn't mention what optimizer was used in the tests. It looks like
-# those tests were done with SGD. I tried RMSProp here because it's a popular
-# one nowadays and the one used in the Deep Learning With Python book. It
-# results in good accuracy with the default learning rate. If we apply the
-# paper suggestion (multiply by 10 or 100), accuracy is much lower.
-optimizer_rmsprop_default = optimizers.RMSprop()
-
 # Parameters to control the experiments.
 # Number of nodes in each layer (note that dropout layers are adjusted,
 # increasing the number of nodes).
@@ -185,6 +166,32 @@ epochs_low = 2
 # to be used in real-life applications (more representative of the accuracy
 # we would expect from the network in actual applications).
 epochs_high = 5
+# Dropout learning rate multiplier, as recommended in the dropout paper
+# ("... dropout net should typically use 10-100 times the learning rate that
+# was optimal for a standard neural net.")
+dropout_lr_multiplier = 10
+# Momentum, as recommended in the dropout paper ("While momentum values of 0.9
+# are common for standard nets, with dropout we found that values around 0.95
+# to 0.99 work quite a lot better.")
+dropout_momentum = 0.95
+
+# SGD optimizers
+# The default one
+optimizer_sgd_default = optimizers.SGD()
+default_sgd_learning_rate = backend.eval(optimizer_sgd_default.lr)
+# The one recommended in the paper
+optimizer_sgd_dropout = optimizers.SGD(
+    lr=default_sgd_learning_rate*dropout_lr_multiplier,
+    momentum=dropout_momentum)
+
+# RMSProp optimizers
+# The default one
+# The paper doesn't mention what optimizer was used in the tests. It looks like
+# those tests were done with SGD. I tried RMSProp here because it's a popular
+# one nowadays and the one used in the Deep Learning With Python book. It
+# results in good accuracy with the default learning rate. If we apply the
+# paper suggestion (multiply by 10 or 100), accuracy is much lower.
+optimizer_rmsprop_default = optimizers.RMSprop()
 
 test_network_configurations(number_of_nodes=number_of_nodes, epochs=epochs_low,
                             standard_optimizer=optimizer_sgd_default,
