@@ -221,7 +221,7 @@ max_norm_max_value = 3
 
 # File where the results will be saved (the name encodes the parameters used
 # in the experiments)
-file_name = "MNSIT DNN units={} dri={:.1f} drh= {:.1f} el={} eh={} dlrm={} dm={:.2f} mn={}.txt" \
+file_name = "MNSIT DNN units={} dri={:.1f} drh={:.1f} el={} eh={} dlrm={} dm={:.2f} mn={}.txt" \
     .format(number_of_units, dropout_rate_input_layer, dropout_rate_hidden_layer,
             epochs_low, epochs_high, dropout_lr_multiplier,
             dropout_momentum, max_norm_max_value)
