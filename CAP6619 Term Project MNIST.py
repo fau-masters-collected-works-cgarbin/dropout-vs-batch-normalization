@@ -52,7 +52,7 @@ def run_experiment(description, model, number_of_nodes, epochs):
 
 
 def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
-                                dropout_optimizer):
+                                dropout_optimizer, end_experiment_callback):
     """Test all network configurations with the given parameters."""
     # Standard network
     model = models.Sequential()
@@ -65,6 +65,7 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
                   metrics=['accuracy'])
     run_experiment("Standard network",
                    model, number_of_nodes, epochs)
+    end_experiment_callback()
 
     # Dropout network, no adjustment
     dropout_rate = 0.5
@@ -81,6 +82,7 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
                   metrics=['accuracy'])
     run_experiment("Dropout network not adjusted",
                    model, number_of_nodes, epochs)
+    end_experiment_callback()
 
     # Dropout network adjusted before
     model = models.Sequential()
@@ -96,6 +98,7 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
                   metrics=['accuracy'])
     run_experiment("Dropout network adjusted before",
                    model, number_of_nodes, epochs)
+    end_experiment_callback()
 
     # Dropout network, adjusted after
     model = models.Sequential()
@@ -111,6 +114,7 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
                   metrics=['accuracy'])
     run_experiment("Dropout network adjusted after",
                    model, number_of_nodes, epochs)
+    end_experiment_callback()
 
     # Dropout network, adjusted all layers
     model = models.Sequential()
@@ -126,6 +130,7 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
                   metrics=['accuracy'])
     run_experiment("Dropout network adjusted all",
                    model, number_of_nodes, epochs)
+    end_experiment_callback()
 
     # Dropout network, dropout before output layer
     model = models.Sequential()
@@ -142,6 +147,7 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
                   metrics=['accuracy'])
     run_experiment("Dropout network all layers",
                    model, number_of_nodes, epochs)
+    end_experiment_callback()
 
 
 # Load and prepare data
@@ -201,26 +207,31 @@ file_name = "MNSIT DNN nodes={} el={} eh={} dlrm={} dm={:.2f}.txt".format(
     number_of_nodes, epochs_low, epochs_high, dropout_lr_multiplier,
     dropout_momentum)
 
+
+def save_step():
+    save_experiments_results(file_name=file_name, display=True)
+
+
 test_network_configurations(number_of_nodes=number_of_nodes,
                             epochs=epochs_low,
                             standard_optimizer=optimizer_sgd_default,
-                            dropout_optimizer=optimizer_sgd_dropout)
-save_experiments_results(file_name=file_name, display=True)
+                            dropout_optimizer=optimizer_sgd_dropout,
+                            end_experiment_callback=save_step)
 
 test_network_configurations(number_of_nodes=number_of_nodes,
                             epochs=epochs_low,
                             standard_optimizer=optimizer_rmsprop_default,
-                            dropout_optimizer=optimizer_rmsprop_default)
-save_experiments_results(file_name=file_name, display=True)
+                            dropout_optimizer=optimizer_rmsprop_default,
+                            end_experiment_callback=save_step)
 
 test_network_configurations(number_of_nodes=number_of_nodes,
                             epochs=epochs_high,
                             standard_optimizer=optimizer_sgd_default,
-                            dropout_optimizer=optimizer_sgd_dropout)
-save_experiments_results(file_name=file_name, display=True)
+                            dropout_optimizer=optimizer_sgd_dropout,
+                            end_experiment_callback=save_step)
 
 test_network_configurations(number_of_nodes=number_of_nodes,
                             epochs=epochs_high,
                             standard_optimizer=optimizer_rmsprop_default,
-                            dropout_optimizer=optimizer_rmsprop_default)
-save_experiments_results(file_name=file_name, display=True)
+                            dropout_optimizer=optimizer_rmsprop_default,
+                            end_experiment_callback=save_step)
