@@ -15,10 +15,11 @@ from keras.datasets import mnist
 
 # Store data from the experiments
 experiments = pd.DataFrame(columns=["Description", "DataSetName", "TestLoss",
-                                    "TestAccuracy", "NumberOfNodes", "Epochs",
-                                    "BatchSize", "Optimizer", "LearningRate",
-                                    "ModelParamCount", "TrainingCpuTime",
-                                    "TestCpuTime"])
+                                    "TestAccuracy", "NumberOfNodes",
+                                    "DropoutRateInput", "DropoutRateHidden",
+                                    "Epochs", "BatchSize", "Optimizer",
+                                    "LearningRate", "ModelParamCount",
+                                    "TrainingCpuTime", "TestCpuTime"])
 
 
 def save_experiments_results(file_name, display):
@@ -28,7 +29,9 @@ def save_experiments_results(file_name, display):
         experiments.to_string(outfile)
 
 
-def run_experiment(description, model, number_of_nodes, epochs):
+def run_experiment(description, model, number_of_nodes,
+                   dropout_rate_input_layer, dropout_rate_hidden_layer,
+                   epochs):
     """Run an experiment: train and test the network, save results"""
     print(description)
 
@@ -44,16 +47,20 @@ def run_experiment(description, model, number_of_nodes, epochs):
     optimizer = model.optimizer
 
     experiments.loc[len(experiments)] = [description, "MNIST", test_loss,
-                                         test_acc, number_of_nodes, epochs,
-                                         batch_size, type(optimizer).__name__,
+                                         test_acc, number_of_nodes,
+                                         dropout_rate_input_layer,
+                                         dropout_rate_hidden_layer,
+                                         epochs, batch_size,
+                                         type(optimizer).__name__,
                                          backend.eval(optimizer.lr),
                                          model.count_params(),
                                          training_time, test_time]
 
 
-def test_network_configurations(number_of_nodes, epochs, max_norm_max_value,
-                                standard_optimizer, dropout_optimizer,
-                                end_experiment_callback):
+def test_network_configurations(number_of_nodes, dropout_rate_input_layer,
+                                dropout_rate_hidden_layer, epochs,
+                                max_norm_max_value, standard_optimizer,
+                                dropout_optimizer, end_experiment_callback):
     """Test all network configurations with the given parameters."""
     # Standard network
     model = models.Sequential()
@@ -65,16 +72,23 @@ def test_network_configurations(number_of_nodes, epochs, max_norm_max_value,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
     run_experiment("Standard network",
-                   model, number_of_nodes, epochs)
+                   model, number_of_nodes, dropout_rate_input_layer,
+                   dropout_rate_hidden_layer, epochs)
     end_experiment_callback()
 
+    # Adjust number of units in each layer: "...if an n-sized layer is optimal
+    # for a standard neural net on any given task, a good dropout net should
+    # have at least n/p units."
+    adjusted_units_hidden = int(
+        number_of_nodes / (1 - dropout_rate_hidden_layer))
+
     # Dropout network, no adjustment
-    dropout_rate = 0.5
     model = models.Sequential()
-    model.add(layers.Dropout(0.2, input_shape=(28 * 28,)))
+    model.add(layers.Dropout(dropout_rate_input_layer,
+                             input_shape=(28 * 28,)))
     model.add(layers.Dense(number_of_nodes, activation='relu',
                            kernel_constraint=max_norm(max_norm_max_value)))
-    model.add(layers.Dropout(rate=dropout_rate))
+    model.add(layers.Dropout(rate=dropout_rate_hidden_layer))
     model.add(layers.Dense(number_of_nodes, activation='relu',
                            kernel_constraint=max_norm(max_norm_max_value)))
     model.add(layers.Dense(10, activation='softmax'))
@@ -82,16 +96,17 @@ def test_network_configurations(number_of_nodes, epochs, max_norm_max_value,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
     run_experiment("Dropout network not adjusted",
-                   model, number_of_nodes, epochs)
+                   model, number_of_nodes, dropout_rate_input_layer,
+                   dropout_rate_hidden_layer, epochs)
     end_experiment_callback()
 
     # Dropout network adjusted before
     model = models.Sequential()
-    model.add(layers.Dropout(0.2, input_shape=(28 * 28,)))
-    model.add(layers.Dense(int(number_of_nodes / dropout_rate),
-                           activation='relu',
+    model.add(layers.Dropout(dropout_rate_input_layer,
+                             input_shape=(28 * 28,)))
+    model.add(layers.Dense(adjusted_units_hidden, activation='relu',
                            kernel_constraint=max_norm(max_norm_max_value)))
-    model.add(layers.Dropout(rate=dropout_rate))
+    model.add(layers.Dropout(rate=dropout_rate_hidden_layer))
     model.add(layers.Dense(number_of_nodes, activation='relu',
                            kernel_constraint=max_norm(max_norm_max_value)))
     model.add(layers.Dense(10, activation='softmax'))
@@ -99,61 +114,64 @@ def test_network_configurations(number_of_nodes, epochs, max_norm_max_value,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
     run_experiment("Dropout network adjusted before",
-                   model, number_of_nodes, epochs)
+                   model, number_of_nodes, dropout_rate_input_layer,
+                   dropout_rate_hidden_layer, epochs)
     end_experiment_callback()
 
     # Dropout network, adjusted after
     model = models.Sequential()
-    model.add(layers.Dropout(0.2, input_shape=(28 * 28,)))
+    model.add(layers.Dropout(dropout_rate_input_layer,
+                             input_shape=(28 * 28,)))
     model.add(layers.Dense(number_of_nodes, activation='relu',
                            kernel_constraint=max_norm(max_norm_max_value)))
-    model.add(layers.Dropout(rate=dropout_rate))
-    model.add(layers.Dense(int(number_of_nodes / dropout_rate),
-                           activation='relu',
+    model.add(layers.Dropout(rate=dropout_rate_hidden_layer))
+    model.add(layers.Dense(adjusted_units_hidden, activation='relu',
                            kernel_constraint=max_norm(max_norm_max_value)))
     model.add(layers.Dense(10, activation='softmax'))
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
     run_experiment("Dropout network adjusted after",
-                   model, number_of_nodes, epochs)
+                   model, number_of_nodes, dropout_rate_input_layer,
+                   dropout_rate_hidden_layer, epochs)
     end_experiment_callback()
 
     # Dropout network, adjusted all layers
     model = models.Sequential()
-    model.add(layers.Dropout(0.2, input_shape=(28 * 28,)))
-    model.add(layers.Dense(int(number_of_nodes / dropout_rate),
+    model.add(layers.Dropout(dropout_rate_input_layer,
+                             input_shape=(28 * 28,)))
+    model.add(layers.Dense(adjusted_units_hidden,
                            activation='relu',
                            kernel_constraint=max_norm(max_norm_max_value)))
-    model.add(layers.Dropout(rate=dropout_rate))
-    model.add(layers.Dense(int(number_of_nodes / dropout_rate),
-                           activation='relu',
+    model.add(layers.Dropout(rate=dropout_rate_hidden_layer))
+    model.add(layers.Dense(adjusted_units_hidden, activation='relu',
                            kernel_constraint=max_norm(max_norm_max_value)))
     model.add(layers.Dense(10, activation='softmax'))
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
     run_experiment("Dropout network adjusted all",
-                   model, number_of_nodes, epochs)
+                   model, number_of_nodes, dropout_rate_input_layer,
+                   dropout_rate_hidden_layer, epochs)
     end_experiment_callback()
 
     # Dropout network, dropout before output layer
     model = models.Sequential()
-    model.add(layers.Dropout(0.2, input_shape=(28 * 28,)))
-    model.add(layers.Dense(int(number_of_nodes / dropout_rate),
-                           activation='relu',
+    model.add(layers.Dropout(dropout_rate_input_layer,
+                             input_shape=(28 * 28,)))
+    model.add(layers.Dense(adjusted_units_hidden, activation='relu',
                            kernel_constraint=max_norm(max_norm_max_value)))
-    model.add(layers.Dropout(rate=dropout_rate))
-    model.add(layers.Dense(int(number_of_nodes / dropout_rate),
-                           activation='relu',
+    model.add(layers.Dropout(rate=dropout_rate_hidden_layer))
+    model.add(layers.Dense(adjusted_units_hidden, activation='relu',
                            kernel_constraint=max_norm(max_norm_max_value)))
-    model.add(layers.Dropout(rate=dropout_rate))
+    model.add(layers.Dropout(rate=dropout_rate_hidden_layer))
     model.add(layers.Dense(10, activation='softmax'))
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
     run_experiment("Dropout network all layers",
-                   model, number_of_nodes, epochs)
+                   model, number_of_nodes, dropout_rate_input_layer,
+                   dropout_rate_hidden_layer, epochs)
     end_experiment_callback()
 
 
@@ -172,8 +190,15 @@ test_images = test_images.astype('float32') / 255
 
 # Parameters to control the experiments.
 # Number of nodes in each layer (note that dropout layers are adjusted,
-# increasing the number of nodes).
+# increasing the number of nodes used in the network).
 number_of_nodes = 1024
+# Dropout rate for the input node ("For input layers, the choice depends on
+# the kind of input. For real-valued inputs (image patches or speech frames),
+# a typical value is 0.8.)" [Note: keras uses "drop", not "keep" rate]
+dropout_rate_input_layer = 0.2
+# Dropout rate for the input node ("Typical values of p for hidden units are
+# in the range 0.5 to 0.8.)" [Note: keras uses "drop", not "keep" rate]
+dropout_rate_hidden_layer = 0.5
 # Number of epochs for the quick training pass - gives an idea of how the
 # experiment is going before we commit more time to it.
 epochs_low = 2
@@ -196,9 +221,10 @@ max_norm_max_value = 3
 
 # File where the results will be saved (the name encodes the parameters used
 # in the experiments)
-file_name = "MNSIT DNN nodes={} el={} eh={} dlrm={} dm={:.2f} mn={}.txt".format(
-    number_of_nodes, epochs_low, epochs_high, dropout_lr_multiplier,
-    dropout_momentum, max_norm_max_value)
+file_name = "MNSIT DNN nodes={} dri={:.1f} drh= {:.1f} el={} eh={} dlrm={} dm={:.2f} mn={}.txt" \
+    .format(number_of_nodes, dropout_rate_input_layer, dropout_rate_hidden_layer,
+            epochs_low, epochs_high, dropout_lr_multiplier,
+            dropout_momentum, max_norm_max_value)
 
 # SGD optimizers
 # The default one
@@ -226,6 +252,8 @@ def save_step():
 
 
 test_network_configurations(number_of_nodes=number_of_nodes,
+                            dropout_rate_input_layer=dropout_rate_input_layer,
+                            dropout_rate_hidden_layer=dropout_rate_hidden_layer,
                             epochs=epochs_low,
                             standard_optimizer=optimizer_sgd_default,
                             dropout_optimizer=optimizer_sgd_dropout,
@@ -233,6 +261,8 @@ test_network_configurations(number_of_nodes=number_of_nodes,
                             end_experiment_callback=save_step)
 
 test_network_configurations(number_of_nodes=number_of_nodes,
+                            dropout_rate_input_layer=dropout_rate_input_layer,
+                            dropout_rate_hidden_layer=dropout_rate_hidden_layer,
                             epochs=epochs_low,
                             standard_optimizer=optimizer_rmsprop_default,
                             dropout_optimizer=optimizer_rmsprop_dropout,
@@ -240,6 +270,8 @@ test_network_configurations(number_of_nodes=number_of_nodes,
                             end_experiment_callback=save_step)
 
 test_network_configurations(number_of_nodes=number_of_nodes,
+                            dropout_rate_input_layer=dropout_rate_input_layer,
+                            dropout_rate_hidden_layer=dropout_rate_hidden_layer,
                             epochs=epochs_high,
                             standard_optimizer=optimizer_sgd_default,
                             dropout_optimizer=optimizer_sgd_dropout,
@@ -247,6 +279,8 @@ test_network_configurations(number_of_nodes=number_of_nodes,
                             end_experiment_callback=save_step)
 
 test_network_configurations(number_of_nodes=number_of_nodes,
+                            dropout_rate_input_layer=dropout_rate_input_layer,
+                            dropout_rate_hidden_layer=dropout_rate_hidden_layer,
                             epochs=epochs_high,
                             standard_optimizer=optimizer_rmsprop_default,
                             dropout_optimizer=optimizer_rmsprop_dropout,
