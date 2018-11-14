@@ -61,8 +61,8 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
     # Dropout network, no adjustment
     dropout_rate = 0.5
     model = models.Sequential()
-    model.add(layers.Dense(number_of_nodes,
-                           activation='relu', input_shape=(28 * 28,)))
+    model.add(layers.Dropout(0.2, input_shape=(28 * 28,)))
+    model.add(layers.Dense(number_of_nodes, activation='relu'))
     model.add(layers.Dropout(rate=dropout_rate))
     model.add(layers.Dense(number_of_nodes, activation='relu'))
     model.add(layers.Dense(10, activation='softmax'))
@@ -74,8 +74,9 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
 
     # Dropout network adjusted before
     model = models.Sequential()
+    model.add(layers.Dropout(0.2, input_shape=(28 * 28,)))
     model.add(layers.Dense(int(number_of_nodes / dropout_rate),
-                           activation='relu', input_shape=(28 * 28,)))
+                           activation='relu'))
     model.add(layers.Dropout(rate=dropout_rate))
     model.add(layers.Dense(number_of_nodes, activation='relu'))
     model.add(layers.Dense(10, activation='softmax'))
@@ -87,8 +88,8 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
 
     # Dropout network, adjusted after
     model = models.Sequential()
-    model.add(layers.Dense(number_of_nodes,
-                           activation='relu', input_shape=(28 * 28,)))
+    model.add(layers.Dropout(0.2, input_shape=(28 * 28,)))
+    model.add(layers.Dense(number_of_nodes, activation='relu'))
     model.add(layers.Dropout(rate=dropout_rate))
     model.add(layers.Dense(int(number_of_nodes / dropout_rate),
                            activation='relu'))
@@ -101,8 +102,9 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
 
     # Dropout network, adjusted all layers
     model = models.Sequential()
+    model.add(layers.Dropout(0.2, input_shape=(28 * 28,)))
     model.add(layers.Dense(int(number_of_nodes / dropout_rate),
-                           activation='relu', input_shape=(28 * 28,)))
+                           activation='relu'))
     model.add(layers.Dropout(rate=dropout_rate))
     model.add(layers.Dense(int(number_of_nodes / dropout_rate),
                            activation='relu'))
@@ -115,8 +117,9 @@ def test_network_configurations(number_of_nodes, epochs, standard_optimizer,
 
     # Dropout network, dropout before output layer
     model = models.Sequential()
+    model.add(layers.Dropout(0.2, input_shape=(28 * 28,)))
     model.add(layers.Dense(int(number_of_nodes / dropout_rate),
-                           activation='relu', input_shape=(28 * 28,)))
+                           activation='relu'))
     model.add(layers.Dropout(rate=dropout_rate))
     model.add(layers.Dense(int(number_of_nodes / dropout_rate),
                            activation='relu'))
@@ -160,10 +163,10 @@ optimizer_sgd_dropout = optimizers.SGD(lr=default_sgd_learning_rate * 10,
 # RMSProp optimizers
 # The default one
 # The paper doesn't mention what optimizer was used in the tests. It looks like
-# those tests were done wihth SGD. I tried RMSProp here because it's a popular
+# those tests were done with SGD. I tried RMSProp here because it's a popular
 # one nowadays and the one used in the Deep Learning With Python book. It
 # results in good accuracy with the default learning rate. If we apply the
-# paper suggestion (multiply by 10), accuracy is much lower.
+# paper suggestion (multiply by 10 or 100), accuracy is much lower.
 optimizer_rmsprop_default = optimizers.RMSprop()
 
 test_network_configurations(number_of_nodes=1024, epochs=2,
@@ -176,12 +179,12 @@ test_network_configurations(number_of_nodes=1024, epochs=2,
                             dropout_optimizer=optimizer_rmsprop_default,
                             file_name="MNIST RMSProp 2 epochs.txt")
 
-test_network_configurations(number_of_nodes=1024, epochs=5,
+test_network_configurations(number_of_nodes=1024, epochs=50,
                             standard_optimizer=optimizer_sgd_default,
                             dropout_optimizer=optimizer_sgd_dropout,
                             file_name="MNIST SGD 5 epochs.txt")
 
-test_network_configurations(number_of_nodes=1024, epochs=5,
+test_network_configurations(number_of_nodes=1024, epochs=50,
                             standard_optimizer=optimizer_rmsprop_default,
                             dropout_optimizer=optimizer_rmsprop_default,
                             file_name="MNIST RMSProp 5 epochs.txt")
