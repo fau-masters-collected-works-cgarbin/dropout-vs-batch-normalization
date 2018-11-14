@@ -153,11 +153,11 @@ epochs_low = 2
 # Number of epochs for the high(er) quality training pass - the one likely
 # to be used in real-life applications (more representative of the accuracy
 # we would expect from the network in actual applications).
-epochs_high = 5
+epochs_high = 10
 # Dropout learning rate multiplier, as recommended in the dropout paper
 # ("... dropout net should typically use 10-100 times the learning rate that
 # was optimal for a standard neural net.")
-dropout_lr_multiplier = 10
+dropout_lr_multiplier = 10.0
 # Momentum, as recommended in the dropout paper ("While momentum values of 0.9
 # are common for standard nets, with dropout we found that values around 0.95
 # to 0.99 work quite a lot better.")
@@ -169,7 +169,7 @@ max_norm_max_value = 3
 
 # File where the results will be saved (the name encodes the parameters used
 # in the experiments)
-file_name = "MNIST DNN units={} dri={:.1f} drh={:.1f} el={} eh={} dlrm={} dm={:.2f} mn={}.txt" \
+file_name = "MNIST DNN units={:04d} dri={:0.2f} drh={:0.2f} el={:02d} eh={:03d} dlrm={:03.1f} dm={:0.2f} mn={}.txt" \
     .format(number_of_units, dropout_rate_input_layer, dropout_rate_hidden_layer,
             epochs_low, epochs_high, dropout_lr_multiplier,
             dropout_momentum, max_norm_max_value)
