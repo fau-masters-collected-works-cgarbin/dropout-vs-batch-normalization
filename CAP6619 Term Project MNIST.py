@@ -104,7 +104,7 @@ def test_network_configurations(parameters, epochs,
     model = models.Sequential()
     model.add(layers.Dropout(p.dropout_rate_input_layer,
                              input_shape=(28 * 28,)))
-    model.add(layers.Dense(adjusted_units_hidden, acgit tivation='relu',
+    model.add(layers.Dense(adjusted_units_hidden, activation='relu',
                            kernel_constraint=max_norm(p.max_norm_max_value)))
     model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
     model.add(layers.Dense(p.number_of_units, activation='relu',
