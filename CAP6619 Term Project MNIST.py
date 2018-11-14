@@ -24,13 +24,6 @@ experiments = pd.DataFrame(columns=["Description", "DataSetName", "Optimizer",
                                     "TestCpuTime"])
 
 
-def save_experiments_results(file_name, display):
-    if display:
-        print(experiments)
-    with open(file_name, "w") as outfile:
-        experiments.to_string(outfile)
-
-
 def run_experiment(description, model, parameters, epochs):
     """Run an experiment: train and test the network, save results"""
     # To make lines shorter
@@ -208,7 +201,10 @@ file_name = "MNIST DNN units={:04d} dri={:0.2f} drh={:0.2f} el={:02d} eh={:03d} 
 
 
 def save_step():
-    save_experiments_results(file_name=file_name, display=True)
+    """Show results as we get them, to let us monitor progress"""
+    print(experiments)
+    with open(file_name, "w") as outfile:
+        experiments.to_string(outfile)
 
 
 test_network_configurations(p, p.epochs_low,
