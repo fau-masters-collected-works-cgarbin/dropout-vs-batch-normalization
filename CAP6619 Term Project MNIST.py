@@ -173,7 +173,7 @@ p = Parameters(
     epochs_high=5,
     dropout_lr_multiplier=10.0,
     dropout_momentum=0.95,
-    max_norm_max_value=2,
+    max_norm_max_value=3,
     batch_size=128
 )
 
