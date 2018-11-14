@@ -62,7 +62,7 @@ def test_network_configurations(number_of_units, dropout_rate_input_layer,
                                 max_norm_max_value, standard_optimizer,
                                 dropout_optimizer, end_experiment_callback):
     """Test all network configurations with the given parameters."""
-    # Standard network
+    # Standard network (no dropout)
     model = models.Sequential()
     model.add(layers.Dense(number_of_units,
                            activation='relu', input_shape=(28 * 28,)))
@@ -82,7 +82,8 @@ def test_network_configurations(number_of_units, dropout_rate_input_layer,
     adjusted_units_hidden = int(
         number_of_units / (1 - dropout_rate_hidden_layer))
 
-    # Dropout network, no adjustment
+    # Dropout without adjustment to number of units (for comparison)
+    # Dropout is applied to all layers, as shown in figure 1.b in the paper
     model = models.Sequential()
     model.add(layers.Dropout(dropout_rate_input_layer,
                              input_shape=(28 * 28,)))
@@ -91,16 +92,18 @@ def test_network_configurations(number_of_units, dropout_rate_input_layer,
     model.add(layers.Dropout(rate=dropout_rate_hidden_layer))
     model.add(layers.Dense(number_of_units, activation='relu',
                            kernel_constraint=max_norm(max_norm_max_value)))
+    model.add(layers.Dropout(rate=dropout_rate_hidden_layer))
     model.add(layers.Dense(10, activation='softmax'))
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    run_experiment("Dropout network not adjusted",
+    run_experiment("Dropout, no unit adjustment",
                    model, number_of_units, dropout_rate_input_layer,
                    dropout_rate_hidden_layer, epochs)
     end_experiment_callback()
 
-    # Dropout network adjusted before
+    # Dropout with adjustment to number of units
+    # Dropout is applied to all layers, as shown in figure 1.b in the paper
     model = models.Sequential()
     model.add(layers.Dropout(dropout_rate_input_layer,
                              input_shape=(28 * 28,)))
@@ -109,67 +112,12 @@ def test_network_configurations(number_of_units, dropout_rate_input_layer,
     model.add(layers.Dropout(rate=dropout_rate_hidden_layer))
     model.add(layers.Dense(number_of_units, activation='relu',
                            kernel_constraint=max_norm(max_norm_max_value)))
-    model.add(layers.Dense(10, activation='softmax'))
-    model.compile(optimizer=dropout_optimizer,
-                  loss='categorical_crossentropy',
-                  metrics=['accuracy'])
-    run_experiment("Dropout network adjusted before",
-                   model, number_of_units, dropout_rate_input_layer,
-                   dropout_rate_hidden_layer, epochs)
-    end_experiment_callback()
-
-    # Dropout network, adjusted after
-    model = models.Sequential()
-    model.add(layers.Dropout(dropout_rate_input_layer,
-                             input_shape=(28 * 28,)))
-    model.add(layers.Dense(number_of_units, activation='relu',
-                           kernel_constraint=max_norm(max_norm_max_value)))
-    model.add(layers.Dropout(rate=dropout_rate_hidden_layer))
-    model.add(layers.Dense(adjusted_units_hidden, activation='relu',
-                           kernel_constraint=max_norm(max_norm_max_value)))
-    model.add(layers.Dense(10, activation='softmax'))
-    model.compile(optimizer=dropout_optimizer,
-                  loss='categorical_crossentropy',
-                  metrics=['accuracy'])
-    run_experiment("Dropout network adjusted after",
-                   model, number_of_units, dropout_rate_input_layer,
-                   dropout_rate_hidden_layer, epochs)
-    end_experiment_callback()
-
-    # Dropout network, adjusted all layers
-    model = models.Sequential()
-    model.add(layers.Dropout(dropout_rate_input_layer,
-                             input_shape=(28 * 28,)))
-    model.add(layers.Dense(adjusted_units_hidden,
-                           activation='relu',
-                           kernel_constraint=max_norm(max_norm_max_value)))
-    model.add(layers.Dropout(rate=dropout_rate_hidden_layer))
-    model.add(layers.Dense(adjusted_units_hidden, activation='relu',
-                           kernel_constraint=max_norm(max_norm_max_value)))
-    model.add(layers.Dense(10, activation='softmax'))
-    model.compile(optimizer=dropout_optimizer,
-                  loss='categorical_crossentropy',
-                  metrics=['accuracy'])
-    run_experiment("Dropout network adjusted all",
-                   model, number_of_units, dropout_rate_input_layer,
-                   dropout_rate_hidden_layer, epochs)
-    end_experiment_callback()
-
-    # Dropout network, dropout before output layer
-    model = models.Sequential()
-    model.add(layers.Dropout(dropout_rate_input_layer,
-                             input_shape=(28 * 28,)))
-    model.add(layers.Dense(adjusted_units_hidden, activation='relu',
-                           kernel_constraint=max_norm(max_norm_max_value)))
-    model.add(layers.Dropout(rate=dropout_rate_hidden_layer))
-    model.add(layers.Dense(adjusted_units_hidden, activation='relu',
-                           kernel_constraint=max_norm(max_norm_max_value)))
     model.add(layers.Dropout(rate=dropout_rate_hidden_layer))
     model.add(layers.Dense(10, activation='softmax'))
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    run_experiment("Dropout network all layers",
+    run_experiment("Dropout, units adjusted",
                    model, number_of_units, dropout_rate_input_layer,
                    dropout_rate_hidden_layer, epochs)
     end_experiment_callback()
@@ -221,7 +169,7 @@ max_norm_max_value = 3
 
 # File where the results will be saved (the name encodes the parameters used
 # in the experiments)
-file_name = "MNSIT DNN units={} dri={:.1f} drh={:.1f} el={} eh={} dlrm={} dm={:.2f} mn={}.txt" \
+file_name = "MNIST DNN units={} dri={:.1f} drh={:.1f} el={} eh={} dlrm={} dm={:.2f} mn={}.txt" \
     .format(number_of_units, dropout_rate_input_layer, dropout_rate_hidden_layer,
             epochs_low, epochs_high, dropout_lr_multiplier,
             dropout_momentum, max_norm_max_value)
@@ -232,7 +180,7 @@ optimizer_sgd_default = optimizers.SGD()
 default_sgd_learning_rate = backend.eval(optimizer_sgd_default.lr)
 # The one recommended in the paper
 optimizer_sgd_dropout = optimizers.SGD(
-    lr=default_sgd_learning_rate*dropout_lr_multiplier,
+    lr=default_sgd_learning_rate * dropout_lr_multiplier,
     momentum=dropout_momentum)
 
 # RMSProp optimizers
