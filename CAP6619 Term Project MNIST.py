@@ -104,7 +104,7 @@ def test_network_configurations(parameters, epochs,
     model = models.Sequential()
     model.add(layers.Dropout(p.dropout_rate_input_layer,
                              input_shape=(28 * 28,)))
-    model.add(layers.Dense(adjusted_units_hidden, activation='relu',
+    model.add(layers.Dense(adjusted_units_hidden, acgit tivation='relu',
                            kernel_constraint=max_norm(p.max_norm_max_value)))
     model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
     model.add(layers.Dense(p.number_of_units, activation='relu',
@@ -173,7 +173,7 @@ p = Parameters(
     epochs_high=5,
     dropout_lr_multiplier=10.0,
     dropout_momentum=0.95,
-    max_norm_max_value=3,
+    max_norm_max_value=2,
     batch_size=128
 )
 
@@ -215,14 +215,14 @@ test_network_configurations(p, p.epochs_low,
                             dropout_optimizer=optimizer_sgd_dropout,
                             end_experiment_callback=save_step)
 
-test_network_configurations(p, p.epochs_low,
-                            standard_optimizer=optimizer_rmsprop_standard,
-                            dropout_optimizer=optimizer_rmsprop_dropout,
-                            end_experiment_callback=save_step)
-
 test_network_configurations(p, p.epochs_high,
                             standard_optimizer=optimizer_sgd_standard,
                             dropout_optimizer=optimizer_sgd_dropout,
+                            end_experiment_callback=save_step)
+
+test_network_configurations(p, p.epochs_low,
+                            standard_optimizer=optimizer_rmsprop_standard,
+                            dropout_optimizer=optimizer_rmsprop_dropout,
                             end_experiment_callback=save_step)
 
 test_network_configurations(p, p.epochs_high,
