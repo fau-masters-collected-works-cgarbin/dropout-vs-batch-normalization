@@ -15,12 +15,13 @@ from keras.constraints import max_norm
 from keras.datasets import mnist
 
 # Store data from the experiments
-experiments = pd.DataFrame(columns=["Description", "DataSetName", "TestLoss",
-                                    "TestAccuracy", "NumberOfUnits",
-                                    "DropoutRateInput", "DropoutRateHidden",
-                                    "Epochs", "BatchSize", "Optimizer",
-                                    "LearningRate", "ModelParamCount",
-                                    "TrainingCpuTime", "TestCpuTime"])
+experiments = pd.DataFrame(columns=["Description", "DataSetName", "Optimizer",
+                                    "TestLoss", "TestAccuracy",
+                                    "NumberOfUnits", "DropoutRateInput",
+                                    "DropoutRateHidden", "Epochs",
+                                    "BatchSize", "LearningRate",
+                                    "ModelParamCount", "TrainingCpuTime",
+                                    "TestCpuTime"])
 
 
 def save_experiments_results(file_name, display):
@@ -48,12 +49,12 @@ def run_experiment(description, model, parameters, epochs):
 
     optimizer = model.optimizer
 
-    experiments.loc[len(experiments)] = [description, "MNIST", test_loss,
+    experiments.loc[len(experiments)] = [description, "MNIST",
+                                         type(optimizer).__name__, test_loss,
                                          test_acc, p.number_of_units,
                                          p.dropout_rate_input_layer,
                                          p.dropout_rate_hidden_layer,
                                          epochs, p.batch_size,
-                                         type(optimizer).__name__,
                                          backend.eval(optimizer.lr),
                                          model.count_params(),
                                          training_time, test_time]
