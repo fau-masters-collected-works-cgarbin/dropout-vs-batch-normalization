@@ -25,7 +25,7 @@ experiments = pd.DataFrame(columns=["Description", "DataSetName", "Optimizer",
                                     "TestCpuTime"])
 
 
-def run_experiment(description, model, parameters, epochs):
+def run_experiment(description, model, parameters):
     """Run an experiment: train and test the network, save results"""
     # To make lines shorter
     p = parameters
@@ -34,7 +34,7 @@ def run_experiment(description, model, parameters, epochs):
 
     start = time.process_time()
     model.fit(train_images, train_labels,
-              epochs=epochs, batch_size=p.batch_size)
+              epochs=p.epochs, batch_size=p.batch_size)
     training_time = time.process_time() - start
 
     start = time.process_time()
@@ -48,7 +48,7 @@ def run_experiment(description, model, parameters, epochs):
                                          test_acc, p.number_of_units,
                                          p.dropout_rate_input_layer,
                                          p.dropout_rate_hidden_layer,
-                                         epochs, p.batch_size,
+                                         p.epochs, p.batch_size,
                                          backend.eval(optimizer.lr),
                                          p.max_norm_max_value,
                                          p.dropout_momentum,
@@ -56,7 +56,7 @@ def run_experiment(description, model, parameters, epochs):
                                          training_time, test_time]
 
 
-def test_network_configurations(parameters, epochs,
+def test_network_configurations(parameters,
                                 standard_optimizer, dropout_optimizer,
                                 end_experiment_callback):
     """Test all network configurations with the given parameters."""
@@ -72,7 +72,7 @@ def test_network_configurations(parameters, epochs,
     model.compile(optimizer=standard_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    run_experiment("Standard network", model, p, epochs)
+    run_experiment("Standard network", model, p)
     end_experiment_callback()
 
     # Adjust number of units in each layer: "...if an n-sized layer is optimal
@@ -96,7 +96,7 @@ def test_network_configurations(parameters, epochs,
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    run_experiment("Dropout, no unit adjustment", model, p, epochs)
+    run_experiment("Dropout, no unit adjustment", model, p)
     end_experiment_callback()
 
     # Dropout with adjustment to number of units
@@ -114,7 +114,7 @@ def test_network_configurations(parameters, epochs,
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    run_experiment("Dropout, units adjusted", model, p, epochs)
+    run_experiment("Dropout, units adjusted", model, p)
     end_experiment_callback()
 
 
@@ -145,11 +145,7 @@ Parameters = collections.namedtuple("Parameters", [
     "dropout_rate_hidden_layer",
     # Number of epochs for the quick training pass - gives an idea of how the
     # experiment is going before we commit more time to it.
-    "epochs_low",
-    # Number of epochs for the high(er) quality training pass - the one likely
-    # to be used in real-life applications (more representative of the accuracy
-    # we would expect from the network in actual applications).
-    "epochs_high",
+    "epochs",
     # Dropout learning rate multiplier, as recommended in the dropout paper
     # ("... dropout net should typically use 10-100 times the learning rate
     # that was optimal for a standard neural net.")
@@ -169,8 +165,7 @@ p = Parameters(
     number_of_units=1024,
     dropout_rate_input_layer=0.2,
     dropout_rate_hidden_layer=0.5,
-    epochs_low=2,
-    epochs_high=5,
+    epochs=5,
     dropout_lr_multiplier=10.0,
     dropout_momentum=0.95,
     max_norm_max_value=3,
@@ -197,9 +192,9 @@ optimizer_rmsprop_dropout = optimizer_rmsprop_standard
 
 # File where the results will be saved (the name encodes the parameters used
 # in the experiments)
-file_name = "MNIST DNN units={:04d} dri={:0.2f} drh={:0.2f} el={:02d} eh={:03d} dlrm={:03.1f} dm={:0.2f} mn={} bs={:04d}.txt" \
+file_name = "MNIST DNN units={:04d} dri={:0.2f} drh={:0.2f} e={:02d} dlrm={:03.1f} dm={:0.2f} mn={} bs={:04d}.txt" \
     .format(p.number_of_units, p.dropout_rate_input_layer,
-            p.dropout_rate_hidden_layer, p.epochs_low, p.epochs_high,
+            p.dropout_rate_hidden_layer, p.epochs,
             p.dropout_lr_multiplier, p.dropout_momentum, p.max_norm_max_value,
             p.batch_size)
 
@@ -211,22 +206,10 @@ def save_step():
         experiments.to_string(outfile)
 
 
-test_network_configurations(p, p.epochs_low,
-                            standard_optimizer=optimizer_sgd_standard,
+test_network_configurations(p, standard_optimizer=optimizer_sgd_standard,
                             dropout_optimizer=optimizer_sgd_dropout,
                             end_experiment_callback=save_step)
 
-test_network_configurations(p, p.epochs_high,
-                            standard_optimizer=optimizer_sgd_standard,
-                            dropout_optimizer=optimizer_sgd_dropout,
-                            end_experiment_callback=save_step)
-
-test_network_configurations(p, p.epochs_low,
-                            standard_optimizer=optimizer_rmsprop_standard,
-                            dropout_optimizer=optimizer_rmsprop_dropout,
-                            end_experiment_callback=save_step)
-
-test_network_configurations(p, p.epochs_high,
-                            standard_optimizer=optimizer_rmsprop_standard,
+test_network_configurations(p, standard_optimizer=optimizer_rmsprop_standard,
                             dropout_optimizer=optimizer_rmsprop_dropout,
                             end_experiment_callback=save_step)
