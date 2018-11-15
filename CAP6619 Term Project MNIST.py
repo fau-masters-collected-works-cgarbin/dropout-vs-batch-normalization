@@ -197,10 +197,11 @@ optimizer_rmsprop_dropout = optimizer_rmsprop_standard
 
 # File where the results will be saved (the name encodes the parameters used
 # in the experiments)
-file_name = "MNIST DNN units={:04d} dri={:0.2f} drh={:0.2f} el={:02d} eh={:03d} dlrm={:03.1f} dm={:0.2f} mn={}.txt" \
+file_name = "MNIST DNN units={:04d} dri={:0.2f} drh={:0.2f} el={:02d} eh={:03d} dlrm={:03.1f} dm={:0.2f} mn={} bs={:04d}.txt" \
     .format(p.number_of_units, p.dropout_rate_input_layer,
             p.dropout_rate_hidden_layer, p.epochs_low, p.epochs_high,
-            p.dropout_lr_multiplier, p.dropout_momentum, p.max_norm_max_value)
+            p.dropout_lr_multiplier, p.dropout_momentum, p.max_norm_max_value,
+            p.batch_size)
 
 
 def save_step():
