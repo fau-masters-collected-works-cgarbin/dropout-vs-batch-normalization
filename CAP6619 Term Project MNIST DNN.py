@@ -17,9 +17,9 @@ from keras.datasets import mnist
 # Store data from the experiments
 experiments = pd.DataFrame(columns=["Description", "DataSetName", "Optimizer",
                                     "TestLoss", "TestAccuracy",
-                                    "NumberOfUnits", "DropoutRateInput",
-                                    "DropoutRateHidden", "Epochs",
-                                    "BatchSize", "LearningRate",
+                                    "UnitsPerLayer", "Epochs",
+                                    "BatchSize", "DropoutRateInput",
+                                    "DropoutRateHidden", "LearningRate",
                                     "MaxNorm", "Momentum",
                                     "ModelParamCount", "TrainingCpuTime",
                                     "TestCpuTime"])
@@ -45,10 +45,10 @@ def run_experiment(description, model, parameters):
 
     experiments.loc[len(experiments)] = [description, "MNIST",
                                          type(optimizer).__name__, test_loss,
-                                         test_acc, p.number_of_units,
+                                         test_acc, p.units_per_layer,
+                                         p.epochs, p.batch_size,
                                          p.dropout_rate_input_layer,
                                          p.dropout_rate_hidden_layer,
-                                         p.epochs, p.batch_size,
                                          backend.eval(optimizer.lr),
                                          p.max_norm_max_value,
                                          p.dropout_momentum,
@@ -65,9 +65,9 @@ def test_network_configurations(parameters,
 
     # Standard network (no dropout)
     model = models.Sequential()
-    model.add(layers.Dense(p.number_of_units,
+    model.add(layers.Dense(p.units_per_layer,
                            activation='relu', input_shape=(28 * 28,)))
-    model.add(layers.Dense(p.number_of_units, activation='relu'))
+    model.add(layers.Dense(p.units_per_layer, activation='relu'))
     model.add(layers.Dense(10, activation='softmax'))
     model.compile(optimizer=standard_optimizer,
                   loss='categorical_crossentropy',
@@ -79,17 +79,17 @@ def test_network_configurations(parameters,
     # for a standard neural net on any given task, a good dropout net should
     # have at least n/p units." [Keras is "drop", not "keep", hence the "1 -"]
     adjusted_units_hidden = int(
-        p.number_of_units / (1 - p.dropout_rate_hidden_layer))
+        p.units_per_layer / (1 - p.dropout_rate_hidden_layer))
 
     # Dropout without adjustment to number of units (for comparison)
     # Dropout is applied to all layers, as shown in figure 1.b in the paper
     model = models.Sequential()
     model.add(layers.Dropout(p.dropout_rate_input_layer,
                              input_shape=(28 * 28,)))
-    model.add(layers.Dense(p.number_of_units, activation='relu',
+    model.add(layers.Dense(p.units_per_layer, activation='relu',
                            kernel_constraint=max_norm(p.max_norm_max_value)))
     model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
-    model.add(layers.Dense(p.number_of_units, activation='relu',
+    model.add(layers.Dense(p.units_per_layer, activation='relu',
                            kernel_constraint=max_norm(p.max_norm_max_value)))
     model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
     model.add(layers.Dense(10, activation='softmax'))
@@ -107,7 +107,7 @@ def test_network_configurations(parameters,
     model.add(layers.Dense(adjusted_units_hidden, activation='relu',
                            kernel_constraint=max_norm(p.max_norm_max_value)))
     model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
-    model.add(layers.Dense(p.number_of_units, activation='relu',
+    model.add(layers.Dense(p.units_per_layer, activation='relu',
                            kernel_constraint=max_norm(p.max_norm_max_value)))
     model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
     model.add(layers.Dense(10, activation='softmax'))
@@ -135,7 +135,11 @@ test_images = test_images.astype('float32') / 255
 Parameters = collections.namedtuple("Parameters", [
     # Number of units in each layer (note that dropout layers are adjusted,
     # increasing the number of units used in the network).
-    "number_of_units",
+    "units_per_layer",
+    # Number of epochs to train.
+    "epochs",
+    # Number of samples in each batch.
+    "batch_size",
     # Dropout rate for the input layer ("For input layers, the choice depends
     # on the kind of input. For real-valued inputs (image patches or speech
     # frames), a typical value is 0.8.)" [Note: keras uses "drop", not "keep"]
@@ -143,8 +147,6 @@ Parameters = collections.namedtuple("Parameters", [
     # Dropout rate for the input layer ("Typical values of p for hidden units
     # are in the range 0.5 to 0.8.)" [Note: keras uses "drop", not "keep" rate]
     "dropout_rate_hidden_layer",
-    # Number of epochs to train.
-    "epochs",
     # Dropout learning rate multiplier, as recommended in the dropout paper
     # ("... dropout net should typically use 10-100 times the learning rate
     # that was optimal for a standard neural net.")
@@ -157,18 +159,17 @@ Parameters = collections.namedtuple("Parameters", [
     # alone gives significant improvements, using dropout along with
     # max-norm... Typical values of c range from 3 to 4.")
     "max_norm_max_value",
-    "batch_size"
 ])
 
 p = Parameters(
-    number_of_units=1024,
+    units_per_layer=1024,
+    epochs=5,
+    batch_size=128,
     dropout_rate_input_layer=0.2,
     dropout_rate_hidden_layer=0.5,
-    epochs=5,
     dropout_lr_multiplier=10.0,
     dropout_momentum=0.95,
-    max_norm_max_value=3,
-    batch_size=128
+    max_norm_max_value=3
 )
 
 # The SGD optimizer to use in standard networks (no dropout).
@@ -192,7 +193,7 @@ optimizer_rmsprop_dropout = optimizer_rmsprop_standard
 # File where the results will be saved (the name encodes the parameters used
 # in the experiments)
 file_name = "MNIST DNN units={:04d} dri={:0.2f} drh={:0.2f} e={:02d} dlrm={:03.1f} dm={:0.2f} mn={} bs={:04d}.txt" \
-    .format(p.number_of_units, p.dropout_rate_input_layer,
+    .format(p.units_per_layer, p.dropout_rate_input_layer,
             p.dropout_rate_hidden_layer, p.epochs,
             p.dropout_lr_multiplier, p.dropout_momentum, p.max_norm_max_value,
             p.batch_size)
