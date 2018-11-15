@@ -1,6 +1,6 @@
 """
 CAP-6619 Deep Learning Fall 2018 term project
-MNIST with standard model, dropout and batch normalization
+MNIST with standard deep neural network and dropout
 """
 
 import time
