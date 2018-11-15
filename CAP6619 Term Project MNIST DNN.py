@@ -143,8 +143,7 @@ Parameters = collections.namedtuple("Parameters", [
     # Dropout rate for the input layer ("Typical values of p for hidden units
     # are in the range 0.5 to 0.8.)" [Note: keras uses "drop", not "keep" rate]
     "dropout_rate_hidden_layer",
-    # Number of epochs for the quick training pass - gives an idea of how the
-    # experiment is going before we commit more time to it.
+    # Number of epochs to train.
     "epochs",
     # Dropout learning rate multiplier, as recommended in the dropout paper
     # ("... dropout net should typically use 10-100 times the learning rate
