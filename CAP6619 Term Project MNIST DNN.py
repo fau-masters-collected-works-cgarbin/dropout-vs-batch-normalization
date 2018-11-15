@@ -17,7 +17,7 @@ from keras.datasets import mnist
 # Store data from the experiments
 experiments = pd.DataFrame(columns=["Description", "DataSetName", "Optimizer",
                                     "TestLoss", "TestAccuracy",
-                                    "UnitsPerLayer", "Epochs",
+                                    "HiddenLayers", "UnitsPerLayer", "Epochs",
                                     "BatchSize", "DropoutRateInput",
                                     "DropoutRateHidden", "LearningRate",
                                     "MaxNorm", "Momentum",
@@ -45,7 +45,8 @@ def run_experiment(description, model, parameters):
 
     experiments.loc[len(experiments)] = [description, "MNIST",
                                          type(optimizer).__name__, test_loss,
-                                         test_acc, p.units_per_layer,
+                                         test_acc, p.hidden_layers,
+                                         p.units_per_layer,
                                          p.epochs, p.batch_size,
                                          p.dropout_rate_input_layer,
                                          p.dropout_rate_hidden_layer,
@@ -67,11 +68,13 @@ def test_network_configurations(parameters,
     model = models.Sequential()
     model.add(layers.Dense(p.units_per_layer,
                            activation='relu', input_shape=(28 * 28,)))
-    model.add(layers.Dense(p.units_per_layer, activation='relu'))
+    for _ in range(p.hidden_layers - 1):
+        model.add(layers.Dense(p.units_per_layer, activation='relu'))
     model.add(layers.Dense(10, activation='softmax'))
     model.compile(optimizer=standard_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
+    print(model.summary())
     run_experiment("Standard network", model, p)
     end_experiment_callback()
 
@@ -86,16 +89,15 @@ def test_network_configurations(parameters,
     model = models.Sequential()
     model.add(layers.Dropout(p.dropout_rate_input_layer,
                              input_shape=(28 * 28,)))
-    model.add(layers.Dense(p.units_per_layer, activation='relu',
-                           kernel_constraint=max_norm(p.max_norm_max_value)))
-    model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
-    model.add(layers.Dense(p.units_per_layer, activation='relu',
-                           kernel_constraint=max_norm(p.max_norm_max_value)))
-    model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
+    for _ in range(p.hidden_layers):
+        model.add(layers.Dense(p.units_per_layer, activation='relu',
+                               kernel_constraint=max_norm(p.max_norm_max_value)))
+        model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
     model.add(layers.Dense(10, activation='softmax'))
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
+    print(model.summary())
     run_experiment("Dropout, no unit adjustment", model, p)
     end_experiment_callback()
 
@@ -104,16 +106,15 @@ def test_network_configurations(parameters,
     model = models.Sequential()
     model.add(layers.Dropout(p.dropout_rate_input_layer,
                              input_shape=(28 * 28,)))
-    model.add(layers.Dense(adjusted_units_hidden, activation='relu',
-                           kernel_constraint=max_norm(p.max_norm_max_value)))
-    model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
-    model.add(layers.Dense(p.units_per_layer, activation='relu',
-                           kernel_constraint=max_norm(p.max_norm_max_value)))
-    model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
+    for _ in range(p.hidden_layers):
+        model.add(layers.Dense(adjusted_units_hidden, activation='relu',
+                               kernel_constraint=max_norm(p.max_norm_max_value)))
+        model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
     model.add(layers.Dense(10, activation='softmax'))
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
+    print(model.summary())
     run_experiment("Dropout, units adjusted", model, p)
     end_experiment_callback()
 
@@ -133,6 +134,9 @@ test_images = test_images.astype('float32') / 255
 
 # Parameters to control the experiments.
 Parameters = collections.namedtuple("Parameters", [
+    # Number of hidden layers in the network. When a dropout network is used,
+    # each hidden layer will be followed by a dropout layer.
+    "hidden_layers",
     # Number of units in each layer (note that dropout layers are adjusted,
     # increasing the number of units used in the network).
     "units_per_layer",
@@ -162,6 +166,7 @@ Parameters = collections.namedtuple("Parameters", [
 ])
 
 p = Parameters(
+    hidden_layers=2,
     units_per_layer=1024,
     epochs=5,
     batch_size=128,
@@ -192,8 +197,8 @@ optimizer_rmsprop_dropout = optimizer_rmsprop_standard
 
 # File where the results will be saved (the name encodes the parameters used
 # in the experiments)
-file_name = "MNIST DNN units={:04d} dri={:0.2f} drh={:0.2f} e={:02d} dlrm={:03.1f} dm={:0.2f} mn={} bs={:04d}.txt" \
-    .format(p.units_per_layer, p.dropout_rate_input_layer,
+file_name = "MNIST DNN hl={:03d} uhl={:04d} dri={:0.2f} drh={:0.2f} e={:02d} dlrm={:03.1f} dm={:0.2f} mn={} bs={:04d}.txt" \
+    .format(p.hidden_layers, p.units_per_layer, p.dropout_rate_input_layer,
             p.dropout_rate_hidden_layer, p.epochs,
             p.dropout_lr_multiplier, p.dropout_momentum, p.max_norm_max_value,
             p.batch_size)
