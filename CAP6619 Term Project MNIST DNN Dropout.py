@@ -13,10 +13,6 @@ from keras.utils import to_categorical
 from keras.constraints import max_norm
 from keras.datasets import mnist
 
-# Make experiments repeatable
-from numpy.random import seed
-seed(123)
-
 # Store data from the experiments
 experiments = pd.DataFrame(columns=["Description", "DataSetName", "Optimizer",
                                     "TestLoss", "TestAccuracy",
