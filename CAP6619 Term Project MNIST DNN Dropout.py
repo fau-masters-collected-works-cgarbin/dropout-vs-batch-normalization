@@ -2,7 +2,6 @@
 CAP-6619 Deep Learning Fall 2018 term project
 MNIST with standard deep neural network and dropout
 """
-
 import time
 import pandas as pd
 import collections
@@ -13,6 +12,10 @@ from keras import backend
 from keras.utils import to_categorical
 from keras.constraints import max_norm
 from keras.datasets import mnist
+
+# Make experiments repeatable
+from numpy.random import seed
+seed(123)
 
 # Store data from the experiments
 experiments = pd.DataFrame(columns=["Description", "DataSetName", "Optimizer",
@@ -166,10 +169,10 @@ Parameters = collections.namedtuple("Parameters", [
 ])
 
 p = Parameters(
-    hidden_layers=2,
-    units_per_layer=1024,
+    hidden_layers=3,
+    units_per_layer=100,
     epochs=5,
-    batch_size=128,
+    batch_size=60,
     dropout_rate_input_layer=0.2,
     dropout_rate_hidden_layer=0.5,
     dropout_lr_multiplier=10.0,
@@ -197,7 +200,7 @@ optimizer_rmsprop_dropout = optimizer_rmsprop_standard
 
 # File where the results will be saved (the name encodes the parameters used
 # in the experiments)
-file_name = "MNIST DNN hl={:03d} uhl={:04d} dri={:0.2f} drh={:0.2f} e={:02d} dlrm={:03.1f} dm={:0.2f} mn={} bs={:04d}.txt" \
+file_name = "MNIST DNN Dropout hl={:03d} uhl={:04d} dri={:0.2f} drh={:0.2f} e={:02d} dlrm={:03.1f} dm={:0.2f} mn={} bs={:04d}.txt" \
     .format(p.hidden_layers, p.units_per_layer, p.dropout_rate_input_layer,
             p.dropout_rate_hidden_layer, p.epochs,
             p.dropout_lr_multiplier, p.dropout_momentum, p.max_norm_max_value,
