@@ -5,3 +5,5 @@
 *.txt
 # Sample images from catvs. dogs in Kaggle
 catsvsdogs/
+# Keras model files
+*h5
