@@ -3,3 +3,5 @@
 .Rhistory
 *.nb.html
 *.txt
+# Sample images from catvs. dogs in Kaggle
+catsvsdogs/
