@@ -165,10 +165,10 @@ Parameters = collections.namedtuple("Parameters", [
 ])
 
 p = Parameters(
-    hidden_layers=3,
-    units_per_layer=100,
+    hidden_layers=2,
+    units_per_layer=512,
     epochs=5,
-    batch_size=60,
+    batch_size=128,
     dropout_rate_input_layer=0.2,
     dropout_rate_hidden_layer=0.5,
     dropout_lr_multiplier=10.0,
