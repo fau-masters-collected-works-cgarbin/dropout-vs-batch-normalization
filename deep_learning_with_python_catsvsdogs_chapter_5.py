@@ -124,9 +124,7 @@ def run_experiment(train_generator, validation_generator, parameters):
         validation_data=validation_generator,
         validation_steps=5)
 
-    model.save("cats_and_dogs_small_1.h5")
-
-    return history
+    return model, history
 
 
 def plot_accuracy_loss(history):
@@ -184,5 +182,6 @@ train_dir, test_dir, validation_dir = prepare_image_dirs(
 train_generator, validation_generator = create_image_generators(
     train_dir, validation_dir, p)
 
-history = run_experiment(train_generator, validation_generator, p)
+model, history = run_experiment(train_generator, validation_generator, p)
+model.save("cats_and_dogs_small_1.h5")
 plot_accuracy_loss(history)
