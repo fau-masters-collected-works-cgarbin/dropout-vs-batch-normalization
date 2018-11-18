@@ -3,6 +3,7 @@ Cat vs. Dogs based on chapter 5 of Deep Learning with Python
 """
 
 import os
+import collections
 
 
 def prepare_image_dirs(source_dir, dest_base_dir):
@@ -72,7 +73,7 @@ def prepare_image_dirs(source_dir, dest_base_dir):
     return train_dir, test_dir, validation_dir
 
 
-def create_image_generators(train_dir, validation_dir):
+def create_image_generators(train_dir, validation_dir, parameters):
     from keras.preprocessing.image import ImageDataGenerator
 
     train_datagen = ImageDataGenerator(rescale=1./255)
@@ -81,19 +82,19 @@ def create_image_generators(train_dir, validation_dir):
     train_generator = train_datagen.flow_from_directory(
         train_dir,
         target_size=(150, 150),
-        batch_size=20,
+        batch_size=parameters.batch_size,
         class_mode="binary")
 
     validation_generator = test_datagen.flow_from_directory(
         validation_dir,
         target_size=(150, 150),
-        batch_size=20,
+        batch_size=parameters.batch_size,
         class_mode="binary")
 
     return train_generator, validation_generator
 
 
-def run_experiment(train_generator, validation_generator):
+def run_experiment(train_generator, validation_generator, parameters):
     from keras import layers
     from keras import models
     from keras import optimizers
@@ -118,8 +119,8 @@ def run_experiment(train_generator, validation_generator):
 
     history = model.fit_generator(
         train_generator,
-        steps_per_epoch=100,
-        epochs=3,
+        steps_per_epoch=parameters.steps_per_epoch,
+        epochs=parameters.epochs,
         validation_data=validation_generator,
         validation_steps=5)
 
@@ -158,12 +159,30 @@ def plot_accuracy_loss(history):
     plt.show()
 
 
+# Parameters to control the experiments.
+Parameters = collections.namedtuple("Parameters", [
+    # Number of epochs to train.
+    "epochs",
+    # Number of samples in each batch.
+    "batch_size",
+    # Number of steps (samples) to use in each epoch (we need this because we
+    # are using a data generator, which is an infinite supplier of samples, so
+    # we need to limit it with this parameter).
+    "steps_per_epoch",
+])
+
+p = Parameters(
+    epochs=5,
+    batch_size=20,
+    steps_per_epoch=100,
+)
+
 train_dir, test_dir, validation_dir = prepare_image_dirs(
     source_dir="/Users/cgarbin/Downloads/all/train",
     dest_base_dir="./catsvsdogs")
 
 train_generator, validation_generator = create_image_generators(
-    train_dir, validation_dir)
+    train_dir, validation_dir, p)
 
-history = run_experiment(train_generator, validation_generator)
+history = run_experiment(train_generator, validation_generator, p)
 plot_accuracy_loss(history)
