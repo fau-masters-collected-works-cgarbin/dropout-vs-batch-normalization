@@ -131,7 +131,7 @@ def plot_accuracy_loss(history):
     """Plots the accuracy and loss of a model's training and validation epochs.
 
     Arguments:
-        history {keras.model} -- The model with the data to plot
+        history {History} -- A Keras History object returned from model.fit
     """
 
     import matplotlib.pyplot as plt
