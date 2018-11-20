@@ -103,8 +103,8 @@ start = time.process_time()
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
 train_labels = to_categorical(train_labels)
 test_labels = to_categorical(test_labels)
-end = time.process_time()
-print("Timing: load and prepare data: {0:.5f}s".format(end - start))
+print("Timing: load and prepare data: {0:.5f}s".format(
+    time.process_time() - start))
 
 train_images = train_images.reshape((60000, 28 * 28))
 train_images = train_images.astype('float32') / 255
