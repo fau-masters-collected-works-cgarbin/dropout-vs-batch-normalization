@@ -196,9 +196,9 @@ optimizer_rmsprop_dropout = optimizer_rmsprop_standard
 
 # File where the results will be saved (the name encodes the parameters used
 # in the experiments)
-file_name_template = ("MNIST DNN Dropout hl={:03d} uhl={:04d} dri={:0.2f}"
-                      " drh={:0.2f} e={:02d} dlrm={:03.1f} dm={:0.2f} mn={}"
-                      " bs={:04d}.txt")
+file_name_template = ("MNIST_DNN_Dropout_hl={:03d}_uhl={:04d}_dri={:0.2f}"
+                      "_drh={:0.2f}_e={:02d}_dlrm={:03.1f}_dm={:0.2f}_mn={}"
+                      "_bs={:04d}.txt")
 file_name = file_name_template.format(
     p.hidden_layers, p.units_per_layer, p.dropout_rate_input_layer,
     p.dropout_rate_hidden_layer, p.epochs, p.dropout_lr_multiplier,
