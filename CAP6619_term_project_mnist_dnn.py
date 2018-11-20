@@ -24,36 +24,22 @@ experiments = pd.DataFrame(columns=["Description", "DataSetName", "Optimizer",
                                     "TestCpuTime"])
 
 
-def run_experiment(description, model, parameters):
-    """Run an experiment: train and test the network, save results"""
+def run_experiment(descprition, model, parameters, end_experiment_callback):
+    """Run an experiment: train and test the network"""
     # To make lines shorter
     p = parameters
 
-    print(description)
-
     start = time.process_time()
-    model.fit(train_images, train_labels,
-              epochs=p.epochs, batch_size=p.batch_size)
+    history = model.fit(train_images, train_labels,
+                        epochs=p.epochs, batch_size=p.batch_size)
     training_time = time.process_time() - start
 
     start = time.process_time()
     test_loss, test_acc = model.evaluate(test_images, test_labels)
     test_time = time.process_time() - start
 
-    optimizer = model.optimizer
-
-    experiments.loc[len(experiments)] = [description, "MNIST",
-                                         type(optimizer).__name__, test_loss,
-                                         test_acc, p.hidden_layers,
-                                         p.units_per_layer,
-                                         p.epochs, p.batch_size,
-                                         p.dropout_rate_input_layer,
-                                         p.dropout_rate_hidden_layer,
-                                         backend.eval(optimizer.lr),
-                                         p.max_norm_max_value,
-                                         p.dropout_momentum,
-                                         model.count_params(),
-                                         training_time, test_time]
+    end_experiment_callback(descprition, model, history,
+                            test_loss, test_acc, training_time, test_time)
 
 
 def test_network_configurations(parameters,
@@ -73,9 +59,7 @@ def test_network_configurations(parameters,
     model.compile(optimizer=standard_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    print(model.summary())
-    run_experiment("Standard network", model, p)
-    end_experiment_callback()
+    run_experiment("standard_network", model, p, end_experiment_callback)
 
     # Adjust number of units in each layer: "...if an n-sized layer is optimal
     # for a standard neural net on any given task, a good dropout net should
@@ -96,9 +80,7 @@ def test_network_configurations(parameters,
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    print(model.summary())
-    run_experiment("Dropout, no unit adjustment", model, p)
-    end_experiment_callback()
+    run_experiment("dropout_no_adjustment", model, p, end_experiment_callback)
 
     # Dropout with adjustment to number of units
     # Dropout is applied to all layers, as shown in figure 1.b in the paper
@@ -113,9 +95,7 @@ def test_network_configurations(parameters,
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    print(model.summary())
-    run_experiment("Dropout, units adjusted", model, p)
-    end_experiment_callback()
+    run_experiment("dropout_units_adjusted", model, p, end_experiment_callback)
 
 
 # Load and prepare data
@@ -205,8 +185,24 @@ file_name = file_name_template.format(
     p.dropout_momentum, p.max_norm_max_value, p.batch_size)
 
 
-def save_step():
+def save_step(description, model, history, test_loss, test_acc, training_time,
+              test_time):
     """Show results as we get them, to let us monitor progress"""
+    optimizer = model.optimizer
+
+    experiments.loc[len(experiments)] = [description, "MNIST",
+                                         type(optimizer).__name__, test_loss,
+                                         test_acc, p.hidden_layers,
+                                         p.units_per_layer,
+                                         p.epochs, p.batch_size,
+                                         p.dropout_rate_input_layer,
+                                         p.dropout_rate_hidden_layer,
+                                         backend.eval(optimizer.lr),
+                                         p.max_norm_max_value,
+                                         p.dropout_momentum,
+                                         model.count_params(),
+                                         training_time, test_time]
+
     print(experiments)
     with open(file_name, "w") as outfile:
         experiments.to_string(outfile)
