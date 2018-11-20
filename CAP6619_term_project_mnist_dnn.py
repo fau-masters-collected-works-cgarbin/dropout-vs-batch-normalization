@@ -24,22 +24,22 @@ experiments = pd.DataFrame(columns=["Description", "DataSetName", "Optimizer",
                                     "TestCpuTime"])
 
 
-def run_experiment(descprition, model, parameters, end_experiment_callback):
+def run_experiment(description, model, parameters, end_experiment_callback):
     """Run an experiment: train and test the network"""
     # To make lines shorter
     p = parameters
 
     start = time.process_time()
-    history = model.fit(train_images, train_labels,
-                        epochs=p.epochs, batch_size=p.batch_size)
+    model.fit(train_images, train_labels, epochs=p.epochs,
+              batch_size=p.batch_size)
     training_time = time.process_time() - start
 
     start = time.process_time()
     test_loss, test_acc = model.evaluate(test_images, test_labels)
     test_time = time.process_time() - start
 
-    end_experiment_callback(descprition, model, history,
-                            test_loss, test_acc, training_time, test_time)
+    end_experiment_callback(description, model, test_loss, test_acc,
+                            training_time, test_time)
 
 
 def test_network_configurations(parameters,
@@ -187,13 +187,14 @@ file_name = file_name_template.format(
     p.batch_size)
 
 
-def save_step(description, model, history, test_loss, test_acc, training_time,
+def save_step(description, model, test_loss, test_acc, training_time,
               test_time):
     """Show results as we get them, to let us monitor progress"""
     optimizer = model.optimizer
+    optimizer_name = type(optimizer).__name__
 
     experiments.loc[len(experiments)] = [description, "MNIST",
-                                         type(optimizer).__name__, test_loss,
+                                         optimizer_name, test_loss,
                                          test_acc, p.hidden_layers,
                                          p.units_per_layer,
                                          p.epochs, p.batch_size,
@@ -205,16 +206,21 @@ def save_step(description, model, history, test_loss, test_acc, training_time,
                                          model.count_params(),
                                          training_time, test_time]
 
-    # Summary of experiments all in one file
+    # Summary of experiments - all in one file
     print(experiments)
     with open(file_name + ".txt", "w") as f:
         experiments.to_string(f)
 
-    # History and model for this specific experiment
+    # Save training history and model for this specific experiment
+    # The model object must be a trained model, which means it has a `history`
+    # object with the training results for each epoch
+    # We need to save the history separately because `model.save` won't save
+    # it - it saves only the model data
+    experiment_file = file_name + description + "_" + optimizer_name + "_"
     import json
-    with open(file_name + description + "_history.json", 'w') as f:
-        json.dump(history.history, f)
-    model.save(file_name + description + "_model.h5")
+    with open(experiment_file + "history.json", 'w') as f:
+        json.dump(model.history.history, f)
+    model.save(experiment_file + "model.h5")
 
 
 test_network_configurations(p, standard_optimizer=optimizer_sgd_standard,
