@@ -3,7 +3,11 @@
 .Rhistory
 *.nb.html
 *.txt
-# Sample images from catvs. dogs in Kaggle
+# Sample images from cat vs. dogs in Kaggle
 catsvsdogs/
+# And for good measure, any image (if we save them in another folder)
+*jpg
 # Keras model files
 *h5
+# Keras history files saved as JSON
+*json

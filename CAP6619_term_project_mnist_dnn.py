@@ -176,13 +176,15 @@ optimizer_rmsprop_dropout = optimizer_rmsprop_standard
 
 # File where the results will be saved (the name encodes the parameters used
 # in the experiments)
-file_name_template = ("MNIST_DNN_Dropout_hl={:03d}_uhl={:04d}_dri={:0.2f}"
+file_name_prefix = "MNIST_DNN_Dropout"
+file_name_template = ("{}_hl={:03d}_uhl={:04d}_dri={:0.2f}"
                       "_drh={:0.2f}_e={:02d}_dlrm={:03.1f}_dm={:0.2f}_mn={}"
-                      "_bs={:04d}.txt")
+                      "_bs={:04d}_")
 file_name = file_name_template.format(
-    p.hidden_layers, p.units_per_layer, p.dropout_rate_input_layer,
-    p.dropout_rate_hidden_layer, p.epochs, p.dropout_lr_multiplier,
-    p.dropout_momentum, p.max_norm_max_value, p.batch_size)
+    file_name_prefix, p.hidden_layers, p.units_per_layer,
+    p.dropout_rate_input_layer, p.dropout_rate_hidden_layer, p.epochs,
+    p.dropout_lr_multiplier, p.dropout_momentum, p.max_norm_max_value,
+    p.batch_size)
 
 
 def save_step(description, model, history, test_loss, test_acc, training_time,
@@ -203,9 +205,16 @@ def save_step(description, model, history, test_loss, test_acc, training_time,
                                          model.count_params(),
                                          training_time, test_time]
 
+    # Summary of experiments all in one file
     print(experiments)
-    with open(file_name, "w") as outfile:
-        experiments.to_string(outfile)
+    with open(file_name + ".txt", "w") as f:
+        experiments.to_string(f)
+
+    # History and model for this specific experiment
+    import json
+    with open(file_name + description + "_history.json", 'w') as f:
+        json.dump(history.history, f)
+    model.save(file_name + description + "_model.h5")
 
 
 test_network_configurations(p, standard_optimizer=optimizer_sgd_standard,
