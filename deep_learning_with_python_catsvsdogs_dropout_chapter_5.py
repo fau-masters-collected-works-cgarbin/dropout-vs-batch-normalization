@@ -130,7 +130,7 @@ def run_experiment(train_generator, validation_generator, parameters):
         steps_per_epoch=parameters.steps_per_epoch,
         epochs=parameters.epochs,
         validation_data=validation_generator,
-        validation_steps=5)
+        validation_steps=p.validation_steps)
 
     return model, history
 
@@ -169,6 +169,8 @@ def plot_accuracy_loss(history):
 Parameters = collections.namedtuple("Parameters", [
     # Number of epochs to train.
     "epochs",
+    # Number of validations steps.
+    "validation_steps",
     # Number of samples in each batch.
     "batch_size",
     # Number of steps (samples) to use in each epoch (we need this because we
@@ -179,6 +181,7 @@ Parameters = collections.namedtuple("Parameters", [
 
 p = Parameters(
     epochs=5,
+    validation_steps=5,
     batch_size=20,
     steps_per_epoch=100,
 )
