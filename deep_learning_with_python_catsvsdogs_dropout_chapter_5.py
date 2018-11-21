@@ -77,7 +77,16 @@ def prepare_image_dirs(source_dir, dest_base_dir):
 def create_image_generators(train_dir, validation_dir, parameters):
     from keras.preprocessing.image import ImageDataGenerator
 
-    train_datagen = ImageDataGenerator(rescale=1./255)
+    # Without data augmentation
+    #train_datagen = ImageDataGenerator(rescale=1./255)
+
+    # With data augmentation
+    train_datagen = ImageDataGenerator(
+        rescale=1./255, rotation_range=40,
+        width_shift_range=0.2, height_shift_range=0.2,
+        shear_range=0.2, zoom_range=0.2, horizontal_flip=True)
+
+    # Test images are never augmented
     test_datagen = ImageDataGenerator(rescale=1./255)
 
     train_generator = train_datagen.flow_from_directory(
