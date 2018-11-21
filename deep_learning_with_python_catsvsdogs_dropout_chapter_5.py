@@ -187,8 +187,7 @@ p = Parameters(
 )
 
 train_dir, test_dir, validation_dir = prepare_image_dirs(
-    source_dir="/Users/cgarbin/Downloads/all/train",
-    dest_base_dir="./catsvsdogs")
+    source_dir="./kaggledataset/train", dest_base_dir="./catsvsdogs")
 
 train_generator, validation_generator = create_image_generators(
     train_dir, validation_dir, p)
