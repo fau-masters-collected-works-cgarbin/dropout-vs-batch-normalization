@@ -189,9 +189,9 @@ Parameters = collections.namedtuple("Parameters", [
 ])
 
 p = Parameters(
-    epochs=5,
-    validation_steps=5,
-    batch_size=20,
+    epochs=100,
+    validation_steps=100,
+    batch_size=32,
     steps_per_epoch=100,
 )
 
