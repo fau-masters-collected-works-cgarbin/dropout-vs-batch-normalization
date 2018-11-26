@@ -55,17 +55,19 @@ def test_network_configurations(parameters,
 
     # Adjust number of units in each layer: "...if an n-sized layer is optimal
     # for a standard neural net on any given task, a good dropout net should
-    # have at least n/p units." [Keras is "drop", not "keep", hence the "1 -"]
+    # have at least n/p units." [Keras is "drop", not "keep", hence the "1 -"].
     adjusted_units_hidden = int(
         p.units_per_layer / (1 - p.dropout_rate_hidden_layer))
 
-    # Dropout without adjustment to number of units (for comparison)
-    # Dropout is applied to all layers, as shown in figure 1.b in the paper
+    # Dropout without adjustment to number of units (for comparison - not in
+    # the original paper).
+    # Dropout is applied to all layers, as shown in figure 1.b in the paper.
     model = models.Sequential()
     model.add(layers.Dropout(p.dropout_rate_input_layer,
                              input_shape=(28 * 28,)))
     for _ in range(p.hidden_layers):
         model.add(layers.Dense(p.units_per_layer, activation='relu',
+                               kernel_initializer='he_normal',
                                kernel_constraint=max_norm(p.max_norm_max_value)))
         model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
     model.add(layers.Dense(10, activation='softmax'))
@@ -74,13 +76,16 @@ def test_network_configurations(parameters,
                   metrics=['accuracy'])
     test_model("dropout_no_adjustment", model, p, end_experiment_callback)
 
-    # Dropout with adjustment to number of units
-    # Dropout is applied to all layers, as shown in figure 1.b in the paper
+    # Dropout with adjustment to number of units.
+    # Dropout is applied to all layers, as shown in figure 1.b in the paper.
+    # See also http://www.cs.toronto.edu/~nitish/dropout/mnist.pbtxt for code
+    # used in the paper for more details on some of the parameters.
     model = models.Sequential()
     model.add(layers.Dropout(p.dropout_rate_input_layer,
                              input_shape=(28 * 28,)))
     for _ in range(p.hidden_layers):
         model.add(layers.Dense(adjusted_units_hidden, activation='relu',
+                               kernel_initializer='he_normal',
                                kernel_constraint=max_norm(p.max_norm_max_value)))
         model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
     model.add(layers.Dense(10, activation='softmax'))
