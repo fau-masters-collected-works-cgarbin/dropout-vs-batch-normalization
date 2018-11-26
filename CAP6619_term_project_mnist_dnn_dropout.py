@@ -44,7 +44,7 @@ def test_network_configurations(parameters,
     # Standard network (no dropout)
     model = models.Sequential()
     model.add(layers.Dense(p.units_per_layer,
-                           activation='relu', input_shape=(28 * 28,)))
+                           activation='relu', input_shape=(pixels_per_image,)))
     for _ in range(p.hidden_layers - 1):
         model.add(layers.Dense(p.units_per_layer, activation='relu'))
     model.add(layers.Dense(10, activation='softmax'))
@@ -53,18 +53,12 @@ def test_network_configurations(parameters,
                   metrics=['accuracy'])
     test_model("standard_network", model, p, end_experiment_callback)
 
-    # Adjust number of units in each layer: "...if an n-sized layer is optimal
-    # for a standard neural net on any given task, a good dropout net should
-    # have at least n/p units." [Keras is "drop", not "keep", hence the "1 -"].
-    adjusted_units_hidden = int(
-        p.units_per_layer / (1 - p.dropout_rate_hidden_layer))
-
     # Dropout without adjustment to number of units (for comparison - not in
     # the original paper).
     # Dropout is applied to all layers, as shown in figure 1.b in the paper.
     model = models.Sequential()
     model.add(layers.Dropout(p.dropout_rate_input_layer,
-                             input_shape=(28 * 28,)))
+                             input_shape=(pixels_per_image,)))
     for _ in range(p.hidden_layers):
         model.add(layers.Dense(p.units_per_layer, activation='relu',
                                kernel_initializer='he_normal',
@@ -76,13 +70,19 @@ def test_network_configurations(parameters,
                   metrics=['accuracy'])
     test_model("dropout_no_adjustment", model, p, end_experiment_callback)
 
+    # Adjust number of units in each layer: "...if an n-sized layer is optimal
+    # for a standard neural net on any given task, a good dropout net should
+    # have at least n/p units." [Keras is "drop", not "keep", hence the "1 -"].
+    adjusted_units_hidden = int(
+        p.units_per_layer / (1 - p.dropout_rate_hidden_layer))
+
     # Dropout with adjustment to number of units.
     # Dropout is applied to all layers, as shown in figure 1.b in the paper.
     # See also http://www.cs.toronto.edu/~nitish/dropout/mnist.pbtxt for code
     # used in the paper for more details on some of the parameters.
     model = models.Sequential()
     model.add(layers.Dropout(p.dropout_rate_input_layer,
-                             input_shape=(28 * 28,)))
+                             input_shape=(pixels_per_image,)))
     for _ in range(p.hidden_layers):
         model.add(layers.Dense(adjusted_units_hidden, activation='relu',
                                kernel_initializer='he_normal',
@@ -259,6 +259,9 @@ Parameters = collections.namedtuple("Parameters", [
     "max_norm_max_value",
 ])
 
+# The input shape: pixels_per_image pixels images from MNIST data set
+pixels_per_image = 28 * 28
+
 # Load and prepare data.
 # Note that they are global variables used in the functions above. A future
 # improvement could be to add them to the parameters data structure.
@@ -269,9 +272,9 @@ test_labels = to_categorical(test_labels)
 print("Timing: load and prepare data: {0:.5f}s".format(
     time.process_time() - start))
 
-train_images = train_images.reshape((60000, 28 * 28))
+train_images = train_images.reshape((60000, pixels_per_image))
 train_images = train_images.astype('float32') / 255
-test_images = test_images.reshape((10000, 28 * 28))
+test_images = test_images.reshape((10000, pixels_per_image))
 test_images = test_images.astype('float32') / 255
 
 p = parse_command_line()
