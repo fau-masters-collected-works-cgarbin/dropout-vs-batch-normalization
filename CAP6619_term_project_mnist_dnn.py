@@ -30,8 +30,8 @@ def test_model(description, model, parameters, end_experiment_callback):
     test_loss, test_acc = model.evaluate(test_images, test_labels)
     test_time = time.process_time() - start
 
-    end_experiment_callback(description, model, test_loss, test_acc,
-                            training_time, test_time)
+    end_experiment_callback(description, parameters, model, test_loss,
+                            test_acc, training_time, test_time)
 
 
 def test_network_configurations(parameters,
@@ -90,20 +90,11 @@ def test_network_configurations(parameters,
     test_model("dropout_units_adjusted", model, p, end_experiment_callback)
 
 
-def save_experiment(description, model, test_loss, test_acc, training_time,
-                    test_time):
+def save_experiment(description, parameters, model, test_loss, test_acc,
+                    training_time, test_time):
     """Save results from one experiment."""
-    # File where the results will be saved (the name encodes the parameters
-    # used in the experiments)
-    file_name_prefix = "MNIST_DNN_Dropout"
-    file_name_template = ("{}_hl={:03d}_uhl={:04d}_dri={:0.2f}"
-                          "_drh={:0.2f}_e={:02d}_dlrm={:03.1f}_dm={:0.2f}"
-                          "_mn={}_bs={:04d}_")
-    file_name = file_name_template.format(
-        file_name_prefix, p.hidden_layers, p.units_per_layer,
-        p.dropout_rate_input_layer, p.dropout_rate_hidden_layer, p.epochs,
-        p.dropout_lr_multiplier, p.dropout_momentum, p.max_norm_max_value,
-        p.batch_size)
+    # To save some typing
+    p = parameters
 
     optimizer = model.optimizer
     optimizer_name = type(optimizer).__name__
