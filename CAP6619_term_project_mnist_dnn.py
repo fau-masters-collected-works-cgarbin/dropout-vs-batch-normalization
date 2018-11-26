@@ -189,9 +189,9 @@ file_name = file_name_template.format(
     p.batch_size)
 
 
-def save_step(description, model, test_loss, test_acc, training_time,
-              test_time):
-    """Show results as we get them, to let us monitor progress"""
+def save_experiment(description, model, test_loss, test_acc, training_time,
+                    test_time):
+    """Save restults from each experiment"""
     optimizer = model.optimizer
     optimizer_name = type(optimizer).__name__
 
@@ -227,8 +227,8 @@ def save_step(description, model, test_loss, test_acc, training_time,
 
 test_network_configurations(p, standard_optimizer=optimizer_sgd_standard,
                             dropout_optimizer=optimizer_sgd_dropout,
-                            end_experiment_callback=save_step)
+                            end_experiment_callback=save_experiment)
 
 test_network_configurations(p, standard_optimizer=optimizer_rmsprop_standard,
                             dropout_optimizer=optimizer_rmsprop_dropout,
-                            end_experiment_callback=save_step)
+                            end_experiment_callback=save_experiment)
