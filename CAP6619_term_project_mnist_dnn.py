@@ -16,8 +16,8 @@ from keras.constraints import max_norm
 from keras.datasets import mnist
 
 
-def run_experiment(description, model, parameters, end_experiment_callback):
-    """Run an experiment: train and test the network"""
+def test_model(description, model, parameters, end_experiment_callback):
+    """Test one model: train it and, evaluate with test data, save results."""
     # To make lines shorter
     p = parameters
 
@@ -51,7 +51,7 @@ def test_network_configurations(parameters,
     model.compile(optimizer=standard_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    run_experiment("standard_network", model, p, end_experiment_callback)
+    test_model("standard_network", model, p, end_experiment_callback)
 
     # Adjust number of units in each layer: "...if an n-sized layer is optimal
     # for a standard neural net on any given task, a good dropout net should
@@ -72,7 +72,7 @@ def test_network_configurations(parameters,
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    run_experiment("dropout_no_adjustment", model, p, end_experiment_callback)
+    test_model("dropout_no_adjustment", model, p, end_experiment_callback)
 
     # Dropout with adjustment to number of units
     # Dropout is applied to all layers, as shown in figure 1.b in the paper
@@ -87,12 +87,12 @@ def test_network_configurations(parameters,
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    run_experiment("dropout_units_adjusted", model, p, end_experiment_callback)
+    test_model("dropout_units_adjusted", model, p, end_experiment_callback)
 
 
 def save_experiment(description, model, test_loss, test_acc, training_time,
                     test_time):
-    """Save results from one experiment"""
+    """Save results from one experiment."""
     # File where the results will be saved (the name encodes the parameters
     # used in the experiments)
     file_name_prefix = "MNIST_DNN_Dropout"
@@ -140,7 +140,7 @@ def save_experiment(description, model, test_loss, test_acc, training_time,
 
 
 def parse_command_line():
-    """Parse command line parameters into a `Parameters` variable"""
+    """Parse command line parameters into a `Parameters` variable."""
     from argparse import ArgumentParser
     ap = ArgumentParser(description='Dropout with MNIST data set.')
 
