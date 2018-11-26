@@ -17,7 +17,7 @@ from keras.datasets import mnist
 
 
 def test_model(description, model, parameters, end_experiment_callback):
-    """Test one model: train it and, evaluate with test data, save results."""
+    """Test one model: train it, evaluate with test data, save results."""
     # To make lines shorter
     p = parameters
 
