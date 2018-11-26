@@ -233,31 +233,38 @@ file_name = file_name_template.format(
     p.dropout_lr_multiplier, p.dropout_momentum, p.max_norm_max_value,
     p.batch_size)
 
-# The SGD optimizer to use in standard networks (no dropout).
-optimizer_sgd_standard = optimizers.SGD()
-# The SGD optimizer to use in dropout networks.
-optimizer_sgd_dropout = optimizers.SGD(
-    lr=backend.eval(optimizer_sgd_standard.lr) * p.dropout_lr_multiplier,
-    momentum=p.dropout_momentum)
 
-# The RMSProp optimizer to use in standard networks (no dropout).
-# The paper doesn't mention what optimizer was used in the tests. It looks
-# like those tests were done with SGD. I tried RMSProp here because it's a
-# popular one nowadays and the one used in the Deep Learning With Python
-# book. It results in good accuracy with the default learning rate, even
-# before dropout is applied.
-optimizer_rmsprop_standard = optimizers.RMSprop()
-# The RMSProp optimizer to use in dropout networks.
-# Increasing the learn rate for the RMSProp optimizer resulted in much worse
-# accuracy. To prevent that we use the default optimizer for dropout.
-optimizer_rmsprop_dropout = optimizer_rmsprop_standard
+def run_all_experiments():
+    # The SGD optimizer to use in standard networks (no dropout).
+    optimizer_sgd_standard = optimizers.SGD()
+    # The SGD optimizer to use in dropout networks.
+    optimizer_sgd_dropout = optimizers.SGD(
+        lr=backend.eval(optimizer_sgd_standard.lr) * p.dropout_lr_multiplier,
+        momentum=p.dropout_momentum)
 
-# Run the experiments with the SGD optimzer
-test_network_configurations(p, standard_optimizer=optimizer_sgd_standard,
-                            dropout_optimizer=optimizer_sgd_dropout,
-                            end_experiment_callback=save_experiment)
+    # The RMSProp optimizer to use in standard networks (no dropout).
+    # The paper doesn't mention what optimizer was used in the tests. It looks
+    # like those tests were done with SGD. I tried RMSProp here because it's a
+    # popular one nowadays and the one used in the Deep Learning With Python
+    # book. It results in good accuracy with the default learning rate, even
+    # before dropout is applied.
+    optimizer_rmsprop_standard = optimizers.RMSprop()
+    # The RMSProp optimizer to use in dropout networks.
+    # Increasing the learn rate for the RMSProp optimizer resulted in much
+    # worse accuracy. To prevent that we use the default optimizer for dropout.
+    optimizer_rmsprop_dropout = optimizer_rmsprop_standard
 
-# Run the experiments with the RMSProp optimizer
-test_network_configurations(p, standard_optimizer=optimizer_rmsprop_standard,
-                            dropout_optimizer=optimizer_rmsprop_dropout,
-                            end_experiment_callback=save_experiment)
+    # Run the experiments with the SGD optimzer
+    test_network_configurations(p, standard_optimizer=optimizer_sgd_standard,
+                                dropout_optimizer=optimizer_sgd_dropout,
+                                end_experiment_callback=save_experiment)
+
+    # Run the experiments with the RMSProp optimizer
+    test_network_configurations(p,
+                                standard_optimizer=optimizer_rmsprop_standard,
+                                dropout_optimizer=optimizer_rmsprop_dropout,
+                                end_experiment_callback=save_experiment)
+
+
+if __name__ == '__main__':
+    run_all_experiments()
