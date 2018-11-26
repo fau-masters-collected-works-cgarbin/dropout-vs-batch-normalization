@@ -15,16 +15,6 @@ from keras.utils import to_categorical
 from keras.constraints import max_norm
 from keras.datasets import mnist
 
-# Store data from the experiments
-experiments = pd.DataFrame(columns=["Description", "DataSetName", "Optimizer",
-                                    "TestLoss", "TestAccuracy",
-                                    "HiddenLayers", "UnitsPerLayer", "Epochs",
-                                    "BatchSize", "DropoutRateInput",
-                                    "DropoutRateHidden", "LearningRate",
-                                    "MaxNorm", "Momentum",
-                                    "ModelParamCount", "TrainingCpuTime",
-                                    "TestCpuTime"])
-
 
 def run_experiment(description, model, parameters, end_experiment_callback):
     """Run an experiment: train and test the network"""
@@ -100,18 +90,88 @@ def test_network_configurations(parameters,
     run_experiment("dropout_units_adjusted", model, p, end_experiment_callback)
 
 
-# Load and prepare data
-start = time.process_time()
-(train_images, train_labels), (test_images, test_labels) = mnist.load_data()
-train_labels = to_categorical(train_labels)
-test_labels = to_categorical(test_labels)
-print("Timing: load and prepare data: {0:.5f}s".format(
-    time.process_time() - start))
+def save_experiment(description, model, test_loss, test_acc, training_time,
+                    test_time):
+    """Save results from one experiment"""
+    optimizer = model.optimizer
+    optimizer_name = type(optimizer).__name__
 
-train_images = train_images.reshape((60000, 28 * 28))
-train_images = train_images.astype('float32') / 255
-test_images = test_images.reshape((10000, 28 * 28))
-test_images = test_images.astype('float32') / 255
+    experiments.loc[len(experiments)] = [description, "MNIST",
+                                         optimizer_name, test_loss,
+                                         test_acc, p.hidden_layers,
+                                         p.units_per_layer,
+                                         p.epochs, p.batch_size,
+                                         p.dropout_rate_input_layer,
+                                         p.dropout_rate_hidden_layer,
+                                         backend.eval(optimizer.lr),
+                                         p.max_norm_max_value,
+                                         p.dropout_momentum,
+                                         model.count_params(),
+                                         training_time, test_time]
+    # Show progress so far
+    print(experiments)
+
+    # Save progress so far into one file
+    with open(file_name + ".txt", "w") as f:
+        experiments.to_string(f)
+
+    # Save training history and model for this specific experiment.
+    # The model object must be a trained model, which means it has a `history`
+    # object with the training results for each epoch.
+    # We need to save the history separately because `model.save` won't save
+    # it - it saves only the model data.
+    experiment_file = file_name + description + "_" + optimizer_name + "_"
+    import json
+    with open(experiment_file + "history.json", 'w') as f:
+        json.dump(model.history.history, f)
+    model.save(experiment_file + "model.h5")
+
+
+def parse_command_line():
+    """Parse command line parameters into a `Parameters` variable"""
+    from argparse import ArgumentParser
+    ap = ArgumentParser(description='Dropout with MNIST data set.')
+
+    # Format: short parameter name, long name, default value (if not specified)
+    ap.add_argument("-hl", "--hidden_layers", default=2, type=int)
+    ap.add_argument("-uhl", "--units_per_layer", default=512, type=int)
+    ap.add_argument("-e", "--epochs", default=5, type=int)
+    ap.add_argument("-bs", "--batch_size", default=128, type=int)
+    ap.add_argument("-dri", "--dropout_rate_input_layer",
+                    default=0.2, type=float)
+    ap.add_argument("-drh", "--dropout_rate_hidden_layer",
+                    default=0.5, type=float)
+    ap.add_argument("-dlrm", "--dropout_lr_multiplier",
+                    default=10.0, type=float)
+    ap.add_argument("-dm", "--dropout_momentum", default=0.95, type=float)
+    ap.add_argument("-mn", "--max_norm_max_value", default=3, type=int)
+
+    args = ap.parse_args()
+
+    p = Parameters(
+        hidden_layers=args.hidden_layers,
+        units_per_layer=args.units_per_layer,
+        epochs=args.epochs,
+        batch_size=args.batch_size,
+        dropout_rate_input_layer=args.dropout_rate_input_layer,
+        dropout_rate_hidden_layer=args.dropout_rate_hidden_layer,
+        dropout_lr_multiplier=args.dropout_lr_multiplier,
+        dropout_momentum=args.dropout_momentum,
+        max_norm_max_value=args.max_norm_max_value,
+    )
+
+    return p
+
+
+# Store data from the experiments
+experiments = pd.DataFrame(columns=["Description", "DataSetName", "Optimizer",
+                                    "TestLoss", "TestAccuracy",
+                                    "HiddenLayers", "UnitsPerLayer", "Epochs",
+                                    "BatchSize", "DropoutRateInput",
+                                    "DropoutRateHidden", "LearningRate",
+                                    "MaxNorm", "Momentum",
+                                    "ModelParamCount", "TrainingCpuTime",
+                                    "TestCpuTime"])
 
 # Parameters to control the experiments.
 Parameters = collections.namedtuple("Parameters", [
@@ -146,35 +206,20 @@ Parameters = collections.namedtuple("Parameters", [
     "max_norm_max_value",
 ])
 
-p = Parameters(
-    hidden_layers=2,
-    units_per_layer=512,
-    epochs=5,
-    batch_size=128,
-    dropout_rate_input_layer=0.2,
-    dropout_rate_hidden_layer=0.5,
-    dropout_lr_multiplier=10.0,
-    dropout_momentum=0.95,
-    max_norm_max_value=3
-)
+# Load and prepare data
+start = time.process_time()
+(train_images, train_labels), (test_images, test_labels) = mnist.load_data()
+train_labels = to_categorical(train_labels)
+test_labels = to_categorical(test_labels)
+print("Timing: load and prepare data: {0:.5f}s".format(
+    time.process_time() - start))
 
-# The SGD optimizer to use in standard networks (no dropout).
-optimizer_sgd_standard = optimizers.SGD()
-# The SGD optimizer to use in dropout networks.
-optimizer_sgd_dropout = optimizers.SGD(
-    lr=backend.eval(optimizer_sgd_standard.lr) * p.dropout_lr_multiplier,
-    momentum=p.dropout_momentum)
+train_images = train_images.reshape((60000, 28 * 28))
+train_images = train_images.astype('float32') / 255
+test_images = test_images.reshape((10000, 28 * 28))
+test_images = test_images.astype('float32') / 255
 
-# The RMSProp optimizer to use in standard networks (no dropout).
-# The paper doesn't mention what optimizer was used in the tests. It looks
-# like those tests were done with SGD. I tried RMSProp here because it's a
-# popular one nowadays and the one used in the Deep Learning With Python
-# book. It results in good accuracy with the default learning rate.
-optimizer_rmsprop_standard = optimizers.RMSprop()
-# The RMSProp optimizer to use in dropout networks.
-# Increasing the learn rate for the RMSProp optimizer resulted in much worse
-# accuracy. To prevent that we use the default optimizer for dropout.
-optimizer_rmsprop_dropout = optimizer_rmsprop_standard
+p = parse_command_line()
 
 # File where the results will be saved (the name encodes the parameters used
 # in the experiments)
@@ -188,47 +233,31 @@ file_name = file_name_template.format(
     p.dropout_lr_multiplier, p.dropout_momentum, p.max_norm_max_value,
     p.batch_size)
 
+# The SGD optimizer to use in standard networks (no dropout).
+optimizer_sgd_standard = optimizers.SGD()
+# The SGD optimizer to use in dropout networks.
+optimizer_sgd_dropout = optimizers.SGD(
+    lr=backend.eval(optimizer_sgd_standard.lr) * p.dropout_lr_multiplier,
+    momentum=p.dropout_momentum)
 
-def save_experiment(description, model, test_loss, test_acc, training_time,
-                    test_time):
-    """Save restults from each experiment"""
-    optimizer = model.optimizer
-    optimizer_name = type(optimizer).__name__
+# The RMSProp optimizer to use in standard networks (no dropout).
+# The paper doesn't mention what optimizer was used in the tests. It looks
+# like those tests were done with SGD. I tried RMSProp here because it's a
+# popular one nowadays and the one used in the Deep Learning With Python
+# book. It results in good accuracy with the default learning rate, even
+# before dropout is applied.
+optimizer_rmsprop_standard = optimizers.RMSprop()
+# The RMSProp optimizer to use in dropout networks.
+# Increasing the learn rate for the RMSProp optimizer resulted in much worse
+# accuracy. To prevent that we use the default optimizer for dropout.
+optimizer_rmsprop_dropout = optimizer_rmsprop_standard
 
-    experiments.loc[len(experiments)] = [description, "MNIST",
-                                         optimizer_name, test_loss,
-                                         test_acc, p.hidden_layers,
-                                         p.units_per_layer,
-                                         p.epochs, p.batch_size,
-                                         p.dropout_rate_input_layer,
-                                         p.dropout_rate_hidden_layer,
-                                         backend.eval(optimizer.lr),
-                                         p.max_norm_max_value,
-                                         p.dropout_momentum,
-                                         model.count_params(),
-                                         training_time, test_time]
-
-    # Summary of experiments - all in one file
-    print(experiments)
-    with open(file_name + ".txt", "w") as f:
-        experiments.to_string(f)
-
-    # Save training history and model for this specific experiment
-    # The model object must be a trained model, which means it has a `history`
-    # object with the training results for each epoch
-    # We need to save the history separately because `model.save` won't save
-    # it - it saves only the model data
-    experiment_file = file_name + description + "_" + optimizer_name + "_"
-    import json
-    with open(experiment_file + "history.json", 'w') as f:
-        json.dump(model.history.history, f)
-    model.save(experiment_file + "model.h5")
-
-
+# Run the experiments with the SGD optimzer
 test_network_configurations(p, standard_optimizer=optimizer_sgd_standard,
                             dropout_optimizer=optimizer_sgd_dropout,
                             end_experiment_callback=save_experiment)
 
+# Run the experiments with the RMSProp optimizer
 test_network_configurations(p, standard_optimizer=optimizer_rmsprop_standard,
                             dropout_optimizer=optimizer_rmsprop_dropout,
                             end_experiment_callback=save_experiment)
