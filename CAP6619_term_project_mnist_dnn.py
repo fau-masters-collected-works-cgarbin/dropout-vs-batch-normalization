@@ -114,8 +114,20 @@ def save_experiment(description, parameters, model, test_loss, test_acc,
     # Show progress so far
     print(experiments)
 
+    # File where the results will be saved (the name encodes the parameters
+    # used in the experiments)
+    base_name_prefix = "MNIST_DNN_Dropout"
+    base_name_template = ("{}_hl={:03d}_uhl={:04d}_dri={:0.2f}"
+                          "_drh={:0.2f}_e={:02d}_dlrm={:03.1f}_dm={:0.2f}"
+                          "_mn={}_bs={:04d}")
+    base_name = base_name_template.format(
+        base_name_prefix, p.hidden_layers, p.units_per_layer,
+        p.dropout_rate_input_layer, p.dropout_rate_hidden_layer, p.epochs,
+        p.dropout_lr_multiplier, p.dropout_momentum, p.max_norm_max_value,
+        p.batch_size)
+
     # Save progress so far into one file
-    with open(file_name + ".txt", "w") as f:
+    with open(base_name + ".txt", "w") as f:
         experiments.to_string(f)
 
     # Save training history and model for this specific experiment.
@@ -123,11 +135,11 @@ def save_experiment(description, parameters, model, test_loss, test_acc,
     # object with the training results for each epoch.
     # We need to save the history separately because `model.save` won't save
     # it - it saves only the model data.
-    experiment_file = file_name + description + "_" + optimizer_name + "_"
+    results_file = base_name + "_" + description + "_" + optimizer_name + "_"
     import json
-    with open(experiment_file + "history.json", 'w') as f:
+    with open(results_file + "history.json", 'w') as f:
         json.dump(model.history.history, f)
-    model.save(experiment_file + "model.h5")
+    model.save(results_file + "model.h5")
 
 
 def parse_command_line():
