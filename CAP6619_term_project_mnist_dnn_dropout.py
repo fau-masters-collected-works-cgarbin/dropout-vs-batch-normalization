@@ -156,18 +156,15 @@ def parse_command_line():
     ap = ArgumentParser(description='Dropout with MNIST data set.')
 
     # Format: short parameter name, long name, default value (if not specified)
-    ap.add_argument("-hl", "--hidden_layers", default=2, type=int)
-    ap.add_argument("-uhl", "--units_per_layer", default=512, type=int)
-    ap.add_argument("-e", "--epochs", default=5, type=int)
-    ap.add_argument("-bs", "--batch_size", default=128, type=int)
-    ap.add_argument("-dri", "--dropout_rate_input_layer",
-                    default=0.2, type=float)
-    ap.add_argument("-drh", "--dropout_rate_hidden_layer",
-                    default=0.5, type=float)
-    ap.add_argument("-dlrm", "--dropout_lr_multiplier",
-                    default=10.0, type=float)
-    ap.add_argument("-dm", "--dropout_momentum", default=0.95, type=float)
-    ap.add_argument("-mn", "--max_norm_max_value", default=3, type=int)
+    ap.add_argument("--hidden_layers", default=2, type=int)
+    ap.add_argument("--units_per_layer", default=512, type=int)
+    ap.add_argument("--epochs", default=5, type=int)
+    ap.add_argument("--batch_size", default=128, type=int)
+    ap.add_argument("--dropout_rate_input_layer", default=0.2, type=float)
+    ap.add_argument("--dropout_rate_hidden_layer", default=0.5, type=float)
+    ap.add_argument("--dropout_lr_multiplier", default=10.0, type=float)
+    ap.add_argument("--dropout_momentum", default=0.95, type=float)
+    ap.add_argument("--max_norm_max_value", default=3, type=int)
 
     args = ap.parse_args()
 
