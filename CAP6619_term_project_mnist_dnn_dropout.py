@@ -10,7 +10,6 @@ import collections
 from keras import models
 from keras import layers
 from keras import optimizers
-from keras import regularizers
 from keras import backend
 from keras.utils import to_categorical
 from keras.constraints import max_norm
