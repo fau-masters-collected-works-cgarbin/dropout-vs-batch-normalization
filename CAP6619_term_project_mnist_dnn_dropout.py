@@ -150,7 +150,8 @@ def save_experiment(description, parameters, model, test_loss, test_acc,
     import json
     with open(results_file + "history.json", 'w') as f:
         json.dump(model.history.history, f)
-    model.save(results_file + "model.h5")
+    # Uncomment to save the model - it may take quite a bit of disk space
+    # model.save(results_file + "model.h5")
 
 
 def parse_command_line():
