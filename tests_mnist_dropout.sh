@@ -1,7 +1,7 @@
 #!/bin/bash
 # Dropout paper is at http://jmlr.org/papers/volume15/srivastava14a.old/srivastava14a.pdf
 
-# Configuraiton used in Deep Learning with Python, chapter 2
+# Configuration used in Deep Learning with Python, chapter 2
 # The code in the book achieves ~98% test accuracy with this configuration
 # (without using dropout), with an RMSProp optimizer (this is important)
 # This is a baseline test, to check that we can achieve the same accuracy
