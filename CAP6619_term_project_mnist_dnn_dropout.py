@@ -63,7 +63,6 @@ def test_network_configurations(parameters,
     for _ in range(p.hidden_layers):
         model.add(layers.Dense(p.units_per_layer, activation='relu',
                                kernel_initializer='he_normal',
-                               kernel_regularizer=regularizers.l2(0.001),
                                kernel_constraint=max_norm(p.max_norm_max_value)))
         model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
     model.add(layers.Dense(10, activation='softmax'))
@@ -88,7 +87,6 @@ def test_network_configurations(parameters,
     for _ in range(p.hidden_layers):
         model.add(layers.Dense(adjusted_units_hidden, activation='relu',
                                kernel_initializer='he_normal',
-                               kernel_regularizer=regularizers.l2(0.001),
                                kernel_constraint=max_norm(p.max_norm_max_value)))
         model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
     model.add(layers.Dense(10, activation='softmax'))
@@ -96,6 +94,12 @@ def test_network_configurations(parameters,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
     test_model("dropout_units_adjusted", model, p, end_experiment_callback)
+
+    # A note on L2 regularization: although the paper says it was "found to be
+    # useful for dropout neural networks as well", during the tests it didn't
+    # make a major difference (better is some cases, worse in others). It was
+    # added as shown below. Perahps I didn't do it correctly?
+    # model.add(...kernel_regularizer=regularizers.l2(0.001),
 
 
 def save_experiment(description, parameters, model, test_loss, test_acc,
