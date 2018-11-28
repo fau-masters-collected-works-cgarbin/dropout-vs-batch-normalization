@@ -10,5 +10,5 @@ catsvsdogs/
 *h5
 # Keras history files saved as JSON
 *history.json
-# Shell script automatically generated, no need to save it
-dropout_mnist.sh
+# Test shell script automatically generated, no need to save it
+*tests.sh
