@@ -52,9 +52,10 @@ def test_network_configurations(parameters,
 
     # Batch normalization
     # "We added Batch Normalization to each hidden layer of the network,..."
-    # TODO: use sigmoid
-    # TODO: add test with ReLU
-    # "Each hidden layer computes y = g(Wu+b) with sigmoid nonlinearity..."
+    # Note on the ativation function: the paper states "Each hidden layer...
+    # with sigmoid nonlinearity...", but tests with ReLU resulted in
+    # significantly better accuracy for SGD and slightly better for RMSProp,
+    # so all tests will be executed with ReLU.
     model = models.Sequential()
     model.add(layers.Dense(p.units_per_layer,
                            activation='relu', input_shape=(28 * 28,)))
