@@ -14,17 +14,9 @@ from keras import backend
 from keras.utils import to_categorical
 from keras.datasets import mnist
 
-# Store data from the experiments
-experiments = pd.DataFrame(columns=["Description", "DataSetName", "Optimizer",
-                                    "TestLoss", "TestAccuracy",
-                                    "HiddenLayers", "UnitsPerLayer", "Epochs",
-                                    "BatchSize", "LearningRate",
-                                    "ModelParamCount", "TrainingCpuTime",
-                                    "TestCpuTime"])
 
-
-def run_experiment(description, model, parameters, end_experiment_callback):
-    """Run an experiment: train and test the network"""
+def test_model(description, model, parameters, end_experiment_callback):
+    """Test one model: train it, evaluate with test data, save results."""
     # To make lines shorter
     p = parameters
 
@@ -37,13 +29,12 @@ def run_experiment(description, model, parameters, end_experiment_callback):
     test_loss, test_acc = model.evaluate(test_images, test_labels)
     test_time = time.process_time() - start
 
-    end_experiment_callback(description, model, test_loss, test_acc,
-                            training_time, test_time)
+    end_experiment_callback(description, parameters, model, test_loss,
+                            test_acc, training_time, test_time)
 
 
 def test_network_configurations(parameters,
-                                standard_optimizer,
-                                end_experiment_callback):
+                                optimizer, end_experiment_callback):
     """Test all network configurations with the given parameters."""
     # To make lines shorter
     p = parameters
@@ -55,14 +46,15 @@ def test_network_configurations(parameters,
     for _ in range(p.hidden_layers - 1):
         model.add(layers.Dense(p.units_per_layer, activation='relu'))
     model.add(layers.Dense(10, activation='softmax'))
-    model.compile(optimizer=standard_optimizer,
+    model.compile(optimizer=optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    run_experiment("standard_network", model, p, end_experiment_callback)
+    test_model("standard_network", model, p, end_experiment_callback)
 
     # Batch normalization
     # "We added Batch Normalization to each hidden layer of the network,..."
     # TODO: use sigmoid
+    # TODO: add test with ReLU
     # "Each hidden layer computes y = g(Wu+b) with sigmoid nonlinearity..."
     model = models.Sequential()
     model.add(layers.Dense(p.units_per_layer,
@@ -70,24 +62,98 @@ def test_network_configurations(parameters,
     for _ in range(p.hidden_layers - 1):
         model.add(layers.Dense(p.units_per_layer, activation='relu'))
     model.add(layers.Dense(10, activation='softmax'))
-    model.compile(optimizer=standard_optimizer,
+    model.compile(optimizer=optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    run_experiment("batch_normalization", model, p, end_experiment_callback)
+    test_model("batch_normalization", model, p, end_experiment_callback)
 
 
-# Load and prepare data
-start = time.process_time()
-(train_images, train_labels), (test_images, test_labels) = mnist.load_data()
-train_labels = to_categorical(train_labels)
-test_labels = to_categorical(test_labels)
-print("Timing: load and prepare data: {0:.5f}s".format(
-    time.process_time() - start))
+def save_experiment(description, parameters, model, test_loss, test_acc,
+                    training_time, test_time):
+    """Save results from one experiment"""
+    # To save some typing
+    p = parameters
 
-train_images = train_images.reshape((60000, 28 * 28))
-train_images = train_images.astype('float32') / 255
-test_images = test_images.reshape((10000, 28 * 28))
-test_images = test_images.astype('float32') / 255
+    optimizer = model.optimizer
+    optimizer_name = type(optimizer).__name__
+
+    experiments.loc[len(experiments)] = [description, "MNIST",
+                                         optimizer_name, test_loss,
+                                         test_acc, p.hidden_layers,
+                                         p.units_per_layer,
+                                         p.epochs, p.batch_size,
+                                         model.count_params(),
+                                         training_time, test_time]
+    # Show progress so far
+    print(experiments)
+
+    # File where the results will be saved (the name encodes the parameters
+    # used in the experiments)
+    base_name_prefix = "MNIST_DNN_BatchNorm"
+    base_name_template = "{}_hl={:03d}_uhl={:04d}_e={:02d}_bs={:04d}"
+    base_name = base_name_template.format(
+        base_name_prefix, p.hidden_layers,
+        p.units_per_layer, p.epochs, p.batch_size)
+
+    # Save progress so far into one file
+    with open(base_name + ".txt", "w") as f:
+        experiments.to_string(f)
+
+    # Save training history and model for this specific experiment.
+    # The model object must be a trained model, which means it has a `history`
+    # object with the training results for each epoch.
+    # We need to save the history separately because `model.save` won't save
+    # it - it saves only the model data.
+    results_file = base_name + "_" + description + "_" + optimizer_name + "_"
+    import json
+    with open(results_file + "history.json", 'w') as f:
+        json.dump(model.history.history, f)
+    # Uncomment to save the model - it may take quite a bit of disk space
+    # model.save(results_file + "model.h5")
+
+
+def parse_command_line():
+    """Parse command line parameters into a `Parameters` variable."""
+    from argparse import ArgumentParser
+    ap = ArgumentParser(description='Dropout with MNIST data set.')
+
+    # Format: short parameter name, long name, default value (if not specified)
+    ap.add_argument("--hidden_layers", default=2, type=int)
+    ap.add_argument("--units_per_layer", default=512, type=int)
+    ap.add_argument("--epochs", default=5, type=int)
+    ap.add_argument("--batch_size", default=128, type=int)
+
+    args = ap.parse_args()
+
+    return Parameters(
+        hidden_layers=args.hidden_layers,
+        units_per_layer=args.units_per_layer,
+        epochs=args.epochs,
+        batch_size=args.batch_size,
+    )
+
+
+def run_all_experiments(parameters):
+    """Run all experiments: test all network configurations, with different
+    optimizers."""
+    optimizer_sgd_standard = optimizers.SGD()
+    optimizer_rmsprop_standard = optimizers.RMSprop()
+
+    test_network_configurations(parameters,
+                                optimizer=optimizer_sgd_standard,
+                                end_experiment_callback=save_experiment)
+
+    test_network_configurations(parameters,
+                                optimizer=optimizer_rmsprop_standard,
+                                end_experiment_callback=save_experiment)
+
+
+# Store data from the experiments
+experiments = pd.DataFrame(columns=["Description", "DataSetName", "Optimizer",
+                                    "TestLoss", "TestAccuracy",
+                                    "HiddenLayers", "UnitsPerLayer", "Epochs",
+                                    "BatchSize", "ModelParamCount",
+                                    "TrainingCpuTime", "TestCpuTime"])
 
 # Parameters to control the experiments.
 Parameters = collections.namedtuple("Parameters", [
@@ -103,58 +169,20 @@ Parameters = collections.namedtuple("Parameters", [
     "batch_size",
 ])
 
-p = Parameters(
-    hidden_layers=3,
-    units_per_layer=100,
-    epochs=5,
-    batch_size=60,
-)
+# Load and prepare data
+# Note that they are global variables used in the functions above. A future
+# improvement could be to add them to the parameters data structure.
+start = time.process_time()
+(train_images, train_labels), (test_images, test_labels) = mnist.load_data()
+train_labels = to_categorical(train_labels)
+test_labels = to_categorical(test_labels)
+print("Timing: load and prepare data: {0:.5f}s".format(
+    time.process_time() - start))
 
-optimizer_sgd_standard = optimizers.SGD()
-optimizer_rmsprop_standard = optimizers.RMSprop()
+train_images = train_images.reshape((60000, 28 * 28))
+train_images = train_images.astype('float32') / 255
+test_images = test_images.reshape((10000, 28 * 28))
+test_images = test_images.astype('float32') / 255
 
-# File where the results will be saved (the name encodes the parameters used
-# in the experiments)
-file_name_prefix = "MNIST_DNN_BatchNorm"
-file_name_template = ("{}_hl={:03d}_uhl={:04d}_bs={:04d}_")
-file_name = file_name_template.format(
-    file_name_prefix, p.hidden_layers, p.units_per_layer, p.batch_size)
-
-
-def save_experiment(description, model, test_loss, test_acc, training_time,
-                    test_time):
-    """Save results from one experiment"""
-    optimizer = model.optimizer
-    optimizer_name = type(optimizer).__name__
-
-    experiments.loc[len(experiments)] = [description, "MNIST",
-                                         optimizer_name, test_loss,
-                                         test_acc, p.hidden_layers,
-                                         p.units_per_layer,
-                                         p.epochs, p.batch_size,
-                                         backend.eval(optimizer.lr),
-                                         model.count_params(),
-                                         training_time, test_time]
-
-    # Summary of experiments - all in one file
-    print(experiments)
-    with open(file_name + ".txt", "w") as f:
-        experiments.to_string(f)
-
-    # Save training history and model for this specific experiment
-    # The model object must be a trained model, which means it has a `history`
-    # object with the training results for each epoch
-    # We need to save the history separately because `model.save` won't save
-    # it - it saves only the model data
-    experiment_file = file_name + description + "_" + optimizer_name + "_"
-    import json
-    with open(experiment_file + "history.json", 'w') as f:
-        json.dump(model.history.history, f)
-    model.save(experiment_file + "model.h5")
-
-
-test_network_configurations(p, standard_optimizer=optimizer_sgd_standard,
-                            end_experiment_callback=save_experiment)
-
-test_network_configurations(p, standard_optimizer=optimizer_rmsprop_standard,
-                            end_experiment_callback=save_experiment)
+p = parse_command_line()
+run_all_experiments(p)
