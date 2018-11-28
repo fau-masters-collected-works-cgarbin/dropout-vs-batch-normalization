@@ -41,7 +41,7 @@ args_template = ("--hidden_layers {} --units_per_layer {} --epochs {} "
                  "--batch_size {} --dropout_rate_input_layer {} "
                  "--dropout_rate_hidden_layer {} --dropout_lr_multiplier {} "
                  "--dropout_momentum {} --max_norm_max_value {}")
-script_file = "dropout_mnist.sh"
+script_file = "dropout_mnist_tests.sh"
 with open(script_file, "w") as f:
     f.write("#!/bin/bash\n")
     f.write("# This file was automatically generated\n\n")
