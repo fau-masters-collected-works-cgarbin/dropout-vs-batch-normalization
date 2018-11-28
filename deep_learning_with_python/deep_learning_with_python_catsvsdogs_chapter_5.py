@@ -179,7 +179,8 @@ p = Parameters(
 )
 
 train_dir, test_dir, validation_dir = prepare_image_dirs(
-    source_dir="./kaggledataset/train", dest_base_dir="./catsvsdogs")
+    source_dir="./deep_learning_with_python/kaggledataset/train",
+    dest_base_dir="./deep_learning_with_python/catsvsdogs")
 
 train_generator, validation_generator = create_image_generators(
     train_dir, validation_dir, p)
