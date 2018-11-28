@@ -16,13 +16,13 @@ file_generator = (pd.read_csv(f, delim_whitespace=True) for f in all_files)
 results = pd.concat(file_generator, ignore_index=True)
 
 # Save combined results into files
-with open("results_all.txt", "w") as f:
+with open("mnist_dropout_results_all.txt", "w") as f:
     results.to_string(f)
-with open("results_top10_accuracy_overall.txt", "w") as f:
+with open("mnist_dropout_results_top10_accuracy_overall.txt", "w") as f:
     results.nlargest(10, "TestAccuracy").to_string(f)
-with open("results_top10_accuracy_dropout.txt", "w") as f:
+with open("mnist_dropout_results_top10_accuracy_dropout.txt", "w") as f:
     results.loc[results["Description"] != "standard_network"]. \
         nlargest(10, "TestAccuracy").to_string(f)
-with open("results_top10_accuracy_no_dropout.txt", "w") as f:
+with open("mnist_dropout_results_top10_accuracy_no_dropout.txt", "w") as f:
     results.loc[results["Description"] == "standard_network"]. \
         nlargest(10, "TestAccuracy").to_string(f)
