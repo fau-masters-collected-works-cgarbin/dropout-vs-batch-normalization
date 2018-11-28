@@ -7,6 +7,14 @@
       "request": "launch",
       "program": "${file}",
       "cwd": "",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Python: MNIST DNN Dropout)",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "cwd": "",
       "args": [
         "--hidden_layers",
         "1",
@@ -26,6 +34,24 @@
         "0.95",
         "--max_norm_max_value",
         "2"
+      ],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Python: MNIST DNN Batch Normalization)",
+      "type": "python",
+      "request": "launch",
+      "program": "${file}",
+      "cwd": "",
+      "args": [
+        "--hidden_layers",
+        "1",
+        "--units_per_layer",
+        "512",
+        "--epochs",
+        "5",
+        "--batch_size",
+        "128"
       ],
       "console": "integratedTerminal"
     },
