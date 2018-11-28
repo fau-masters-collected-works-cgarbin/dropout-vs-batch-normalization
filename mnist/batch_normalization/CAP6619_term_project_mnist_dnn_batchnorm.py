@@ -125,7 +125,7 @@ def save_experiment(description, parameters, model, test_loss, test_acc,
 def parse_command_line():
     """Parse command line parameters into a `Parameters` variable."""
     from argparse import ArgumentParser
-    ap = ArgumentParser(description='Dropout with MNIST data set.')
+    ap = ArgumentParser(description='Batch normalization with MNIST data set.')
 
     # Format: short parameter name, long name, default value (if not specified)
     ap.add_argument("--hidden_layers", default=2, type=int)
@@ -167,11 +167,11 @@ experiments = pd.DataFrame(columns=["Description", "DataSetName", "Optimizer",
 
 # Parameters to control the experiments.
 Parameters = collections.namedtuple("Parameters", [
-    # Number of hidden layers in the network. When a dropout network is used,
-    # each hidden layer will be followed by a dropout layer.
+    # Number of hidden layers in the network. When a batch normalization
+    # network is used, each hidden layer will be followed by a batch
+    # normalization layer.
     "hidden_layers",
-    # Number of units in each layer (note that dropout layers are adjusted,
-    # increasing the number of units used in the network).
+    # Number of units in each layer.
     "units_per_layer",
     # Number of epochs to train.
     "epochs",
