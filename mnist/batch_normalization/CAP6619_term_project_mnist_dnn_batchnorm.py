@@ -58,9 +58,19 @@ def test_network_configurations(parameters,
     # so all tests will be executed with ReLU.
     model = models.Sequential()
     model.add(layers.Dense(p.units_per_layer,
+                           kernel_initializer='he_normal',
                            activation='relu', input_shape=(28 * 28,)))
-    for _ in range(p.hidden_layers - 1):
-        model.add(layers.Dense(p.units_per_layer, activation='relu'))
+    # Note on scale, from Keras doc: "When the next layer is linear (also e.g.
+    # nn.relu), this can be disabled since the scaling will be done by the next
+    # layer.", i.e. scale=True only in the layer before the softmax layer.
+    scale = p.hidden_layers == 1  # Scale only if using only one layer
+    model.add(layers.BatchNormalization(scale=scale))
+    for i in range(p.hidden_layers - 1):
+        model.add(layers.Dense(p.units_per_layer,
+                               kernel_initializer='he_normal',
+                               activation='relu'))
+        scale = i == p.hidden_layers - 2  # Scale only last layer
+        model.add(layers.BatchNormalization(scale=scale))
     model.add(layers.Dense(10, activation='softmax'))
     model.compile(optimizer=optimizer,
                   loss='categorical_crossentropy',
