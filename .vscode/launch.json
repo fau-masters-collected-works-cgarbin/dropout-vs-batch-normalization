@@ -6,6 +6,7 @@
       "type": "python",
       "request": "launch",
       "program": "${file}",
+      "cwd": "",
       "args": [
         "--hidden_layers",
         "1",
@@ -40,6 +41,7 @@
       "type": "python",
       "request": "launch",
       "module": "enter-your-module-name-here",
+      "cwd": "",
       "console": "integratedTerminal"
     },
     {
@@ -48,6 +50,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/manage.py",
       "console": "integratedTerminal",
+      "cwd": "",
       "args": ["runserver", "--noreload", "--nothreading"],
       "django": true
     },
@@ -67,7 +70,8 @@
       "type": "python",
       "request": "launch",
       "program": "${file}",
-      "console": "externalTerminal"
+      "console": "externalTerminal",
+      "cwd": ""
     }
   ]
 }
