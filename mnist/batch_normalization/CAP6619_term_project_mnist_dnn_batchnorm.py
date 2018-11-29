@@ -20,6 +20,8 @@ def test_model(description, model, parameters, end_experiment_callback):
     p = parameters
 
     start = time.process_time()
+    # From the paper: "Shuffle training examples more thoroughly." shuffle=True
+    # is the default in model.fit already, so no need to explicitly add it.
     model.fit(train_images, train_labels, epochs=p.epochs,
               batch_size=p.batch_size)
     training_time = time.process_time() - start
