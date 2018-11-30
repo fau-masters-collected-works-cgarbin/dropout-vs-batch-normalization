@@ -104,10 +104,11 @@ def save_experiment(description, parameters, model, test_loss, test_acc,
     # File where the results will be saved (the name encodes the parameters
     # used in the experiments)
     base_name_prefix = "MNIST_DNN_BatchNorm"
-    base_name_template = "{}_hl={:03d}_uhl={:04d}_e={:02d}_bs={:04d}"
+    base_name_template = ("{}_hl={:03d}_uhl={:04d}_e={:02d}_bs={:04d}_o={}"
+                          "_lr={:0.4f}")
     base_name = base_name_template.format(
-        base_name_prefix, p.hidden_layers,
-        p.units_per_layer, p.epochs, p.batch_size)
+        base_name_prefix, p.hidden_layers, p.units_per_layer, p.epochs,
+        p.batch_size, p.optimizer, p.learning_rate)
 
     # Save progress so far into one file
     with open(base_name + ".txt", "w") as f:
