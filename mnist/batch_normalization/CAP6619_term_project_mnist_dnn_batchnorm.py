@@ -11,6 +11,7 @@ from keras import models
 from keras import layers
 from keras import optimizers
 from keras.utils import to_categorical
+from keras import backend
 from keras.datasets import mnist
 
 
@@ -94,6 +95,7 @@ def save_experiment(description, parameters, model, test_loss, test_acc,
                                          test_acc, p.hidden_layers,
                                          p.units_per_layer,
                                          p.epochs, p.batch_size,
+                                         backend.eval(optimizer.lr),
                                          model.count_params(),
                                          training_time, test_time]
     # Show progress so far
@@ -134,6 +136,8 @@ def parse_command_line():
     ap.add_argument("--units_per_layer", default=512, type=int)
     ap.add_argument("--epochs", default=5, type=int)
     ap.add_argument("--batch_size", default=128, type=int)
+    ap.add_argument("--optimizer", default="sgd", type=str)
+    ap.add_argument("--learning_rate", default=0.01, type=float)
 
     args = ap.parse_args()
 
@@ -142,21 +146,22 @@ def parse_command_line():
         units_per_layer=args.units_per_layer,
         epochs=args.epochs,
         batch_size=args.batch_size,
+        optimizer=args.optimizer,
+        learning_rate=args.learning_rate,
     )
 
 
-def run_all_experiments(parameters):
+def run_experiments(parameters):
     """Run all experiments: test all network configurations, with different
-    optimizers."""
-    optimizer_sgd_standard = optimizers.SGD()
-    optimizer_rmsprop_standard = optimizers.RMSprop()
+    optimizers. """
+    optimizer = None
+    if (parameters.optimizer == "sgd"):
+        optimizer = optimizers.SGD(lr=parameters.learning_rate)
+    elif (parameters.optimizer == "rmsprop"):
+        optimizer = optimizers.RMSprop(lr=parameters.learning_rate)
+    assert optimizer is not None  # Provide a valid optimizer
 
-    test_network_configurations(parameters,
-                                optimizer=optimizer_sgd_standard,
-                                end_experiment_callback=save_experiment)
-
-    test_network_configurations(parameters,
-                                optimizer=optimizer_rmsprop_standard,
+    test_network_configurations(parameters, optimizer=optimizer,
                                 end_experiment_callback=save_experiment)
 
 
@@ -164,8 +169,9 @@ def run_all_experiments(parameters):
 experiments = pd.DataFrame(columns=["Description", "DataSetName", "Optimizer",
                                     "TestLoss", "TestAccuracy",
                                     "HiddenLayers", "UnitsPerLayer", "Epochs",
-                                    "BatchSize", "ModelParamCount",
-                                    "TrainingCpuTime", "TestCpuTime"])
+                                    "BatchSize", "LearningRate",
+                                    "ModelParamCount", "TrainingCpuTime",
+                                    "TestCpuTime"])
 
 # Parameters to control the experiments.
 Parameters = collections.namedtuple("Parameters", [
@@ -179,6 +185,14 @@ Parameters = collections.namedtuple("Parameters", [
     "epochs",
     # Number of samples in each batch.
     "batch_size",
+    # Optimizer: "sgd" or "rmsprop"
+    "optimizer",
+    # Learning rate - can be increased for batch normalization ("In a batch-
+    # normalized model, we have been able to achieve a training speedup from
+    # higher learning rates, with no ill side effects").
+    # The default Keras values are SGD: 0.01, RMSProp: 0.001 (see
+    # https://keras.io/optimizers/).
+    "learning_rate",
 ])
 
 # Load and prepare data
@@ -197,4 +211,4 @@ test_images = test_images.reshape((10000, 28 * 28))
 test_images = test_images.astype('float32') / 255
 
 p = parse_command_line()
-run_all_experiments(p)
+run_experiments(p)

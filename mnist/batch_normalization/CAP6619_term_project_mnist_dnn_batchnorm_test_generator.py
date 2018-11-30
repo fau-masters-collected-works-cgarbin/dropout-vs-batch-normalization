@@ -15,24 +15,30 @@ import stat
 # epochs = ["2", "5", "10"]
 # # 60 is the batch size used in the paper ("with 60 examples per mini-batch")
 # batch_size = ["60", "128", "256"]
+# optimizer = ["sgd", "rmsprop"]
+# learning_rate = ["0.1", "0.01", "0.001"]
 
 # This is a simplified list
 hidden_layers = ["1", "2"]
-units_per_layer = ["512", "1024"]
-epochs = ["2", "5"]
+units_per_layer = ["512"]
+epochs = ["2"]
 batch_size = ["128"]
+optimizer = ["sgd", "rmsprop"]
+learning_rate = ["0.1", "0.01"]
 
 all_tests = list(itertools.product(
-    hidden_layers, units_per_layer, epochs, batch_size,))
+    hidden_layers, units_per_layer, epochs, batch_size, optimizer,
+    learning_rate))
 
 args_template = ("--hidden_layers {} --units_per_layer {} --epochs {} "
-                 "--batch_size {}")
+                 "--batch_size {} --optimizer {} --learning_rate {}")
 script_file = "batchnorm_mnist_tests.sh"
 with open(script_file, "w") as f:
     f.write("#!/bin/bash\n")
     f.write("# This file was automatically generated\n\n")
     for i, test in enumerate(all_tests, start=1):
-        args = args_template.format(test[0], test[1], test[2], test[3])
+        args = args_template.format(test[0], test[1], test[2], test[3],
+                                    test[4], test[5])
         f.write('echo "Testing {} of {} - {}"\n'.format(i, len(all_tests),
                                                         test))
         f.write("python3 CAP6619_term_project_mnist_dnn_batchnorm.py \\\n")
