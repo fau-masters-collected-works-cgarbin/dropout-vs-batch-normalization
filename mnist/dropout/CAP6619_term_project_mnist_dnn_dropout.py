@@ -76,17 +76,10 @@ def test_network(parameters, end_experiment_callback):
     # Create the optimizer
     optimizer = None
     if p.optimizer == "sgd":
-        if p.momentum == "none":
-            optimizer = optimizers.SGD(p.learning_rate)
-        else:
-            optimizer = optimizers.SGD(
-                p.learning_rate, momentum=float(p.momentum))
+        optimizer = optimizers.SGD(
+            p.learning_rate, momentum=float(p.momentum))
     elif p.optimizer == "rmsprop":
-        if p.momentum == "none":
-            optimizer = optimizers.RMSprop(p.learning_rate)
-        else:
-            optimizer = optimizers.RMSprop(
-                p.learning_rate, momentum=float(p.momentum))
+        optimizer = optimizers.RMSprop(p.learning_rate)
     else:
         assert False  # Invalid optimizer
 
@@ -237,10 +230,10 @@ Parameters = collections.namedtuple("Parameters", [
     # dropout net should typically use 10-100 times the learning rate that was
     # optimal for a standard neural net.")
     "learning_rate",
-    # Momentum, to adjust as recommended in the dropout paper ("While momentum
-    # values of 0.9 are common for standard nets, with dropout we found that
-    # values around 0.95 to 0.99 work quite a lot better."), or "none" to skip
-    # customization and use the default from Keras
+    # Momentum for the SGD optimizer (not used in RMSProp), to adjust as
+    # recommended in the dropout paper ("While momentum values of 0.9 are
+    # common for standard nets, with dropout we found that values around 0.95
+    # to 0.99 work quite a lot better."). Set to 0.0 to not use momentum.
     "momentum",
     # Max norm max value, or "none" to skip it. The paper recommends its usage
     # ("Although dropout alone gives significant improvements, using dropout
@@ -266,5 +259,27 @@ train_images = train_images.astype('float32') / 255
 test_images = test_images.reshape((10000, pixels_per_image))
 test_images = test_images.astype('float32') / 255
 
-p = parse_command_line()
+# Change this to "False" when testing from the command line. Leave set to True
+# when launching from the IDE and change the parameters below (it's faster
+# than dealing with launch.json).
+ide_test = True
+
+p = None
+if ide_test:
+    p = Parameters(
+        network="standard",
+        optimizer="sgd",
+        hidden_layers=1,
+        units_per_layer=512,
+        epochs=5,
+        batch_size=128,
+        dropout_rate_input_layer=0.1,
+        dropout_rate_hidden_layer=0.5,
+        learning_rate=0.1,
+        momentum=0.95,
+        max_norm_max_value=2,
+    )
+else:
+    p = parse_command_line()
+
 test_network(p, save_experiment)
