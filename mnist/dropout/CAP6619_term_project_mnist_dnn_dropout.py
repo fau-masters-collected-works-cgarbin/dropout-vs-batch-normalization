@@ -62,8 +62,8 @@ def test_network_configurations(parameters,
     for _ in range(p.hidden_layers):
         model.add(layers.Dense(p.units_per_layer, activation='relu',
                                kernel_initializer='he_normal',
-                               kernel_constraint=max_norm(p.max_norm_max_value)))
-        model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
+                               kernel_constraint=max_norm(int(p.max_norm_max_value))))
+    model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
     model.add(layers.Dense(10, activation='softmax'))
     model.compile(optimizer=dropout_optimizer,
                   loss='categorical_crossentropy',
@@ -86,7 +86,7 @@ def test_network_configurations(parameters,
     for _ in range(p.hidden_layers):
         model.add(layers.Dense(adjusted_units_hidden, activation='relu',
                                kernel_initializer='he_normal',
-                               kernel_constraint=max_norm(p.max_norm_max_value)))
+                               kernel_constraint=max_norm(int(p.max_norm_max_value))))
         model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
     model.add(layers.Dense(10, activation='softmax'))
     model.compile(optimizer=dropout_optimizer,
@@ -107,10 +107,12 @@ def save_experiment(description, parameters, model, test_loss, test_acc,
     # To save some typing
     p = parameters
 
+    # Even though we have information about the optimizer in the parameters,
+    # we read directly from the model as insurance against coding mistakes.
     optimizer = model.optimizer
     optimizer_name = type(optimizer).__name__
 
-    experiments.loc[len(experiments)] = [description, "MNIST",
+    experiments.loc[len(experiments)] = ["MNIST", p.network,
                                          optimizer_name, test_loss,
                                          test_acc, p.hidden_layers,
                                          p.units_per_layer,
@@ -118,8 +120,8 @@ def save_experiment(description, parameters, model, test_loss, test_acc,
                                          p.dropout_rate_input_layer,
                                          p.dropout_rate_hidden_layer,
                                          backend.eval(optimizer.lr),
+                                         p.momentum,
                                          p.max_norm_max_value,
-                                         p.dropout_momentum,
                                          model.count_params(),
                                          training_time, test_time]
     # Show progress so far
@@ -128,14 +130,14 @@ def save_experiment(description, parameters, model, test_loss, test_acc,
     # File where the results will be saved (the name encodes the parameters
     # used in the experiments)
     base_name_prefix = "MNIST_DNN_Dropout"
-    base_name_template = ("{}_hl={:03d}_uhl={:04d}_dri={:0.2f}"
-                          "_drh={:0.2f}_e={:02d}_dlrm={:03.1f}_dm={:0.2f}"
-                          "_mn={}_bs={:04d}")
+    base_name_template = ("{}nw={}_opt={}_hl={:03d}_uhl={:04d}_e={:02d}"
+                          "_bs={:04d}_dri={:0.2f}_drh={:0.2f}_lr={:03.1f}"
+                          "_m={}_mn={}")
     base_name = base_name_template.format(
-        base_name_prefix, p.hidden_layers, p.units_per_layer,
-        p.dropout_rate_input_layer, p.dropout_rate_hidden_layer, p.epochs,
-        p.dropout_lr_multiplier, p.dropout_momentum, p.max_norm_max_value,
-        p.batch_size)
+        base_name_prefix, p.network, p.optimizer, p.hidden_layers, p.units_per_layer, p.epochs, p.batch_size,
+        p.dropout_rate_input_layer, p.dropout_rate_hidden_layer,
+        p.learning_rate, p.momentum, p.max_norm_max_value,
+    )
 
     # Save progress so far into one file
     with open(base_name + ".txt", "w") as f:
@@ -160,27 +162,31 @@ def parse_command_line():
     ap = ArgumentParser(description='Dropout with MNIST data set.')
 
     # Format: short parameter name, long name, default value (if not specified)
-    ap.add_argument("--hidden_layers", default=2, type=int)
-    ap.add_argument("--units_per_layer", default=512, type=int)
-    ap.add_argument("--epochs", default=5, type=int)
-    ap.add_argument("--batch_size", default=128, type=int)
-    ap.add_argument("--dropout_rate_input_layer", default=0.2, type=float)
-    ap.add_argument("--dropout_rate_hidden_layer", default=0.5, type=float)
-    ap.add_argument("--dropout_lr_multiplier", default=10.0, type=float)
-    ap.add_argument("--dropout_momentum", default=0.95, type=float)
-    ap.add_argument("--max_norm_max_value", default=3, type=int)
+    ap.add_argument("--network", type=str)
+    ap.add_argument("--optimizer", type=str)
+    ap.add_argument("--hidden_layers", type=int)
+    ap.add_argument("--units_per_layer", type=int)
+    ap.add_argument("--epochs", type=int)
+    ap.add_argument("--batch_size", type=int)
+    ap.add_argument("--dropout_rate_input_layer", type=float)
+    ap.add_argument("--dropout_rate_hidden_layer", type=float)
+    ap.add_argument("--learning_rate", type=float)
+    ap.add_argument("--momentum", type=str)
+    ap.add_argument("--max_norm_max_value", type=str)
 
     args = ap.parse_args()
 
     return Parameters(
+        network=args.network,
+        optimizer=args.optimizer,
         hidden_layers=args.hidden_layers,
         units_per_layer=args.units_per_layer,
         epochs=args.epochs,
         batch_size=args.batch_size,
         dropout_rate_input_layer=args.dropout_rate_input_layer,
         dropout_rate_hidden_layer=args.dropout_rate_hidden_layer,
-        dropout_lr_multiplier=args.dropout_lr_multiplier,
-        dropout_momentum=args.dropout_momentum,
+        learning_rate=args.learning_rate,
+        momentum=args.momentum,
         max_norm_max_value=args.max_norm_max_value,
     )
 
@@ -192,8 +198,8 @@ def run_all_experiments(parameters):
     optimizer_sgd_standard = optimizers.SGD()
     # The SGD optimizer to use in dropout networks.
     optimizer_sgd_dropout = optimizers.SGD(
-        lr=backend.eval(optimizer_sgd_standard.lr) * p.dropout_lr_multiplier,
-        momentum=p.dropout_momentum)
+        lr=backend.eval(optimizer_sgd_standard.lr) * p.learning_rate,
+        momentum=float(p.momentum))
 
     # The RMSProp optimizer to use in standard networks (no dropout).
     # The paper doesn't mention what optimizer was used in the tests. It looks
@@ -221,17 +227,24 @@ def run_all_experiments(parameters):
 
 
 # Store data from the experiments
-experiments = pd.DataFrame(columns=["Description", "DataSetName", "Optimizer",
+experiments = pd.DataFrame(columns=["DataSetName", "Network", "Optimizer",
                                     "TestLoss", "TestAccuracy",
                                     "HiddenLayers", "UnitsPerLayer", "Epochs",
                                     "BatchSize", "DropoutRateInput",
                                     "DropoutRateHidden", "LearningRate",
-                                    "MaxNorm", "Momentum",
+                                    "Momentum", "MaxNorm",
                                     "ModelParamCount", "TrainingCpuTime",
                                     "TestCpuTime"])
 
 # Parameters to control the experiments.
 Parameters = collections.namedtuple("Parameters", [
+    # Type of network to test: "standard": no dropout, "dropout_no_adjustment":
+    # dropout without adjusting units in each layer, "dropout": dropout with
+    # layers adjusted as recommended in the paper.
+    "network",
+    # Type of optimizer to use: "sgd" or "rmsprop". The paper doesn't specify,
+    # but it can be inferred that it's an SGD with adjusted learning rate.
+    "optimizer",
     # Number of hidden layers in the network. When a dropout network is used,
     # each hidden layer will be followed by a dropout layer.
     "hidden_layers",
@@ -249,17 +262,17 @@ Parameters = collections.namedtuple("Parameters", [
     # Dropout rate for the input layer ("Typical values of p for hidden units
     # are in the range 0.5 to 0.8.)" [Note: keras uses "drop", not "keep" rate]
     "dropout_rate_hidden_layer",
-    # Dropout learning rate multiplier, as recommended in the dropout paper
-    # ("... dropout net should typically use 10-100 times the learning rate
-    # that was optimal for a standard neural net.")
-    "dropout_lr_multiplier",
-    # Momentum, as recommended in the dropout paper ("While momentum values of
-    # 0.9 are common for standard nets, with dropout we found that values
-    # around 0.95 to 0.99 work quite a lot better.")
-    "dropout_momentum",
-    # Max norm max value. The paper recommends its usage ("Although dropout
-    # alone gives significant improvements, using dropout along with
-    # max-norm... Typical values of c range from 3 to 4.")
+    # Learning rate, to adjust as recommended in the dropout paper ("...
+    # dropout net should typically use 10-100 times the learning rate that was
+    # optimal for a standard neural net.")
+    "learning_rate",
+    # Momentum, to adjust as recommended in the dropout paper ("While momentum
+    # values of 0.9 are common for standard nets, with dropout we found that
+    # values around 0.95 to 0.99 work quite a lot better.")
+    "momentum",
+    # Max norm max value, or "none" to skip it. The paper recommends its usage
+    # ("Although dropout alone gives significant improvements, using dropout
+    # along with max-norm... Typical values of c range from 3 to 4.")
     "max_norm_max_value",
 ])
 
