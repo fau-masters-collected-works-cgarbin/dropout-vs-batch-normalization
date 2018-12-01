@@ -12,3 +12,5 @@ catsvsdogs/
 *history.json
 # Test shell script automatically generated, no need to save it
 *tests.sh
+# Compressed result files
+*gz
