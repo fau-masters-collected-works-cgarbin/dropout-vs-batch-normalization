@@ -77,7 +77,7 @@ def test_network(parameters, end_experiment_callback):
     optimizer = None
     if p.optimizer == "sgd":
         optimizer = optimizers.SGD(
-            p.learning_rate, momentum=float(p.momentum), decay=p.decay)
+            p.learning_rate, momentum=float(p.sgd_momentum), decay=p.decay)
     elif p.optimizer == "rmsprop":
         optimizer = optimizers.RMSprop(p.learning_rate, decay=p.decay)
     else:
@@ -116,7 +116,7 @@ def save_experiment(parameters, model, test_loss, test_acc,
                                          p.dropout_rate_input_layer,
                                          p.dropout_rate_hidden_layer,
                                          backend.eval(optimizer.lr),
-                                         p.momentum, p.decay,
+                                         p.sgd_momentum, p.decay,
                                          p.max_norm_max_value,
                                          model.count_params(),
                                          training_time, test_time]
@@ -132,7 +132,7 @@ def save_experiment(parameters, model, test_loss, test_acc,
     base_name = base_name_template.format(
         base_name_prefix, p.network, p.optimizer, p.hidden_layers, p.units_per_layer, p.epochs, p.batch_size,
         p.dropout_rate_input_layer, p.dropout_rate_hidden_layer,
-        p.learning_rate, p.momentum, p.max_norm_max_value,
+        p.learning_rate, p.sgd_momentum, p.max_norm_max_value,
     )
 
     # Save progress so far into one file
@@ -168,7 +168,7 @@ def parse_command_line():
     ap.add_argument("--dropout_rate_hidden_layer", type=float)
     ap.add_argument("--learning_rate", type=float)
     ap.add_argument("--decay", type=float)
-    ap.add_argument("--momentum", type=str)
+    ap.add_argument("--sgd_momentum", type=str)
     ap.add_argument("--max_norm_max_value", type=str)
 
     args = ap.parse_args()
@@ -184,7 +184,7 @@ def parse_command_line():
         dropout_rate_hidden_layer=args.dropout_rate_hidden_layer,
         learning_rate=args.learning_rate,
         decay=args.decay,
-        momentum=args.momentum,
+        sgd_momentum=args.sgd_momentum,
         max_norm_max_value=args.max_norm_max_value,
     )
 
@@ -195,7 +195,7 @@ experiments = pd.DataFrame(columns=["DataSetName", "Network", "Optimizer",
                                     "HiddenLayers", "UnitsPerLayer", "Epochs",
                                     "BatchSize", "DropoutRateInput",
                                     "DropoutRateHidden", "LearningRate",
-                                    "Decay", "Momentum", "MaxNorm",
+                                    "Decay", "SgdMomentum", "MaxNorm",
                                     "ModelParamCount", "TrainingCpuTime",
                                     "TestCpuTime"])
 
@@ -239,7 +239,7 @@ Parameters = collections.namedtuple("Parameters", [
     # recommended in the dropout paper ("While momentum values of 0.9 are
     # common for standard nets, with dropout we found that values around 0.95
     # to 0.99 work quite a lot better."). Set to 0.0 to not use momentum.
-    "momentum",
+    "sgd_momentum",
     # Max norm max value, or "none" to skip it. The paper recommends its usage
     # ("Although dropout alone gives significant improvements, using dropout
     # along with max-norm... Typical values of c range from 3 to 4.")
@@ -274,15 +274,15 @@ if ide_test:
     p = Parameters(
         network="dropout",
         optimizer="sgd",
-        hidden_layers=3,
-        units_per_layer=1024,
-        epochs=30,
+        hidden_layers=1,
+        units_per_layer=512,
+        epochs=2,
         batch_size=128,
         dropout_rate_input_layer=0.1,
         dropout_rate_hidden_layer=0.5,
         learning_rate=0.1,
         decay=0.001,
-        momentum=0.95,
+        sgd_momentum=0.95,
         max_norm_max_value=2,
     )
 else:
