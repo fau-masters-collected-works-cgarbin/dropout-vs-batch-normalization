@@ -124,11 +124,12 @@ def save_experiment(parameters, model, test_loss, test_acc,
     base_name_prefix = "MNIST_DNN_Dropout"
     base_name_template = ("{}_nw={}_opt={}_hl={:03d}_uhl={:04d}_e={:02d}"
                           "_bs={:04d}_dri={:0.2f}_drh={:0.2f}_lr={:03.1f}"
-                          "_m={}_mn={}")
+                          "d={:0.4f}_m={}_mn={}")
     base_name = base_name_template.format(
-        base_name_prefix, p.network, p.optimizer, p.hidden_layers, p.units_per_layer, p.epochs, p.batch_size,
+        base_name_prefix, p.network, p.optimizer, p.hidden_layers,
+        p.units_per_layer, p.epochs, p.batch_size,
         p.dropout_rate_input_layer, p.dropout_rate_hidden_layer,
-        p.learning_rate, p.sgd_momentum, p.max_norm_max_value,
+        p.learning_rate, p.decay, p.sgd_momentum, p.max_norm_max_value,
     )
 
     # Save progress so far into one file
