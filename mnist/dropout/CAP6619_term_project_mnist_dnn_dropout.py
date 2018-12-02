@@ -7,6 +7,8 @@ Dropout paper: http://jmlr.org/papers/volume15/srivastava14a.old/srivastava14a.p
 import time
 import pandas as pd
 import collections
+import json
+import os
 from keras import models
 from keras import layers
 from keras import optimizers
@@ -15,6 +17,8 @@ from keras.utils import to_categorical
 from keras.constraints import max_norm
 from keras.datasets import mnist
 from datetime import datetime
+from io import StringIO
+from argparse import ArgumentParser
 
 
 def create_model(parameters):
@@ -125,13 +129,11 @@ def save_experiment(parameters, model, test_loss, test_acc,
 
     # Save progress so far into the file used for this experiment
     results_file = p.experiment_name + "_results.txt"
-    import os
     if os.path.isfile(results_file):
         # File already exists - append data without column names.
         # First, get a formatted string; if we use to_string(header=False) it
         # will use only one space between columnds, instead of formatting
         # considering the column name (the header).
-        from io import StringIO
         output = StringIO()
         experiments.to_string(output)
         with open(results_file, "a") as f:
@@ -161,7 +163,6 @@ def save_experiment(parameters, model, test_loss, test_acc,
         p.learning_rate, p.decay, p.sgd_momentum, p.max_norm_max_value,
     )
 
-    import json
     with open(base_name + "_history.json", 'w') as f:
         json.dump(model.history.history, f)
     # Uncomment to save the model - it may take quite a bit of disk space
@@ -170,7 +171,6 @@ def save_experiment(parameters, model, test_loss, test_acc,
 
 def parse_command_line():
     """Parse command line parameters into a `Parameters` variable."""
-    from argparse import ArgumentParser
     ap = ArgumentParser(description='Dropout with MNIST data set.')
 
     # Format: short parameter name, long name, default value (if not specified)

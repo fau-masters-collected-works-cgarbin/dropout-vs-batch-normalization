@@ -5,6 +5,8 @@ MNIST with standard deep neural network and dropout
 Create a shell script with all tests we need to execute.
 """
 import itertools
+import os
+import stat
 
 # Some default values from Keras to keep in mind:
 #  * Learning rate: SGD=0.01, RMSprop=0.001
@@ -43,9 +45,6 @@ max_norm_max_value = ["2"]
 
 
 def create_test_file(file_name, experiment_name, tests):
-    import os
-    import stat
-
     args_template = (
         "--experiment_name {} --network {} --optimizer {} --hidden_layers {} "
         "--units_per_layer {} --epochs {} --batch_size {} "
