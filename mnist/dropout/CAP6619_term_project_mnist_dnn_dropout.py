@@ -45,10 +45,16 @@ def create_model(parameters):
         model.add(layers.Dropout(p.dropout_rate_input_layer,
                                  input_shape=(pixels_per_image,)))
         for _ in range(p.hidden_layers):
-            model.add(layers.Dense(units_hidden_layer, activation='relu',
-                                   kernel_initializer='he_normal',
-                                   kernel_constraint=max_norm(
-                                       int(p.max_norm_max_value))))
+            # Reason to use he_normal initializer: "...weights W initialized to
+            # small random Gaussian values."
+            if p.max_norm_max_value == "none":
+                model.add(layers.Dense(units_hidden_layer, activation='relu',
+                                       kernel_initializer='he_normal'))
+            else:
+                model.add(layers.Dense(units_hidden_layer, activation='relu',
+                                       kernel_initializer='he_normal',
+                                       kernel_constraint=max_norm(
+                                           int(p.max_norm_max_value))))
         model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
     else:
         assert False  # Invalid network type
@@ -266,7 +272,7 @@ ide_test = True
 p = None
 if ide_test:
     p = Parameters(
-        network="dropout",
+        network="standard",
         optimizer="sgd",
         hidden_layers=1,
         units_per_layer=512,
