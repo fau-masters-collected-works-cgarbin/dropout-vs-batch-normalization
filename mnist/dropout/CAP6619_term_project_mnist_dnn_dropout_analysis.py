@@ -21,8 +21,8 @@ with open("mnist_dropout_results_all.txt", "w") as f:
 with open("mnist_dropout_results_top10_accuracy_overall.txt", "w") as f:
     results.nlargest(10, "TestAccuracy").to_string(f)
 with open("mnist_dropout_results_top10_accuracy_dropout.txt", "w") as f:
-    results.loc[results["Description"] != "standard_network"]. \
+    results.loc[results["Network"] != "standard"]. \
         nlargest(10, "TestAccuracy").to_string(f)
 with open("mnist_dropout_results_top10_accuracy_no_dropout.txt", "w") as f:
-    results.loc[results["Description"] == "standard_network"]. \
+    results.loc[results["Network"] == "standard"]. \
         nlargest(10, "TestAccuracy").to_string(f)
