@@ -113,43 +113,59 @@ def save_experiment(parameters, model, test_loss, test_acc,
     optimizer_name = type(optimizer).__name__
 
     experiments.loc[len(experiments)] = [
-        datetime.now().strftime("%Y-%m-%d_%H:%M:%S"),
+        p.experiment_name, datetime.now().strftime("%Y-%m-%d_%H:%M:%S"),
         "MNIST", p.network, optimizer_name, test_loss, test_acc,
         p.hidden_layers, p.units_per_layer, p.epochs, p.batch_size,
         p.dropout_rate_input_layer, p.dropout_rate_hidden_layer,
         backend.eval(optimizer.lr), p.decay, p.sgd_momentum,
         p.max_norm_max_value, model.count_params(), training_time, test_time]
-    # Show progress so far
+
+    # Show progress so far to the user
     print(experiments)
 
-    # File where the results will be saved (the name encodes the parameters
-    # used in the experiments)
-    base_name_prefix = "MNIST_DNN_Dropout"
-    base_name_template = ("{}_nw={}_opt={}_hl={:03d}_uhl={:04d}_e={:02d}"
-                          "_bs={:04d}_dri={:0.2f}_drh={:0.2f}_lr={:03.1f}"
-                          "d={:0.4f}_m={}_mn={}")
-    base_name = base_name_template.format(
-        base_name_prefix, p.network, p.optimizer, p.hidden_layers,
-        p.units_per_layer, p.epochs, p.batch_size,
-        p.dropout_rate_input_layer, p.dropout_rate_hidden_layer,
-        p.learning_rate, p.decay, p.sgd_momentum, p.max_norm_max_value,
-    )
-
-    # Save progress so far into one file
-    with open(base_name + ".txt", "w") as f:
-        experiments.to_string(f)
+    # Save progress so far into the file used for this experiment
+    results_file = p.experiment_name + "_results.txt"
+    import os
+    if os.path.isfile(results_file):
+        # File already exists - append data without column names.
+        # First, get a formatted string; if we use to_string(header=False) it
+        # will use only one space between columnds, instead of formatting
+        # considering the column name (the header).
+        from io import StringIO
+        output = StringIO()
+        experiments.to_string(output)
+        with open(results_file, "a") as f:
+            f.write(os.linesep)
+            f.write(output.getvalue().splitlines()[1])
+        output.close()
+    else:
+        # File doesn't exist yet - create and write column names + data
+        with open(results_file, "w") as f:
+            experiments.to_string(f)
 
     # Save training history and model for this specific experiment.
     # The model object must be a trained model, which means it has a `history`
     # object with the training results for each epoch.
     # We need to save the history separately because `model.save` won't save
     # it - it saves only the model data.
-    results_file = base_name + "_" + p.network + "_" + optimizer_name + "_"
+
+    # File where the training history and model will be saved. The name encodes
+    # the test the parameters used in the epxeriment.
+    base_name_template = ("{}_nw={}_opt={}_hl={:03d}_uhl={:04d}_e={:02d}"
+                          "_bs={:04d}_dri={:0.2f}_drh={:0.2f}_lr={:03.1f}"
+                          "d={:0.4f}_m={}_mn={}")
+    base_name = base_name_template.format(
+        p.experiment_name, p.network, p.optimizer, p.hidden_layers,
+        p.units_per_layer, p.epochs, p.batch_size,
+        p.dropout_rate_input_layer, p.dropout_rate_hidden_layer,
+        p.learning_rate, p.decay, p.sgd_momentum, p.max_norm_max_value,
+    )
+
     import json
-    with open(results_file + "history.json", 'w') as f:
+    with open(base_name + "_history.json", 'w') as f:
         json.dump(model.history.history, f)
     # Uncomment to save the model - it may take quite a bit of disk space
-    # model.save(results_file + "model.h5")
+    # model.save(base_name + "_model.h5")
 
 
 def parse_command_line():
@@ -158,6 +174,7 @@ def parse_command_line():
     ap = ArgumentParser(description='Dropout with MNIST data set.')
 
     # Format: short parameter name, long name, default value (if not specified)
+    ap.add_argument("--experiment_name", type=str)
     ap.add_argument("--network", type=str)
     ap.add_argument("--optimizer", type=str)
     ap.add_argument("--hidden_layers", type=int)
@@ -174,6 +191,7 @@ def parse_command_line():
     args = ap.parse_args()
 
     return Parameters(
+        experiment_name=args.experiment_name,
         network=args.network,
         optimizer=args.optimizer,
         hidden_layers=args.hidden_layers,
@@ -190,17 +208,19 @@ def parse_command_line():
 
 
 # Store data from the experiments
-experiments = pd.DataFrame(columns=["TestTime", "DataSetName", "Network",
-                                    "Optimizer", "TestLoss", "TestAccuracy",
-                                    "HiddenLayers", "UnitsPerLayer", "Epochs",
-                                    "BatchSize", "DropoutRateInput",
-                                    "DropoutRateHidden", "LearningRate",
-                                    "Decay", "SgdMomentum", "MaxNorm",
-                                    "ModelParamCount", "TrainingCpuTime",
-                                    "TestCpuTime"])
+experiments = pd.DataFrame(columns=[
+    "ExperimentName", "TestTime", "DataSetName", "Network", "Optimizer",
+    "TestLoss", "TestAccuracy", "HiddenLayers", "UnitsPerLayer", "Epochs",
+    "BatchSize", "DropoutRateInput", "DropoutRateHidden", "LearningRate",
+    "Decay", "SgdMomentum", "MaxNorm", "ModelParamCount", "TrainingCpuTime",
+    "TestCpuTime"])
 
 # Parameters to control the experiments.
 Parameters = collections.namedtuple("Parameters", [
+    # A brief description of the experiment. Will be used as part of file names
+    # to prevent collisions with other experiments. Cannot contain spaces to
+    # work correctly as a command line parameter.
+    "experiment_name",
     # Type of network to test: "standard": no dropout, "dropout_no_adjustment":
     # dropout without adjusting units in each layer, "dropout": dropout with
     # layers adjusted as recommended in the paper.
@@ -267,11 +287,15 @@ test_images = test_images.astype('float32') / 255
 # Change this to "False" when testing from the command line. Leave set to True
 # when launching from the IDE and change the parameters below (it's faster
 # than dealing with launch.json).
-ide_test = False
+ide_test = True
+# Show a warning to let user now we are ignoring command line parameters
+if ide_test:
+    print("\n\n  --- Running from IDE - ignoring command line\n\n")
 
 p = None
 if ide_test:
     p = Parameters(
+        experiment_name="dropout_mnist_dnn",
         network="dropout_no_adjustment",
         optimizer="sgd",
         hidden_layers=2,
