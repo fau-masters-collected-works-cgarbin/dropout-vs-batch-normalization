@@ -113,7 +113,7 @@ def save_experiment(parameters, model, test_loss, test_acc,
     optimizer_name = type(optimizer).__name__
 
     experiments.loc[len(experiments)] = [
-        datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        datetime.now().strftime("%Y-%m-%d_%H:%M:%S"),
         "MNIST", p.network, optimizer_name, test_loss, test_acc,
         p.hidden_layers, p.units_per_layer, p.epochs, p.batch_size,
         p.dropout_rate_input_layer, p.dropout_rate_hidden_layer,
@@ -267,14 +267,14 @@ test_images = test_images.astype('float32') / 255
 # Change this to "False" when testing from the command line. Leave set to True
 # when launching from the IDE and change the parameters below (it's faster
 # than dealing with launch.json).
-ide_test = True
+ide_test = False
 
 p = None
 if ide_test:
     p = Parameters(
-        network="standard",
+        network="dropout_no_adjustment",
         optimizer="sgd",
-        hidden_layers=1,
+        hidden_layers=2,
         units_per_layer=512,
         epochs=2,
         batch_size=128,
