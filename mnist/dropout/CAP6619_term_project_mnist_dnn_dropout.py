@@ -55,7 +55,7 @@ def create_model(parameters):
                                        kernel_initializer='he_normal',
                                        kernel_constraint=max_norm(
                                            int(p.max_norm_max_value))))
-        model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
+            model.add(layers.Dropout(rate=p.dropout_rate_hidden_layer))
     else:
         assert False  # Invalid network type
 
