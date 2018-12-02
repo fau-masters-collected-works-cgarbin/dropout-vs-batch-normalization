@@ -14,6 +14,7 @@ from keras import backend
 from keras.utils import to_categorical
 from keras.constraints import max_norm
 from keras.datasets import mnist
+from datetime import datetime
 
 
 def test_model(model, parameters, end_experiment_callback):
@@ -108,18 +109,13 @@ def save_experiment(parameters, model, test_loss, test_acc,
     optimizer = model.optimizer
     optimizer_name = type(optimizer).__name__
 
-    experiments.loc[len(experiments)] = ["MNIST", p.network,
-                                         optimizer_name, test_loss,
-                                         test_acc, p.hidden_layers,
-                                         p.units_per_layer,
-                                         p.epochs, p.batch_size,
-                                         p.dropout_rate_input_layer,
-                                         p.dropout_rate_hidden_layer,
-                                         backend.eval(optimizer.lr),
-                                         p.sgd_momentum, p.decay,
-                                         p.max_norm_max_value,
-                                         model.count_params(),
-                                         training_time, test_time]
+    experiments.loc[len(experiments)] = [
+        datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "MNIST", p.network, optimizer_name, test_loss, test_acc,
+        p.hidden_layers, p.units_per_layer, p.epochs, p.batch_size,
+        p.dropout_rate_input_layer, p.dropout_rate_hidden_layer,
+        backend.eval(optimizer.lr), p.decay, p.sgd_momentum,
+        p.max_norm_max_value, model.count_params(), training_time, test_time]
     # Show progress so far
     print(experiments)
 
@@ -190,8 +186,8 @@ def parse_command_line():
 
 
 # Store data from the experiments
-experiments = pd.DataFrame(columns=["DataSetName", "Network", "Optimizer",
-                                    "TestLoss", "TestAccuracy",
+experiments = pd.DataFrame(columns=["TestTime", "DataSetName", "Network",
+                                    "Optimizer", "TestLoss", "TestAccuracy",
                                     "HiddenLayers", "UnitsPerLayer", "Epochs",
                                     "BatchSize", "DropoutRateInput",
                                     "DropoutRateHidden", "LearningRate",
