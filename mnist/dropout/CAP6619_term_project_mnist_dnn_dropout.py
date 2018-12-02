@@ -77,9 +77,9 @@ def test_network(parameters, end_experiment_callback):
     optimizer = None
     if p.optimizer == "sgd":
         optimizer = optimizers.SGD(
-            p.learning_rate, momentum=float(p.momentum))
+            p.learning_rate, momentum=float(p.momentum), decay=p.decay)
     elif p.optimizer == "rmsprop":
-        optimizer = optimizers.RMSprop(p.learning_rate)
+        optimizer = optimizers.RMSprop(p.learning_rate, decay=p.decay)
     else:
         assert False  # Invalid optimizer
 
@@ -116,7 +116,7 @@ def save_experiment(parameters, model, test_loss, test_acc,
                                          p.dropout_rate_input_layer,
                                          p.dropout_rate_hidden_layer,
                                          backend.eval(optimizer.lr),
-                                         p.momentum,
+                                         p.momentum, p.decay,
                                          p.max_norm_max_value,
                                          model.count_params(),
                                          training_time, test_time]
@@ -167,6 +167,7 @@ def parse_command_line():
     ap.add_argument("--dropout_rate_input_layer", type=float)
     ap.add_argument("--dropout_rate_hidden_layer", type=float)
     ap.add_argument("--learning_rate", type=float)
+    ap.add_argument("--decay", type=float)
     ap.add_argument("--momentum", type=str)
     ap.add_argument("--max_norm_max_value", type=str)
 
@@ -182,6 +183,7 @@ def parse_command_line():
         dropout_rate_input_layer=args.dropout_rate_input_layer,
         dropout_rate_hidden_layer=args.dropout_rate_hidden_layer,
         learning_rate=args.learning_rate,
+        decay=args.decay,
         momentum=args.momentum,
         max_norm_max_value=args.max_norm_max_value,
     )
@@ -193,7 +195,7 @@ experiments = pd.DataFrame(columns=["DataSetName", "Network", "Optimizer",
                                     "HiddenLayers", "UnitsPerLayer", "Epochs",
                                     "BatchSize", "DropoutRateInput",
                                     "DropoutRateHidden", "LearningRate",
-                                    "Momentum", "MaxNorm",
+                                    "Decay", "Momentum", "MaxNorm",
                                     "ModelParamCount", "TrainingCpuTime",
                                     "TestCpuTime"])
 
@@ -230,6 +232,9 @@ Parameters = collections.namedtuple("Parameters", [
     # dropout net should typically use 10-100 times the learning rate that was
     # optimal for a standard neural net.")
     "learning_rate",
+    # Weight decay (L2). The source code the paper points to has "l2_decay"
+    # set to 0.001. The default in Keras for SGD and RMSProp is 0.0.
+    "decay",
     # Momentum for the SGD optimizer (not used in RMSProp), to adjust as
     # recommended in the dropout paper ("While momentum values of 0.9 are
     # common for standard nets, with dropout we found that values around 0.95
@@ -267,15 +272,16 @@ ide_test = True
 p = None
 if ide_test:
     p = Parameters(
-        network="standard",
+        network="dropout",
         optimizer="sgd",
-        hidden_layers=1,
-        units_per_layer=512,
-        epochs=5,
+        hidden_layers=3,
+        units_per_layer=1024,
+        epochs=30,
         batch_size=128,
         dropout_rate_input_layer=0.1,
         dropout_rate_hidden_layer=0.5,
         learning_rate=0.1,
+        decay=0.001,
         momentum=0.95,
         max_norm_max_value=2,
     )
