@@ -91,12 +91,6 @@ def test_network(parameters, end_experiment_callback):
 
     test_model(model, p, end_experiment_callback)
 
-    # A note on L2 regularization: although the paper says it was "found to be
-    # useful for dropout neural networks as well", during the tests it didn't
-    # make a major difference (better is some cases, worse in others). It was
-    # added as shown below. Perahps I didn't do it correctly?
-    # model.add(...kernel_regularizer=regularizers.l2(0.001),
-
 
 def save_experiment(parameters, model, test_loss, test_acc,
                     training_time, test_time):
