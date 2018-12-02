@@ -17,26 +17,8 @@ from keras.datasets import mnist
 from datetime import datetime
 
 
-def test_model(model, parameters, end_experiment_callback):
-    """Test one model: train it, evaluate with test data, save results."""
-    # To make lines shorter
-    p = parameters
-
-    start = time.process_time()
-    model.fit(train_images, train_labels, epochs=p.epochs,
-              batch_size=p.batch_size)
-    training_time = time.process_time() - start
-
-    start = time.process_time()
-    test_loss, test_acc = model.evaluate(test_images, test_labels)
-    test_time = time.process_time() - start
-
-    end_experiment_callback(parameters, model, test_loss,
-                            test_acc, training_time, test_time)
-
-
-def test_network(parameters, end_experiment_callback):
-    """Test a network described by the given parameters."""
+def create_model(parameters):
+    """Create a model described by the given parameters."""
     # To make lines shorter
     p = parameters
 
@@ -89,7 +71,28 @@ def test_network(parameters, end_experiment_callback):
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
 
-    test_model(model, p, end_experiment_callback)
+    return model
+
+
+def test_model(parameters, end_experiment_callback):
+    """Test one model: create, train, evaluate with test data and save
+    results."""
+    # To make lines shorter
+    p = parameters
+
+    model = create_model(parameters)
+
+    start = time.process_time()
+    model.fit(train_images, train_labels, epochs=p.epochs,
+              batch_size=p.batch_size)
+    training_time = time.process_time() - start
+
+    start = time.process_time()
+    test_loss, test_acc = model.evaluate(test_images, test_labels)
+    test_time = time.process_time() - start
+
+    end_experiment_callback(parameters, model, test_loss,
+                            test_acc, training_time, test_time)
 
 
 def save_experiment(parameters, model, test_loss, test_acc,
@@ -279,4 +282,4 @@ if ide_test:
 else:
     p = parse_command_line()
 
-test_network(p, save_experiment)
+test_model(p, save_experiment)
