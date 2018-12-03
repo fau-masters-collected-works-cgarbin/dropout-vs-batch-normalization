@@ -11,7 +11,7 @@ catsvsdogs/
 *h5
 # Keras history files saved as JSON
 *history.json
-# Test shell script automatically generated, no need to save it
-*tests.sh
+# Test shell scripts automatically generated, no need to save them
+*.sh
 # Compressed result files
 *gz
