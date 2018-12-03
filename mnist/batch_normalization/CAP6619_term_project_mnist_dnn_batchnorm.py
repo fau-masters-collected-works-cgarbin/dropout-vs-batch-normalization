@@ -31,8 +31,8 @@ def test_model(description, model, parameters, end_experiment_callback):
     test_loss, test_acc = model.evaluate(test_images, test_labels)
     test_time = time.process_time() - start
 
-    end_experiment_callback(description, parameters, model, test_loss,
-                            test_acc, training_time, test_time)
+    end_experiment_callback(parameters, model, test_loss, test_acc,
+                            training_time, test_time)
 
 
 def test_network_configurations(parameters,
@@ -81,23 +81,22 @@ def test_network_configurations(parameters,
     test_model("batch_normalization", model, p, end_experiment_callback)
 
 
-def save_experiment(description, parameters, model, test_loss, test_acc,
+def save_experiment(parameters, model, test_loss, test_acc,
                     training_time, test_time):
     """Save results from one experiment"""
     # To save some typing
     p = parameters
 
+    # Even though we have information about the optimizer in the parameters,
+    # we read directly from the model as insurance against coding mistakes.
     optimizer = model.optimizer
     optimizer_name = type(optimizer).__name__
 
-    experiments.loc[len(experiments)] = [description, "MNIST",
-                                         optimizer_name, test_loss,
-                                         test_acc, p.hidden_layers,
-                                         p.units_per_layer,
-                                         p.epochs, p.batch_size,
-                                         backend.eval(optimizer.lr),
-                                         model.count_params(),
-                                         training_time, test_time]
+    experiments.loc[len(experiments)] = [
+        p.experiment_name, "MNIST", p.network, optimizer_name, test_loss,
+        test_acc, p.hidden_layers, p.units_per_layer,
+        p.epochs, p.batch_size, backend.eval(optimizer.lr),
+        model.count_params(), training_time, test_time]
     # Show progress so far
     print(experiments)
 
@@ -119,7 +118,7 @@ def save_experiment(description, parameters, model, test_loss, test_acc,
     # object with the training results for each epoch.
     # We need to save the history separately because `model.save` won't save
     # it - it saves only the model data.
-    results_file = base_name + "_" + description + "_" + optimizer_name + "_"
+    results_file = base_name + "_" + p.experiment_name + "_" + optimizer_name + "_"
     import json
     with open(results_file + "history.json", 'w') as f:
         json.dump(model.history.history, f)
@@ -133,21 +132,25 @@ def parse_command_line():
     ap = ArgumentParser(description='Batch normalization with MNIST data set.')
 
     # Format: short parameter name, long name, default value (if not specified)
+    ap.add_argument("--experiment_name", type=str)
+    ap.add_argument("--network", type=str)
+    ap.add_argument("--optimizer", type=str)
     ap.add_argument("--hidden_layers", default=2, type=int)
     ap.add_argument("--units_per_layer", default=512, type=int)
     ap.add_argument("--epochs", default=5, type=int)
     ap.add_argument("--batch_size", default=128, type=int)
-    ap.add_argument("--optimizer", default="sgd", type=str)
     ap.add_argument("--learning_rate", default=0.01, type=float)
 
     args = ap.parse_args()
 
     return Parameters(
+        experiment_name=args.experiment_name,
+        network=args.network,
+        optimizer=args.optimizer,
         hidden_layers=args.hidden_layers,
         units_per_layer=args.units_per_layer,
         epochs=args.epochs,
         batch_size=args.batch_size,
-        optimizer=args.optimizer,
         learning_rate=args.learning_rate,
     )
 
@@ -167,15 +170,23 @@ def run_experiments(parameters):
 
 
 # Store data from the experiments
-experiments = pd.DataFrame(columns=["Description", "DataSetName", "Optimizer",
-                                    "TestLoss", "TestAccuracy",
-                                    "HiddenLayers", "UnitsPerLayer", "Epochs",
-                                    "BatchSize", "LearningRate",
-                                    "ModelParamCount", "TrainingCpuTime",
-                                    "TestCpuTime"])
+experiments = pd.DataFrame(columns=[
+    "ExperimentName", "DataSetName", "Network", "Optimizer", "TestLoss",
+    "TestAccuracy", "HiddenLayers", "UnitsPerLayer", "Epochs", "BatchSize",
+    "LearningRate", "ModelParamCount", "TrainingCpuTime", "TestCpuTime"])
 
 # Parameters to control the experiments.
 Parameters = collections.namedtuple("Parameters", [
+    # A brief description of the experiment. Will be used as part of file names
+    # to prevent collisions with other experiments. Cannot contain spaces to
+    # work correctly as a command line parameter.
+    "experiment_name",
+    # Type of network to test: only valid choice is "batch_normalization". The
+    # standard network type (no batch normalization) can be tested with the
+    # dropout code, to avoid duplication.
+    "network",
+    # Type of optimizer to use: "sgd" or "rmsprop".
+    "optimizer",
     # Number of hidden layers in the network. When a batch normalization
     # network is used, each hidden layer will be followed by a batch
     # normalization layer.
@@ -186,8 +197,6 @@ Parameters = collections.namedtuple("Parameters", [
     "epochs",
     # Number of samples in each batch.
     "batch_size",
-    # Optimizer: "sgd" or "rmsprop"
-    "optimizer",
     # Learning rate - can be increased for batch normalization ("In a batch-
     # normalized model, we have been able to achieve a training speedup from
     # higher learning rates, with no ill side effects").
@@ -222,11 +231,13 @@ if ide_test:
 p = None
 if ide_test:
     p = Parameters(
+        experiment_name="batchnorm_mnist_dnn",
+        network="batch_normalization",
+        optimizer="sgd",
         hidden_layers=1,
         units_per_layer=512,
-        epochs=5,
+        epochs=2,
         batch_size=128,
-        optimizer="sgd",
         learning_rate=0.1,
     )
 else:
