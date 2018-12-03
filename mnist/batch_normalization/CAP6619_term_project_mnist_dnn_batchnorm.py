@@ -57,7 +57,7 @@ def test_network_configurations(parameters,
     # "We added Batch Normalization to each hidden layer of the network,..."
     # Note on the ativation function: the paper states "Each hidden layer...
     # with sigmoid nonlinearity...", but tests with ReLU resulted in
-    # significantly better accuracy for SGD and slightly better for RMSProp,
+    # significantly better accuracy for SGD and slightly better for RMSprop,
     # so all tests will be executed with ReLU.
     model = models.Sequential()
     model.add(layers.Dense(p.units_per_layer,
@@ -211,5 +211,25 @@ train_images = train_images.astype('float32') / 255
 test_images = test_images.reshape((10000, 28 * 28))
 test_images = test_images.astype('float32') / 255
 
-p = parse_command_line()
+# Change this to "False" when testing from the command line. Leave set to True
+# when launching from the IDE and change the parameters below (it's faster
+# than dealing with launch.json).
+ide_test = True
+# Show a warning to let user now we are ignoring command line parameters
+if ide_test:
+    print("\n\n  --- Running from IDE - ignoring command line\n\n")
+
+p = None
+if ide_test:
+    p = Parameters(
+        hidden_layers=1,
+        units_per_layer=512,
+        epochs=5,
+        batch_size=128,
+        optimizer="sgd",
+        learning_rate=0.1,
+    )
+else:
+    p = parse_command_line()
+
 run_experiments(p)
