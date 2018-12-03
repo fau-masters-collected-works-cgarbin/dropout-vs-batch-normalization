@@ -127,6 +127,27 @@ dropout_no_adjustment_sgd = Parameters(
     max_norm_max_value=["none", "2", "3"],
 )
 
+# Test a dropout MLP network with adjustment and with SGD.
+dropout_sgd = Parameters(
+    experiment_name="dropout_mnist_mlp_dropout_sgd",
+    network=["dropout"],
+    optimizer=["sgd"],
+    hidden_layers=["2", "3", "4"],
+    units_per_layer=["1024", "2048"],
+    epochs=["5", "20", "50"],
+    batch_size=["128"],
+    dropout_rate_input_layer=["0.1"],
+    dropout_rate_hidden_layer=["0.5"],
+    # Test with Keras default 0.01 and a higher rate
+    learning_rate=["0.01", "0.1"],
+    # Test with Keras default 0.0 (no decay) and a small decay
+    decay=["0.0", "0.001"],
+    # Test with Keras default (no momentum) and some momentum
+    sgd_momentum=["0.0", "0.95", "0.99"],
+    # Test with Keras default (no max-norm) and some max-norm
+    max_norm_max_value=["none", "2", "3"],
+)
+
 
 def create_test_file(p):
 
@@ -165,3 +186,4 @@ create_test_file(quick_test)
 create_test_file(standard_sgd)
 create_test_file(standard_rmsprop)
 create_test_file(dropout_no_adjustment_sgd)
+create_test_file(dropout_sgd)
