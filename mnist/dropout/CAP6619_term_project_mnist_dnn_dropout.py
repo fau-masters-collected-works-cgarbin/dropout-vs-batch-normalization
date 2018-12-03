@@ -49,8 +49,8 @@ def create_model(parameters):
         model.add(layers.Dropout(p.dropout_rate_input_layer,
                                  input_shape=(pixels_per_image,)))
         for _ in range(p.hidden_layers):
-            # Reason to use he_normal initializer: "...weights W initialized to
-            # small random Gaussian values."
+            # Reason to use he_normal initializer: source code the paper points
+            # to has "initialization: DENSE_GAUSSIAN_SQRT_FAN_IN" for weights.
             if p.max_norm_max_value == "none":
                 model.add(layers.Dense(units_hidden_layer, activation='relu',
                                        kernel_initializer='he_normal'))
