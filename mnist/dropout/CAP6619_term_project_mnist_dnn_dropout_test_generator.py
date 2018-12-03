@@ -3,6 +3,36 @@ CAP-6619 Deep Learning Fall 2018 term project
 MNIST with standard deep neural network and dropout
 
 Create shell scripts with all tests we need to execute.
+
+Dropout paper: http://jmlr.org/papers/volume15/srivastava14a.old/srivastava14a.pdf
+
+Some default values from Keras to keep in mind:
+
+* Learning rate: SGD=0.01, RMSprop=0.001
+* Momentum: SGD=0.0 (RMSprop doesn't have momentum)
+* Decay: 0.0 for SGD and RMSprop
+* MaxNorm:  not used in either, must be explicitly added
+
+Some notes from the paper about the tests they conducted:
+
+* Number of layers and units per layer: "The architectures shown in Figure 4
+  include all combinations of 2, 3, and 4 layer networks with 1024 and 2048
+  units in each layer"
+* Using max-norm: "One particular form of regularization was found to be
+  especially useful for dropout... This is also called max-norm regularization"
+* Learning rate: "Dropout introduces a significant amount of noise in the
+  gradients compared to standard stochastic gradient descent. ... a dropout net
+  should typically use 10-100 times the learning rate that was optimal for a
+  standard neural net."
+* Momentum: "we found that values around 0.95 to 0.99 work quite a lot better."
+* Droput rate: "Typical values of p for hidden units are in the range 0.5 to
+  0.8. For input layers, the choice depends on the kind of input. For
+  real-valued inputs (image patches or speech frames), a typical value is 0.8."
+* Optimizer: the paper is not clear. It seems to use SGD.
+
+From the source code the paper points to (http://www.cs.toronto.edu/~nitish/dropout/mnist.pbtxt):
+
+* l2_decay: 0.001
 """
 import itertools
 import os
