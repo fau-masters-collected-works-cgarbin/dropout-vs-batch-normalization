@@ -76,7 +76,6 @@ def create_model(parameters):
     else:
         assert False  # Invalid optimizer
 
-    # Compile the network and test it
     model.compile(optimizer=optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
