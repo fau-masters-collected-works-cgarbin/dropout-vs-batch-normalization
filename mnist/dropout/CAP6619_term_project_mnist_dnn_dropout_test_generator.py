@@ -39,15 +39,9 @@ import os
 import stat
 from CAP6619_term_project_mnist_dropout_parameters import Parameters
 
-# Some default values from Keras to keep in mind:
-#  * Learning rate: SGD=0.01, RMSprop=0.001
-#  * Momentum: SGD=0.0 (RMSprop doesn't have momentum)
-#  * Decay: 0.0 for SGD and RMSprop
-#  * MaxNorm:  not used in either, must be explicitly added
-
 # This is a quick set of tests to test the overall sanity of the code.
 quick_test = Parameters(
-    experiment_name="dropout_mnist_dnn_quick_test",
+    experiment_name="dropout_mnist_mlp_quick_test",
     network=["standard", "dropout_no_adjustment", "dropout"],
     optimizer=["sgd", "rmsprop"],
     hidden_layers=["1"],
@@ -60,6 +54,29 @@ quick_test = Parameters(
     decay=["0.001"],
     sgd_momentum=["0.95"],
     max_norm_max_value=["2"],
+)
+
+# Test a regular MLP network (no dropout) with SGD to use as baseline.
+standard_sgd = Parameters(
+    experiment_name="dropout_mnist_mlp_standard_sgd",
+    network=["standard"],
+    optimizer=["sgd"],
+    hidden_layers=["2", "3", "4"],
+    units_per_layer=["1024", "2048"],
+    epochs=["5", "20", "50"],
+    batch_size=["128"],
+    # Not used in MLP but needs a value to satisfy command line parser
+    dropout_rate_input_layer=["0.1"],
+    # Not used in MLP but needs a value to satisfy command line parser
+    dropout_rate_hidden_layer=["0.5"],
+    # Test with Keras default 0.001 and a higher rate
+    learning_rate=["0.01", "0.1"],
+    # Test with Keras default 0.0 (no decay) and a small decay
+    decay=["0.0", "0.001"],
+    # Test with Keras default (no momentum) and some momentum
+    sgd_momentum=["0.0", "0.95"],
+    # Test with Keras default (no max-norm) and some max-norm
+    max_norm_max_value=["none", "2"],
 )
 
 
@@ -97,3 +114,4 @@ def create_test_file(p):
 
 
 create_test_file(quick_test)
+create_test_file(standard_sgd)
