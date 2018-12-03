@@ -69,12 +69,39 @@ standard_sgd = Parameters(
     dropout_rate_input_layer=["0.1"],
     # Not used in MLP but needs a value to satisfy command line parser
     dropout_rate_hidden_layer=["0.5"],
-    # Test with Keras default 0.001 and a higher rate
+    # Test with Keras default 0.01 and a higher rate
     learning_rate=["0.01", "0.1"],
     # Test with Keras default 0.0 (no decay) and a small decay
     decay=["0.0", "0.001"],
     # Test with Keras default (no momentum) and some momentum
     sgd_momentum=["0.0", "0.95"],
+    # Test with Keras default (no max-norm) and some max-norm
+    max_norm_max_value=["none", "2"],
+)
+
+# Test a regular MLP network (no dropout) with RMSprop to use as baseline.
+standard_rmsprop = Parameters(
+    experiment_name="dropout_mnist_mlp_standard_rmsprop",
+    network=["standard"],
+    optimizer=["rmsprop"],
+    hidden_layers=["2", "3", "4"],
+    units_per_layer=["1024", "2048"],
+    epochs=["5", "20", "50"],
+    batch_size=["128"],
+    # Not used in MLP but needs a value to satisfy command line parser
+    dropout_rate_input_layer=["0.1"],
+    # Not used in MLP but needs a value to satisfy command line parser
+    dropout_rate_hidden_layer=["0.5"],
+    # Test with Keras default 0.001 and a higher rate
+    # The higher value comes from the Keras MNIST sample code, albeit for CNN
+    # https://github.com/keras-team/keras/blob/master/examples/mnist_tfrecord.py
+    learning_rate=["0.001", "0.002"],
+    # Test with Keras default 0.0 (no decay) and a small decay
+    # The value 0.00001 comes from the Keras MNIST sample code, albeit for CNN
+    # https://github.com/keras-team/keras/blob/master/examples/mnist_tfrecord.py
+    decay=["0.0", "0.00001"],
+    # Not used in RMSprop but needs a value to satisfy command line parser
+    sgd_momentum=["0.0"],
     # Test with Keras default (no max-norm) and some max-norm
     max_norm_max_value=["none", "2"],
 )
@@ -115,3 +142,4 @@ def create_test_file(p):
 
 create_test_file(quick_test)
 create_test_file(standard_sgd)
+create_test_file(standard_rmsprop)
