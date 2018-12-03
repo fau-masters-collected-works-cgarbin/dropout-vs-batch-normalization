@@ -15,7 +15,7 @@ from keras import backend
 from keras.datasets import mnist
 
 
-def test_model(description, model, parameters, end_experiment_callback):
+def test_model(model, parameters, end_experiment_callback):
     """Test one model: train it, evaluate with test data, save results."""
     # To make lines shorter
     p = parameters
@@ -51,7 +51,7 @@ def test_network_configurations(parameters,
     model.compile(optimizer=optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    test_model("standard_network", model, p, end_experiment_callback)
+    test_model(model, p, end_experiment_callback)
 
     # Batch normalization
     # "We added Batch Normalization to each hidden layer of the network,..."
@@ -78,7 +78,7 @@ def test_network_configurations(parameters,
     model.compile(optimizer=optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    test_model("batch_normalization", model, p, end_experiment_callback)
+    test_model(model, p, end_experiment_callback)
 
 
 def save_experiment(parameters, model, test_loss, test_acc,
