@@ -130,7 +130,7 @@ def save_experiment(parameters, model, test_loss, test_acc,
     # Save progress so far into the file used for this experiment
     results_file = p.experiment_name + "_results.txt"
     # First, get a formatted string; if we use to_string(header=False) it
-    # will use only one space between columnd, instead of formatting
+    # will use only one space between columns, instead of formatting
     # considering the column name (the header).
     # Also ensure that we use a fixed-length size for the network name to
     # keep the columns aligned.
