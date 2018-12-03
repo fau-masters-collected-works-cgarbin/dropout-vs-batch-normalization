@@ -295,27 +295,22 @@ ide_test = True
 if ide_test:
     print("\n\n  --- Running from IDE - ignoring command line\n\n")
 
-# Trailing spaces to keep the columns adjusted in the results file
-NETWORK_STANDARD = "standard             "
-NETWORK_DROPOUT_NO_ADJUSTMENT = "dropout_no_adjustment"
-NETWORK_DROPOUT = "dropout              "
-
 p = None
 if ide_test:
     p = Parameters(
         experiment_name="dropout_mnist_dnn",
-        network="dropout",
-        optimizer="sgd",
+        network="standard",
+        optimizer="rmsprop",
         hidden_layers=1,
         units_per_layer=512,
-        epochs=2,
+        epochs=5,
         batch_size=128,
         dropout_rate_input_layer=0.1,
         dropout_rate_hidden_layer=0.5,
-        learning_rate=0.1,
-        decay=0.001,
-        sgd_momentum=0.95,
-        max_norm_max_value=2,
+        learning_rate=0.001,
+        decay=0.0,
+        sgd_momentum="none",
+        max_norm_max_value="none",
     )
 else:
     p = parse_command_line()
