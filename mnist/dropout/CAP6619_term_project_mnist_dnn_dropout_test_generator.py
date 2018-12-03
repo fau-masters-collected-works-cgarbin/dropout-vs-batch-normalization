@@ -104,7 +104,7 @@ def create_test_file(p):
                 p.experiment_name,
                 test[0], test[1], test[2], test[3], test[4], test[5], test[6],
                 test[7], test[8], test[9], test[10], test[11])
-            f.write('echo "{} - test {} of {} - {}"\n'.format(
+            f.write('echo "\n\n{} - test {} of {} - {}"\n'.format(
                 p.experiment_name, i, len(tests), test))
             f.write("python3 CAP6619_term_project_mnist_dnn_dropout.py \\\n")
             f.write("   " + args + "\n\n")
