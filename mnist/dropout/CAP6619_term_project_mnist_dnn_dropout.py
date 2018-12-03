@@ -129,13 +129,16 @@ def save_experiment(parameters, model, test_loss, test_acc,
 
     # Save progress so far into the file used for this experiment
     results_file = p.experiment_name + "_results.txt"
+    # First, get a formatted string; if we use to_string(header=False) it
+    # will use only one space between columnd, instead of formatting
+    # considering the column name (the header).
+    # Also ensure that we use a fixed-length size for the network name to
+    # keep the columns aligned.
+    output = StringIO()
+    experiments.to_string(output, formatters={
+                          "Network": "{:>25}".format}, header=True)
     if os.path.isfile(results_file):
         # File already exists - append data without column names.
-        # First, get a formatted string; if we use to_string(header=False) it
-        # will use only one space between columnds, instead of formatting
-        # considering the column name (the header).
-        output = StringIO()
-        experiments.to_string(output)
         with open(results_file, "a") as f:
             f.write(os.linesep)
             f.write(output.getvalue().splitlines()[1])
@@ -143,7 +146,7 @@ def save_experiment(parameters, model, test_loss, test_acc,
     else:
         # File doesn't exist yet - create and write column names + data
         with open(results_file, "w") as f:
-            experiments.to_string(f)
+            f.write(output.getvalue())
 
     # Save training history and model for this specific experiment.
     # The model object must be a trained model, which means it has a `history`
@@ -292,13 +295,18 @@ ide_test = True
 if ide_test:
     print("\n\n  --- Running from IDE - ignoring command line\n\n")
 
+# Trailing spaces to keep the columns adjusted in the results file
+NETWORK_STANDARD = "standard             "
+NETWORK_DROPOUT_NO_ADJUSTMENT = "dropout_no_adjustment"
+NETWORK_DROPOUT = "dropout              "
+
 p = None
 if ide_test:
     p = Parameters(
         experiment_name="dropout_mnist_dnn",
-        network="dropout_no_adjustment",
+        network="dropout",
         optimizer="sgd",
-        hidden_layers=2,
+        hidden_layers=1,
         units_per_layer=512,
         epochs=2,
         batch_size=128,
