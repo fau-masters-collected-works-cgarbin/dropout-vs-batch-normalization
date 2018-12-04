@@ -221,7 +221,7 @@ if ide_test:
 p = None
 if ide_test:
     p = Parameters(
-        experiment_name="batchnorm_mnist_dnn",
+        experiment_name="batchnorm_mnist_mlp",
         network="batch_normalization",
         optimizer="sgd",
         hidden_layers=1,

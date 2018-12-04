@@ -8,7 +8,7 @@ import pandas as pd
 import glob
 
 # Get all result files from current directory
-all_files = glob.glob("MNIST_DNN_BatchNorm_*.txt")
+all_files = glob.glob("MNIST_MLP_BatchNorm_*.txt")
 # Create a generator to get data from one file at a time
 file_generator = (pd.read_csv(f, delim_whitespace=True) for f in all_files)
 # Read all files using the generator and concatenates them (ignore_index=True

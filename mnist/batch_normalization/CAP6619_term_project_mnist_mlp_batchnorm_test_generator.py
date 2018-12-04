@@ -138,7 +138,7 @@ def create_test_file(p):
                 test[7], test[8])
             f.write('echo "\n\n{} - test {} of {} - {}"\n'.format(
                 p.experiment_name, i, len(tests), test))
-            f.write("python3 CAP6619_term_project_mnist_dnn_batchnorm.py \\\n")
+            f.write("python3 CAP6619_term_project_mnist_mlp_batchnorm.py \\\n")
             f.write("   " + args + "\n\n")
 
     # Make it executable (for the current user)
