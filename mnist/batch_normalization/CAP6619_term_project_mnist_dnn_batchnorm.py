@@ -7,6 +7,8 @@ Batch normalization paper: https://arxiv.org/pdf/1502.03167.pdf
 import time
 import pandas as pd
 import collections
+import json
+import os
 from keras import models
 from keras import layers
 from keras import optimizers
@@ -14,6 +16,8 @@ from keras.utils import to_categorical
 from keras import backend
 from keras.datasets import mnist
 from datetime import datetime
+from io import StringIO
+from argparse import ArgumentParser
 
 
 def create_model(parameters):
@@ -104,38 +108,54 @@ def save_experiment(parameters, model, test_loss, test_acc,
         p.hidden_layers, p.units_per_layer, p.epochs, p.batch_size,
         backend.eval(optimizer.lr), p.decay, model.count_params(),
         training_time, test_time]
-    # Show progress so far
+
+    # Show progress so far to the user
     print(experiments)
 
-    # File where the results will be saved (the name encodes the parameters
-    # used in the experiments)
-    base_name_prefix = "MNIST_DNN_BatchNorm"
-    base_name_template = ("{}_hl={:03d}_uhl={:04d}_e={:02d}_bs={:04d}_o={}"
-                          "_lr={:0.4f}_d={:0.4f}")
-    base_name = base_name_template.format(
-        base_name_prefix, p.hidden_layers, p.units_per_layer, p.epochs,
-        p.batch_size, p.optimizer, p.learning_rate, p.decay)
-
-    # Save progress so far into one file
-    with open(base_name + ".txt", "w") as f:
-        experiments.to_string(f)
+    # Save progress so far into the file used for this experiment
+    results_file = p.experiment_name + "_results.txt"
+    # First, get a formatted string; if we use to_string(header=False) it
+    # will use only one space between columns, instead of formatting
+    # considering the column name (the header).
+    # Also ensure that we use a fixed-length size for the network name to
+    # keep the columns aligned.
+    output = StringIO()
+    experiments.to_string(output, formatters={
+                          "Network": "{:>25}".format}, header=True)
+    if os.path.isfile(results_file):
+        # File already exists - append data without column names.
+        with open(results_file, "a") as f:
+            f.write(os.linesep)
+            f.write(output.getvalue().splitlines()[1])
+        output.close()
+    else:
+        # File doesn't exist yet - create and write column names + data
+        with open(results_file, "w") as f:
+            f.write(output.getvalue())
 
     # Save training history and model for this specific experiment.
     # The model object must be a trained model, which means it has a `history`
     # object with the training results for each epoch.
     # We need to save the history separately because `model.save` won't save
     # it - it saves only the model data.
-    results_file = base_name + "_" + p.experiment_name + "_" + optimizer_name + "_"
-    import json
-    with open(results_file + "history.json", 'w') as f:
+
+    # File where the training history and model will be saved. The name encodes
+    # the test the parameters used in the epxeriment.
+    base_name_template = ("{}_nw={}_opt={}_hl={:03d}_uhl={:04d}_e={:02d}"
+                          "_bs={:04d}_lr={:03.1f}d={:0.4f}")
+    base_name = base_name_template.format(
+        p.experiment_name, p.network, p.optimizer, p.hidden_layers,
+        p.units_per_layer, p.epochs, p.batch_size, p.learning_rate, p.decay,
+    )
+
+    with open(base_name + "_history.json", 'w') as f:
         json.dump(model.history.history, f)
     # Uncomment to save the model - it may take quite a bit of disk space
-    # model.save(results_file + "model.h5")
+    # model.save(base_name + "_model.h5")
 
 
 def parse_command_line():
     """Parse command line parameters into a `Parameters` variable."""
-    from argparse import ArgumentParser
     ap = ArgumentParser(description='Batch normalization with MNIST data set.')
 
     # Format: short parameter name, long name, default value (if not specified)
