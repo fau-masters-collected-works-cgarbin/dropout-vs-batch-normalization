@@ -247,7 +247,7 @@ if ide_test:
 p = None
 if ide_test:
     p = Parameters(
-        experiment_name="dropout_mnist_dnn",
+        experiment_name="dropout_mnist_mlp",
         network="standard",
         optimizer="rmsprop",
         hidden_layers=1,
