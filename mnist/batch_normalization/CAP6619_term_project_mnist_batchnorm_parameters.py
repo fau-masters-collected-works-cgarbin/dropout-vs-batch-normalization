@@ -34,4 +34,9 @@ Parameters = collections.namedtuple("Parameters", [
     "learning_rate",
     # Weight decay (L2).
     "decay",
+    # Momentum for the SGD optimizer (not used in RMSProp). The paper mentions
+    # as a side noe ("SGD variants such as momentum... have been used to
+    # achieve state of the art performance.)" and it has proven to benefitial
+    # in the dropout tests.
+    "sgd_momentum",
 ])

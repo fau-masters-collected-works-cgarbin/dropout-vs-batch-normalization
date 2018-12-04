@@ -73,6 +73,7 @@ quick_test = Parameters(
     batch_size=["128"],
     learning_rate=["0.01", "0.1"],
     decay=["0.0", "0.0001"],
+    sgd_momentum=["0.95"],
 )
 
 # Test batch normalization with SGD.
@@ -90,6 +91,8 @@ batchnorm_sgd = Parameters(
     learning_rate=["0.01", "0.1"],
     # Test with Keras default 0.0 (no decay) and a small decay
     decay=["0.0", "0.0001"],
+    # Test with Keras default (no momentum) and some momentum
+    sgd_momentum=["0.0", "0.95"],
 )
 
 # Test batch normalization with RMSprop.
@@ -107,6 +110,8 @@ batchnorm_rmsprop = Parameters(
     learning_rate=["0.001", "0.005"],
     # Test with Keras default 0.0 (no decay) and a small decay
     decay=["0.0", "0.0001"],
+    # Not used in RMSprop but needs a value to satisfy command line parser
+    sgd_momentum=["0.0"],
 )
 
 

@@ -55,7 +55,8 @@ def create_model(parameters):
     # Create the optimizer
     optimizer = None
     if p.optimizer == "sgd":
-        optimizer = optimizers.SGD(p.learning_rate, decay=p.decay)
+        optimizer = optimizers.SGD(
+            p.learning_rate, momentum=float(p.sgd_momentum), decay=p.decay)
     elif p.optimizer == "rmsprop":
         optimizer = optimizers.RMSprop(p.learning_rate, decay=p.decay)
     else:
@@ -106,8 +107,8 @@ def save_experiment(parameters, model, test_loss, test_acc,
         p.experiment_name, datetime.now().strftime("%Y-%m-%d_%H:%M:%S"),
         "MNIST", p.network, optimizer_name, test_loss, test_acc,
         p.hidden_layers, p.units_per_layer, p.epochs, p.batch_size,
-        backend.eval(optimizer.lr), p.decay, model.count_params(),
-        training_time, test_time]
+        backend.eval(optimizer.lr), p.decay, p.sgd_momentum,
+        model.count_params(), training_time, test_time]
 
     # Show progress so far to the user
     print(experiments)
@@ -142,10 +143,11 @@ def save_experiment(parameters, model, test_loss, test_acc,
     # File where the training history and model will be saved. The name encodes
     # the test the parameters used in the epxeriment.
     base_name_template = ("{}_nw={}_opt={}_hl={:03d}_uhl={:04d}_e={:02d}"
-                          "_bs={:04d}_lr={:03.1f}d={:0.4f}")
+                          "_bs={:04d}_lr={:03.1f}d={:0.4f}_m{}")
     base_name = base_name_template.format(
         p.experiment_name, p.network, p.optimizer, p.hidden_layers,
         p.units_per_layer, p.epochs, p.batch_size, p.learning_rate, p.decay,
+        p.sgd_momentum,
     )
 
     with open(base_name + "_history.json", 'w') as f:
@@ -168,6 +170,7 @@ def parse_command_line():
     ap.add_argument("--batch_size", default=128, type=int)
     ap.add_argument("--learning_rate", default=0.01, type=float)
     ap.add_argument("--decay", type=float)
+    ap.add_argument("--sgd_momentum", type=str)
 
     args = ap.parse_args()
 
@@ -181,6 +184,7 @@ def parse_command_line():
         batch_size=args.batch_size,
         learning_rate=args.learning_rate,
         decay=args.decay,
+        sgd_momentum=args.sgd_momentum,
     )
 
 
@@ -188,8 +192,8 @@ def parse_command_line():
 experiments = pd.DataFrame(columns=[
     "ExperimentName", "TestTime", "DataSetName", "Network", "Optimizer",
     "TestLoss", "TestAccuracy", "HiddenLayers", "UnitsPerLayer", "Epochs",
-    "BatchSize", "LearningRate", "Decay", "ModelParamCount", "TrainingCpuTime",
-    "TestCpuTime"])
+    "BatchSize", "LearningRate", "Decay", "SgdMomentum", "ModelParamCount",
+    "TrainingCpuTime", "TestCpuTime"])
 
 # Load and prepare data
 # Note that they are global variables used in the functions above. A future
@@ -226,6 +230,7 @@ if ide_test:
         batch_size=128,
         learning_rate=0.1,
         decay=0.0,
+        sgd_momentum=0.0,
     )
 else:
     p = parse_command_line()
