@@ -50,6 +50,7 @@ parameters, as follows:
 import itertools
 import os
 import stat
+from CAP6619_term_project_mnist_batchnorm_parameters import Parameters
 
 # All combinations of values we need to try
 # This is the complete list - uncomment for final tests
@@ -61,31 +62,84 @@ import stat
 # optimizer = ["sgd", "rmsprop"]
 # learning_rate = ["0.1", "0.01", "0.001"]
 
-# This is a simplified list
-hidden_layers = ["1", "2"]
-units_per_layer = ["512"]
-epochs = ["2"]
-batch_size = ["128"]
-optimizer = ["sgd", "rmsprop"]
-learning_rate = ["0.1", "0.01"]
+# This is a quick set of tests to test the overall sanity of the code.
+quick_test = Parameters(
+    experiment_name="batchnorm_mnist_mlp_quick_test",
+    network=["batch_normalization"],
+    optimizer=["sgd", "rmsprop"],
+    hidden_layers=["1", "2"],
+    units_per_layer=["512"],
+    epochs=["2"],
+    batch_size=["128"],
+    learning_rate=["0.01", "0.1"],
+    decay=["0.0", "0.0001"],
+)
 
-all_tests = list(itertools.product(
-    hidden_layers, units_per_layer, epochs, batch_size, optimizer,
-    learning_rate))
+# Test batch normalization with SGD.
+# Use similar configurations as in the dropout test so we can compare them.
+batchnorm_sgd = Parameters(
+    experiment_name="batchnorm_mnist_mlp_sgd",
+    network=["batch_normalization"],
+    optimizer=["sgd"],
+    hidden_layers=["2", "3", "4"],
+    units_per_layer=["1024", "2048"],
+    epochs=["5", "20", "50"],
+    batch_size=["128"],
+    # Test with the Keras default 0.01 and a higer rate because the paper
+    # recommends "Increase learning rate."
+    learning_rate=["0.01", "0.1"],
+    # Test with Keras default 0.0 (no decay) and a small decay
+    decay=["0.0", "0.0001"],
+)
 
-args_template = ("--hidden_layers {} --units_per_layer {} --epochs {} "
-                 "--batch_size {} --optimizer {} --learning_rate {}")
-script_file = "batchnorm_mnist_tests.sh"
-with open(script_file, "w") as f:
-    f.write("#!/bin/bash\n")
-    f.write("# This file was automatically generated\n\n")
-    for i, test in enumerate(all_tests, start=1):
-        args = args_template.format(test[0], test[1], test[2], test[3],
-                                    test[4], test[5])
-        f.write('echo "Testing {} of {} - {}"\n'.format(i, len(all_tests),
-                                                        test))
-        f.write("python3 CAP6619_term_project_mnist_dnn_batchnorm.py \\\n")
-        f.write("   " + args + "\n\n")
+# Test batch normalization with RMSprop.
+# Use similar configurations as in the dropout test so we can compare them.
+batchnorm_rmsprop = Parameters(
+    experiment_name="batchnorm_mnist_mlp_rmsprop",
+    network=["batch_normalization"],
+    optimizer=["rmsprop"],
+    hidden_layers=["2", "3", "4"],
+    units_per_layer=["1024", "2048"],
+    epochs=["5", "20", "50"],
+    batch_size=["128"],
+    # Test with the Keras default 0.001 and a higer rate because the paper
+    # recommends "Increase learning rate."
+    learning_rate=["0.001", "0.005"],
+    # Test with Keras default 0.0 (no decay) and a small decay
+    decay=["0.0", "0.0001"],
+)
 
-# Make it executable (for the current user)
-os.chmod(script_file, os.stat(script_file).st_mode | stat.S_IEXEC)
+
+def create_test_file(p):
+
+    tests = list(itertools.product(
+        p.network, p.optimizer, p.hidden_layers, p.units_per_layer, p.epochs,
+        p.batch_size, p.learning_rate, p.decay))
+
+    args_template = (
+        "--experiment_name {} --network {} --optimizer {} --hidden_layers {} "
+        "--units_per_layer {} --epochs {} --batch_size {} --learning_rate {} "
+        "--decay {}")
+
+    file_name = p.experiment_name + ".sh"
+
+    with open(file_name, "w") as f:
+        f.write("#!/bin/bash\n")
+        f.write("# This file was automatically generated\n\n")
+        for i, test in enumerate(tests, start=1):
+            args = args_template.format(
+                p.experiment_name,
+                test[0], test[1], test[2], test[3], test[4], test[5], test[6],
+                test[7])
+            f.write('echo "\n\n{} - test {} of {} - {}"\n'.format(
+                p.experiment_name, i, len(tests), test))
+            f.write("python3 CAP6619_term_project_mnist_dnn_batchnorm.py \\\n")
+            f.write("   " + args + "\n\n")
+
+    # Make it executable (for the current user)
+    os.chmod(file_name, os.stat(file_name).st_mode | stat.S_IEXEC)
+
+
+create_test_file(quick_test)
+create_test_file(batchnorm_sgd)
+create_test_file(batchnorm_rmsprop)
