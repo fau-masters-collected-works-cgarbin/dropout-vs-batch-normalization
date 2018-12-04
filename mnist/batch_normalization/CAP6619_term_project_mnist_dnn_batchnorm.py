@@ -51,9 +51,9 @@ def create_model(parameters):
     # Create the optimizer
     optimizer = None
     if p.optimizer == "sgd":
-        optimizer = optimizers.SGD(p.learning_rate)
+        optimizer = optimizers.SGD(p.learning_rate, decay=p.decay)
     elif p.optimizer == "rmsprop":
-        optimizer = optimizers.RMSprop(p.learning_rate)
+        optimizer = optimizers.RMSprop(p.learning_rate, decay=p.decay)
     else:
         assert False  # Invalid optimizer
 
@@ -102,7 +102,7 @@ def save_experiment(parameters, model, test_loss, test_acc,
         p.experiment_name, datetime.now().strftime("%Y-%m-%d_%H:%M:%S"),
         "MNIST", p.network, optimizer_name, test_loss, test_acc,
         p.hidden_layers, p.units_per_layer, p.epochs, p.batch_size,
-        backend.eval(optimizer.lr), model.count_params(),
+        backend.eval(optimizer.lr), p.decay, model.count_params(),
         training_time, test_time]
     # Show progress so far
     print(experiments)
@@ -111,10 +111,10 @@ def save_experiment(parameters, model, test_loss, test_acc,
     # used in the experiments)
     base_name_prefix = "MNIST_DNN_BatchNorm"
     base_name_template = ("{}_hl={:03d}_uhl={:04d}_e={:02d}_bs={:04d}_o={}"
-                          "_lr={:0.4f}")
+                          "_lr={:0.4f}_d={:0.4f}")
     base_name = base_name_template.format(
         base_name_prefix, p.hidden_layers, p.units_per_layer, p.epochs,
-        p.batch_size, p.optimizer, p.learning_rate)
+        p.batch_size, p.optimizer, p.learning_rate, p.decay)
 
     # Save progress so far into one file
     with open(base_name + ".txt", "w") as f:
@@ -147,6 +147,7 @@ def parse_command_line():
     ap.add_argument("--epochs", default=5, type=int)
     ap.add_argument("--batch_size", default=128, type=int)
     ap.add_argument("--learning_rate", default=0.01, type=float)
+    ap.add_argument("--decay", type=float)
 
     args = ap.parse_args()
 
@@ -159,6 +160,7 @@ def parse_command_line():
         epochs=args.epochs,
         batch_size=args.batch_size,
         learning_rate=args.learning_rate,
+        decay=args.decay,
     )
 
 
@@ -166,7 +168,7 @@ def parse_command_line():
 experiments = pd.DataFrame(columns=[
     "ExperimentName", "TestTime", "DataSetName", "Network", "Optimizer",
     "TestLoss", "TestAccuracy", "HiddenLayers", "UnitsPerLayer", "Epochs",
-    "BatchSize", "LearningRate", "ModelParamCount", "TrainingCpuTime",
+    "BatchSize", "LearningRate", "Decay", "ModelParamCount", "TrainingCpuTime",
     "TestCpuTime"])
 
 # Parameters to control the experiments.
@@ -197,6 +199,9 @@ Parameters = collections.namedtuple("Parameters", [
     # The default Keras values are SGD: 0.01, RMSProp: 0.001 (see
     # https://keras.io/optimizers/).
     "learning_rate",
+    # Weight decay (L2). The source code the paper points to has "l2_decay"
+    # set to 0.001. The default in Keras for SGD and RMSProp is 0.0.
+    "decay",
 ])
 
 # Load and prepare data
@@ -233,6 +238,7 @@ if ide_test:
         epochs=2,
         batch_size=128,
         learning_rate=0.1,
+        decay=0.0,
     )
 else:
     p = parse_command_line()
