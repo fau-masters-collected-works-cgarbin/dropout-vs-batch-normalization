@@ -13,6 +13,7 @@ from keras import optimizers
 from keras.utils import to_categorical
 from keras import backend
 from keras.datasets import mnist
+from datetime import datetime
 
 
 def create_model(parameters):
@@ -98,10 +99,11 @@ def save_experiment(parameters, model, test_loss, test_acc,
     optimizer_name = type(optimizer).__name__
 
     experiments.loc[len(experiments)] = [
-        p.experiment_name, "MNIST", p.network, optimizer_name, test_loss,
-        test_acc, p.hidden_layers, p.units_per_layer,
-        p.epochs, p.batch_size, backend.eval(optimizer.lr),
-        model.count_params(), training_time, test_time]
+        p.experiment_name, datetime.now().strftime("%Y-%m-%d_%H:%M:%S"),
+        "MNIST", p.network, optimizer_name, test_loss, test_acc,
+        p.hidden_layers, p.units_per_layer, p.epochs, p.batch_size,
+        backend.eval(optimizer.lr), model.count_params(),
+        training_time, test_time]
     # Show progress so far
     print(experiments)
 
@@ -162,9 +164,10 @@ def parse_command_line():
 
 # Store data from the experiments
 experiments = pd.DataFrame(columns=[
-    "ExperimentName", "DataSetName", "Network", "Optimizer", "TestLoss",
-    "TestAccuracy", "HiddenLayers", "UnitsPerLayer", "Epochs", "BatchSize",
-    "LearningRate", "ModelParamCount", "TrainingCpuTime", "TestCpuTime"])
+    "ExperimentName", "TestTime", "DataSetName", "Network", "Optimizer",
+    "TestLoss", "TestAccuracy", "HiddenLayers", "UnitsPerLayer", "Epochs",
+    "BatchSize", "LearningRate", "ModelParamCount", "TrainingCpuTime",
+    "TestCpuTime"])
 
 # Parameters to control the experiments.
 Parameters = collections.namedtuple("Parameters", [
