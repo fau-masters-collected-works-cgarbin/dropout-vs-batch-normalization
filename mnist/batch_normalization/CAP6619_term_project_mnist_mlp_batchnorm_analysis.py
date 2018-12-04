@@ -22,8 +22,5 @@ with open(base_name + "all.txt", "w") as f:
 with open(base_name + "top10_accuracy_overall.txt", "w") as f:
     results.nlargest(10, "TestAccuracy").to_string(f)
 with open(base_name + "top10_accuracy_batchnorm.txt", "w") as f:
-    results.loc[results["Description"] != "standard_network"]. \
-        nlargest(10, "TestAccuracy").to_string(f)
-with open(base_name + "top10_accuracy_no_batchnorm.txt", "w") as f:
-    results.loc[results["Description"] == "standard_network"]. \
+    results.loc[results["Network"] != "standard_network"]. \
         nlargest(10, "TestAccuracy").to_string(f)
