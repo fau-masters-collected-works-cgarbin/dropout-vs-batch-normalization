@@ -119,12 +119,12 @@ def create_test_file(p):
 
     tests = list(itertools.product(
         p.network, p.optimizer, p.hidden_layers, p.units_per_layer, p.epochs,
-        p.batch_size, p.learning_rate, p.decay))
+        p.batch_size, p.learning_rate, p.decay, p.sgd_momentum))
 
     args_template = (
         "--experiment_name {} --network {} --optimizer {} --hidden_layers {} "
         "--units_per_layer {} --epochs {} --batch_size {} --learning_rate {} "
-        "--decay {}")
+        "--decay {} --sgd_momentum {}")
 
     file_name = p.experiment_name + ".sh"
 
@@ -135,7 +135,7 @@ def create_test_file(p):
             args = args_template.format(
                 p.experiment_name,
                 test[0], test[1], test[2], test[3], test[4], test[5], test[6],
-                test[7])
+                test[7], test[8])
             f.write('echo "\n\n{} - test {} of {} - {}"\n'.format(
                 p.experiment_name, i, len(tests), test))
             f.write("python3 CAP6619_term_project_mnist_dnn_batchnorm.py \\\n")

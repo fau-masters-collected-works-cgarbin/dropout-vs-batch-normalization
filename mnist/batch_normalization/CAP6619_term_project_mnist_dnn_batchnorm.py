@@ -213,7 +213,7 @@ test_images = test_images.astype('float32') / 255
 # Change this to "False" when testing from the command line. Leave set to True
 # when launching from the IDE and change the parameters below (it's faster
 # than dealing with launch.json).
-ide_test = True
+ide_test = False
 # Show a warning to let user now we are ignoring command line parameters
 if ide_test:
     print("\n\n  --- Running from IDE - ignoring command line\n\n")
