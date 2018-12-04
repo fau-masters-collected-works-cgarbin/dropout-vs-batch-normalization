@@ -32,7 +32,6 @@ Parameters = collections.namedtuple("Parameters", [
     # The default Keras values are SGD: 0.01, RMSProp: 0.001 (see
     # https://keras.io/optimizers/).
     "learning_rate",
-    # Weight decay (L2). The source code the paper points to has "l2_decay"
-    # set to 0.001. The default in Keras for SGD and RMSProp is 0.0.
+    # Weight decay (L2).
     "decay",
 ])
