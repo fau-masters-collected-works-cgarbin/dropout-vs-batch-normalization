@@ -15,45 +15,16 @@ from keras import backend
 from keras.datasets import mnist
 
 
-def test_model(model, parameters, end_experiment_callback):
-    """Test one model: train it, evaluate with test data, save results."""
+def create_model(parameters):
+    """Create a model described by the given parameters."""
     # To make lines shorter
     p = parameters
 
-    start = time.process_time()
-    # From the paper: "Shuffle training examples more thoroughly." shuffle=True
-    # is the default in model.fit already, so no need to explicitly add it.
-    model.fit(train_images, train_labels, epochs=p.epochs,
-              batch_size=p.batch_size)
-    training_time = time.process_time() - start
+    # The only network type currently supported.
+    # Use the dropout code to test standard networks (no dropout, not batch
+    # normalization).
+    assert p.network == "batch_normalization"
 
-    start = time.process_time()
-    test_loss, test_acc = model.evaluate(test_images, test_labels)
-    test_time = time.process_time() - start
-
-    end_experiment_callback(parameters, model, test_loss, test_acc,
-                            training_time, test_time)
-
-
-def test_network_configurations(parameters,
-                                optimizer, end_experiment_callback):
-    """Test all network configurations with the given parameters."""
-    # To make lines shorter
-    p = parameters
-
-    # Standard network (no batch normalization)
-    model = models.Sequential()
-    model.add(layers.Dense(p.units_per_layer,
-                           activation='relu', input_shape=(28 * 28,)))
-    for _ in range(p.hidden_layers - 1):
-        model.add(layers.Dense(p.units_per_layer, activation='relu'))
-    model.add(layers.Dense(10, activation='softmax'))
-    model.compile(optimizer=optimizer,
-                  loss='categorical_crossentropy',
-                  metrics=['accuracy'])
-    test_model(model, p, end_experiment_callback)
-
-    # Batch normalization
     # "We added Batch Normalization to each hidden layer of the network,..."
     # Note on the ativation function: the paper states "Each hidden layer...
     # with sigmoid nonlinearity...", but tests with ReLU resulted in
@@ -75,10 +46,44 @@ def test_network_configurations(parameters,
         scale = i == p.hidden_layers - 2  # Scale only last layer
         model.add(layers.BatchNormalization(scale=scale))
     model.add(layers.Dense(10, activation='softmax'))
+
+    # Create the optimizer
+    optimizer = None
+    if p.optimizer == "sgd":
+        optimizer = optimizers.SGD(p.learning_rate)
+    elif p.optimizer == "rmsprop":
+        optimizer = optimizers.RMSprop(p.learning_rate)
+    else:
+        assert False  # Invalid optimizer
+
     model.compile(optimizer=optimizer,
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
-    test_model(model, p, end_experiment_callback)
+
+    return model
+
+
+def test_model(parameters, end_experiment_callback):
+    """Test one model: create, train, evaluate with test data and save
+    results."""
+    # To make lines shorter
+    p = parameters
+
+    model = create_model(parameters)
+
+    start = time.process_time()
+    # From the paper: "Shuffle training examples more thoroughly." shuffle=True
+    # is the default in model.fit already, so no need to explicitly add it.
+    model.fit(train_images, train_labels, epochs=p.epochs,
+              batch_size=p.batch_size)
+    training_time = time.process_time() - start
+
+    start = time.process_time()
+    test_loss, test_acc = model.evaluate(test_images, test_labels)
+    test_time = time.process_time() - start
+
+    end_experiment_callback(parameters, model, test_loss, test_acc,
+                            training_time, test_time)
 
 
 def save_experiment(parameters, model, test_loss, test_acc,
@@ -155,20 +160,6 @@ def parse_command_line():
     )
 
 
-def run_experiments(parameters):
-    """Run all experiments: test all network configurations, with different
-    optimizers. """
-    optimizer = None
-    if (parameters.optimizer == "sgd"):
-        optimizer = optimizers.SGD(lr=parameters.learning_rate)
-    elif (parameters.optimizer == "rmsprop"):
-        optimizer = optimizers.RMSprop(lr=parameters.learning_rate)
-    assert optimizer is not None  # Provide a valid optimizer
-
-    test_network_configurations(parameters, optimizer=optimizer,
-                                end_experiment_callback=save_experiment)
-
-
 # Store data from the experiments
 experiments = pd.DataFrame(columns=[
     "ExperimentName", "DataSetName", "Network", "Optimizer", "TestLoss",
@@ -243,4 +234,4 @@ if ide_test:
 else:
     p = parse_command_line()
 
-run_experiments(p)
+test_model(p, save_experiment)
