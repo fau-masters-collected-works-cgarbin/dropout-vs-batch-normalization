@@ -1,6 +1,6 @@
 """Parameters to control the experiments.
 
-These parameters drive the code. Modify them to test different configuraitons.
+These parameters drive the code. Modify them to test different configurations.
 """
 import collections
 
