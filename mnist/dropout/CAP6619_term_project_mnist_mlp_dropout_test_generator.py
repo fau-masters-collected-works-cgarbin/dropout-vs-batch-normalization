@@ -37,7 +37,7 @@ From the source code the paper points to (http://www.cs.toronto.edu/~nitish/drop
 import itertools
 import os
 import stat
-from CAP6619_term_project_mnist_dropout_parameters import Parameters
+from CAP6619_term_project_mnist_mlp_dropout_parameters import Parameters
 
 # This is a quick set of tests to test the overall sanity of the code.
 quick_test = Parameters(

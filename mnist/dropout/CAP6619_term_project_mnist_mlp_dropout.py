@@ -18,7 +18,7 @@ from keras.datasets import mnist
 from datetime import datetime
 from io import StringIO
 from argparse import ArgumentParser
-from CAP6619_term_project_mnist_dropout_parameters import Parameters
+from CAP6619_term_project_mnist_mlp_dropout_parameters import Parameters
 
 
 def create_model(parameters):
@@ -239,7 +239,7 @@ test_images = test_images.astype('float32') / 255
 # Change this to "False" when testing from the command line. Leave set to True
 # when launching from the IDE and change the parameters below (it's faster
 # than dealing with launch.json).
-ide_test = False
+ide_test = True
 # Show a warning to let user now we are ignoring command line parameters
 if ide_test:
     print("\n\n  --- Running from IDE - ignoring command line\n\n")

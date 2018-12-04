@@ -50,7 +50,7 @@ parameters, as follows:
 import itertools
 import os
 import stat
-from CAP6619_term_project_mnist_batchnorm_parameters import Parameters
+from CAP6619_term_project_mnist_mlp_batchnorm_parameters import Parameters
 
 # All combinations of values we need to try
 # This is the complete list - uncomment for final tests
