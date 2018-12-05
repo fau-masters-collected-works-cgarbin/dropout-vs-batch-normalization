@@ -81,7 +81,8 @@ def test_model(parameters, end_experiment_callback):
     # From the paper: "Shuffle training examples more thoroughly." shuffle=True
     # is the default in model.fit already, so no need to explicitly add it.
     model.fit(train_images, train_labels, epochs=p.epochs,
-              batch_size=p.batch_size)
+              batch_size=p.batch_size,
+              validation_data=(test_images, test_labels))
     training_time = time.process_time() - start
 
     start = time.process_time()
@@ -224,7 +225,7 @@ if ide_test:
         experiment_name="batchnorm_mnist_mlp",
         network="batch_normalization",
         optimizer="sgd",
-        hidden_layers=1,
+        hidden_layers=2,
         units_per_layer=512,
         epochs=2,
         batch_size=128,
