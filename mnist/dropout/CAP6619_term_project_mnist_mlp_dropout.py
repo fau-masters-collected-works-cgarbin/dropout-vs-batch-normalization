@@ -93,7 +93,8 @@ def test_model(parameters, end_experiment_callback):
 
     start = time.process_time()
     model.fit(train_images, train_labels, epochs=p.epochs,
-              batch_size=p.batch_size)
+              batch_size=p.batch_size,
+              validation_data=(test_images, test_labels))
     training_time = time.process_time() - start
 
     start = time.process_time()
