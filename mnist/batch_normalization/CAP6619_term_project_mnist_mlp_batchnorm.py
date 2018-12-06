@@ -69,7 +69,7 @@ def create_model(parameters):
     return model
 
 
-def test_model(parameters, end_experiment_callback):
+def test_model(parameters, end_experiment_callback, verbose):
     """Test one model: create, train, evaluate with test data and save
     results."""
     # To make lines shorter
@@ -82,11 +82,13 @@ def test_model(parameters, end_experiment_callback):
     # is the default in model.fit already, so no need to explicitly add it.
     model.fit(train_images, train_labels, epochs=p.epochs,
               batch_size=p.batch_size,
-              validation_data=(test_images, test_labels))
+              validation_data=(test_images, test_labels),
+              verbose=verbose)
     training_time = time.process_time() - start
 
     start = time.process_time()
-    test_loss, test_acc = model.evaluate(test_images, test_labels)
+    test_loss, test_acc = model.evaluate(
+        test_images, test_labels, verbose=verbose)
     test_time = time.process_time() - start
 
     end_experiment_callback(parameters, model, test_loss, test_acc,
@@ -214,7 +216,7 @@ test_images = test_images.astype('float32') / 255
 # Change this to "False" when testing from the command line. Leave set to True
 # when launching from the IDE and change the parameters below (it's faster
 # than dealing with launch.json).
-ide_test = True
+ide_test = False
 # Show a warning to let user now we are ignoring command line parameters
 if ide_test:
     print("\n\n  --- Running from IDE - ignoring command line\n\n")
@@ -224,16 +226,16 @@ if ide_test:
     p = Parameters(
         experiment_name="batchnorm_mnist_mlp",
         network="batch_normalization",
-        optimizer="sgd",
+        optimizer="rmsprop",
         hidden_layers=2,
         units_per_layer=512,
         epochs=2,
         batch_size=128,
-        learning_rate=0.1,
+        learning_rate=0.001,
         decay=0.0,
-        sgd_momentum=0.0,
+        sgd_momentum=0.95,
     )
 else:
     p = parse_command_line()
 
-test_model(p, save_experiment)
+test_model(p, save_experiment, verbose=1 if ide_test else 2)
