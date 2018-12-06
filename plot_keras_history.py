@@ -18,26 +18,28 @@ def parse_command_line():
     return args.file
 
 
+def plot_history(history):
+    # Create a data source for the epochs
+    epochs = range(1, len(history['loss'])+1)
+
+    # Style with default seaborn, then change background to white (easier to read)
+    sns.set()
+    sns.set_style('white')
+
+    # Plot loss data
+    sns.lineplot(x=epochs, y=history['loss'], label='Training loss')
+    sns.lineplot(x=epochs, y=history['val_loss'], label='Test loss')
+
+    # Change x-axis tick labels (epoch) from float to integers
+    plt.xticks(epochs)
+
+    plt.legend()
+    plt.show()
+
+
 # Load data from file
 file = parse_command_line()
 file = "mnist/dropout/dropout_mnist_mlp_nw=standard_opt=rmsprop_hl=001_uhl=0512_e=05_bs=0128_dri=0.10_drh=0.50_lr=0.0d=0.0000_m=none_mn=none_history.json"
 with open(file) as f:
     history = json.load(f)
-print(history)
-
-# Create a data source for the epochs
-epochs = range(1, len(history['loss'])+1)
-
-# Style with default seaborn, then change background to white (easier to read)
-sns.set()
-sns.set_style('white')
-
-# Plot loss data
-sns.lineplot(x=epochs, y=history['loss'], label='Training loss')
-sns.lineplot(x=epochs, y=history['val_loss'], label='Test loss')
-
-# Change x-axis tick labels (epoch) from float to integers
-plt.xticks(epochs)
-
-plt.legend()
-plt.show()
+    plot_history(history)
