@@ -6,6 +6,7 @@ Data is read from a JSON file, crated with json.dump(history)
 import json
 import os
 import glob
+import re
 from argparse import ArgumentParser
 from matplotlib import pyplot as plt
 import seaborn as sns
@@ -48,6 +49,21 @@ def plot_history(history, file, show):
     plt.xticks(epochs)
 
     plt.legend()
+
+    # Add a title from the pieces embedded in the file name
+    network = re.search(r"nw=(.*?)_", file).group(1)
+    optimizer = re.search(r"opt=(.*?)_", file).group(1)
+    hidden_layers = re.search(r"hl=(.*?)_", file).group(1)
+    units_per_layer = re.search(r"uhl=(.*?)_", file).group(1)
+    epochs = re.search(r"e=(.*?)_", file).group(1)
+    learning_rate = re.search(r"lr=(.*?)_", file).group(1)
+
+    title = ("{} network \n epochs={} optimizer={} \n"
+             "hidden layers={} units in hidden layer={} \n"
+             "lr={}").format(
+        network, epochs, optimizer, hidden_layers, units_per_layer,
+        learning_rate)
+    plt.title(title)
 
     # Save to disk as a .png file
     png_file = file.replace(".json", ".png")
