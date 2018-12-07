@@ -40,7 +40,10 @@ def plot_history(history, file, show):
     plt.xticks(epochs)
 
     plt.legend()
-    plt.savefig(file)
+
+    # Save to disk as a .png file
+    png_file = file.replace(".json", "")  # `savefig` adds .png extension
+    plt.savefig(png_file)
 
     if show:
         plt.show()
