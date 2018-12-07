@@ -22,15 +22,15 @@ def parse_command_line():
 
 
 def plot_history(history):
-
-    # TODO: set y max value the same for all graphs to allow comparisons
-
-    # Create a data source for the epochs
-    epochs = range(1, len(history['loss'])+1)
-
-    # Style with default seaborn, then change background to white (easier to read)
+    # Style with default seaborn, then change background (easier to read)
     sns.set()
     sns.set_style('white')
+
+    # Fix the y axis scale for all graphs so we can compare graphs
+    plt.ylim(0, 0.8)
+
+    # Create a data source for the epochs - need this for the x axis
+    epochs = range(1, len(history['loss'])+1)
 
     # Plot loss data
     sns.lineplot(x=epochs, y=history['loss'], label='Training loss')
