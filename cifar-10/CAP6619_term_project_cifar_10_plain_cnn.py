@@ -1,4 +1,4 @@
-"""CIFAR-10 using a plain CCN, no dropout, no batch normalization. Meant to
+"""CIFAR-10 using a plain CNN, no dropout, no batch normalization. Meant to
 be used as a baseline to compare with dropout and batch normalization.
 
 Based on the Keras CIFAR-10 example.
