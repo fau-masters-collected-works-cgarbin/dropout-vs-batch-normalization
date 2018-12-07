@@ -243,7 +243,7 @@ test_images = test_images.astype('float32') / 255
 # Change this to "False" when testing from the command line. Leave set to True
 # when launching from the IDE and change the parameters below (it's faster
 # than dealing with launch.json).
-ide_test = False
+ide_test = True
 # Show a warning to let user now we are ignoring command line parameters
 if ide_test:
     print("\n\n  --- Running from IDE - ignoring command line\n\n")
@@ -252,9 +252,9 @@ p = None
 if ide_test:
     p = Parameters(
         experiment_name="dropout_mnist_mlp",
-        network="standard",
+        network="dropout",
         optimizer="rmsprop",
-        hidden_layers=1,
+        hidden_layers=4,
         units_per_layer=512,
         epochs=5,
         batch_size=128,
