@@ -130,3 +130,8 @@ model.save(base_name + "_model.h5")
 # Save training history
 with open(base_name + "_history.json", 'w') as f:
     json.dump(model.history.history, f)
+
+# Save a summary of the results
+with open(base_name + "_summary.txt", 'w') as f:
+    f.write("Training time: {}\n".format(training_time))
+    f.write("Total parameters: {}".format(model.count_params()))
