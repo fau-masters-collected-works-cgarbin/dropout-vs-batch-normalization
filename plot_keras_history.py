@@ -30,12 +30,21 @@ def get_title(file_name):
     units_per_layer = re.search(r"uhl=(.*?)_", file_name).group(1)
     epochs = re.search(r"e=(.*?)_", file_name).group(1)
     learning_rate = re.search(r"lr=(.*?)_", file_name).group(1)
+    weight_decay = re.search(r"_d=(.*?)_", file_name).group(1)
 
-    title = ("{} network \n epochs={} optimizer={} \n"
-             "hidden layers={} units in hidden layer={} \n"
-             "lr={}").format(
-        network, epochs, optimizer, hidden_layers, units_per_layer,
-        learning_rate)
+    # Nicer text for humans for title and optimizer
+    pretty_network = {"standard": "Standard",
+                      "dropout": "Dropout",
+                      "dropout_no_adjustment": "Droput w/o adjustment",
+                      "batch_normalization": "Batch normalization"}
+    pretty_optimizer = {"sgd": "SGD", "rmsprop": "RMSProp"}
+
+    title = ("{} network, {} optimizer, trained for {} epochs\n"
+             "{} hidden layers, {} units per layer \n"
+             "Learning rate = {}, weight decay = {}").format(
+        pretty_network[network], pretty_optimizer[optimizer], int(epochs),
+        int(hidden_layers), int(units_per_layer), float(learning_rate),
+        float(weight_decay))
 
     return title
 
