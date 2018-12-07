@@ -63,7 +63,7 @@ if ide_test:
     print("\n\n  --- Running from IDE - ignoring command line\n\n")
     # Get all history files from a directory...
     directory = "./mnist/dropout/"
-    # ...and a specific network type (must match values in Parameters) or "*"
+    # ...and a specific pattern to select files
     pattern = "quick_test"
     plot_all_files(directory, pattern)
 else:
