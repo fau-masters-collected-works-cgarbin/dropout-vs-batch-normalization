@@ -42,7 +42,7 @@ def plot_history(history, file, show):
     plt.legend()
 
     # Save to disk as a .png file
-    png_file = file.replace(".json", "")  # `savefig` adds .png extension
+    png_file = file.replace(".json", ".png")
     plt.savefig(png_file)
 
     if show:
@@ -57,7 +57,7 @@ def plot_all_files(directory, pattern, show):
         with open(file) as f:
             print("plotting " + f.name)  # show progress to the user
             history = json.load(f)
-            plot_history(history, file + ".png", show)
+            plot_history(history, file, show)
 
 
 # Change this to "False" when testing from the command line. Leave set to True
