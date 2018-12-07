@@ -22,6 +22,14 @@ def parse_command_line():
 
 
 def plot_history(history, file, show):
+    """Plot the loss created from the execution of Keras fit()
+
+    Arguments:
+      history {[dataframe]} -- The history data from the call to fit()
+      file {[string]} -- Name of the input file (the one with the history)
+      show {[Boolean]} -- True to also show on screen, False to just save it
+    """
+
     # Style with default seaborn, then change background (easier to read)
     sns.set()
     sns.set_style('white')
