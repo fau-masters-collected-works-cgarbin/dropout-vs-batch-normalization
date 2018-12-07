@@ -45,6 +45,10 @@ def plot_history(history, file, show):
     sns.lineplot(x=epochs, y=history['loss'], label='Training loss')
     sns.lineplot(x=epochs, y=history['val_loss'], label='Test loss')
 
+    # Add axis labels
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
+
     # Change x-axis tick labels (epoch) from float to integers
     plt.xticks(epochs)
 
