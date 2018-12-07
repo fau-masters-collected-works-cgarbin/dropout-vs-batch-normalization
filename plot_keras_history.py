@@ -39,6 +39,9 @@ def get_title(file_name):
                       "batch_normalization": "Batch normalization"}
     pretty_optimizer = {"sgd": "SGD", "rmsprop": "RMSProp"}
 
+    # Note: three lines is the most I was able to fit with the standard
+    # matlibplot title formatting (there are solutions to fit more lines, but
+    # none are simple - at least the ones I could find)
     title = ("{} network, {} optimizer, trained for {} epochs\n"
              "{} hidden layers, {} units per layer \n"
              "Learning rate = {}, weight decay = {}").format(
