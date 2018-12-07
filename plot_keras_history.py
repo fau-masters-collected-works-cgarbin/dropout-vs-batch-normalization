@@ -22,6 +22,24 @@ def parse_command_line():
     return args.directory, args.pattern
 
 
+def get_title(file_name):
+    """Create a title by extracting pieces of the file name."""
+    network = re.search(r"nw=(.*?)_", file_name).group(1)
+    optimizer = re.search(r"opt=(.*?)_", file_name).group(1)
+    hidden_layers = re.search(r"hl=(.*?)_", file_name).group(1)
+    units_per_layer = re.search(r"uhl=(.*?)_", file_name).group(1)
+    epochs = re.search(r"e=(.*?)_", file_name).group(1)
+    learning_rate = re.search(r"lr=(.*?)_", file_name).group(1)
+
+    title = ("{} network \n epochs={} optimizer={} \n"
+             "hidden layers={} units in hidden layer={} \n"
+             "lr={}").format(
+        network, epochs, optimizer, hidden_layers, units_per_layer,
+        learning_rate)
+
+    return title
+
+
 def plot_history(history, file, show):
     """Plot the loss history created from druing the execution of Keras fit().
 
@@ -53,21 +71,7 @@ def plot_history(history, file, show):
     plt.xticks(epochs)
 
     plt.legend()
-
-    # Add a title from the pieces embedded in the file name
-    network = re.search(r"nw=(.*?)_", file).group(1)
-    optimizer = re.search(r"opt=(.*?)_", file).group(1)
-    hidden_layers = re.search(r"hl=(.*?)_", file).group(1)
-    units_per_layer = re.search(r"uhl=(.*?)_", file).group(1)
-    epochs = re.search(r"e=(.*?)_", file).group(1)
-    learning_rate = re.search(r"lr=(.*?)_", file).group(1)
-
-    title = ("{} network \n epochs={} optimizer={} \n"
-             "hidden layers={} units in hidden layer={} \n"
-             "lr={}").format(
-        network, epochs, optimizer, hidden_layers, units_per_layer,
-        learning_rate)
-    plt.title(title)
+    plt.title(get_title(file))
 
     # Save to disk as a .png file
     png_file = file.replace(".json", ".png")
