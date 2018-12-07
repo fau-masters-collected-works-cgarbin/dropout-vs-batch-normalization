@@ -12,7 +12,7 @@ import seaborn as sns
 
 
 def parse_command_line():
-    """Parse command line parameters and return it."""
+    """Parse command line parameters and return them."""
     ap = ArgumentParser(description='Plot Keras history from a JSON file.')
     ap.add_argument("--directory", type=str)
     ap.add_argument("--pattern", type=str)
@@ -22,7 +22,7 @@ def parse_command_line():
 
 
 def plot_history(history, file, show):
-    """Plot the loss created from the execution of Keras fit()
+    """Plot the loss history created from druing the execution of Keras fit().
 
     Arguments:
       history {[dataframe]} -- The history data from the call to fit()
