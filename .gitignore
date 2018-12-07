@@ -1,8 +1,10 @@
+.DS_Store
 .RData
 .Rhistory
 *.nb.html
 *.txt
 __pycache__
+*.png
 # Sample images from cat vs. dogs in Kaggle
 catsvsdogs/
 # And for good measure, any image (if we save them in another folder)

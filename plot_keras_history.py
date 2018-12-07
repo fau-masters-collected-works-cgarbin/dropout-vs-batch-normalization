@@ -21,7 +21,7 @@ def parse_command_line():
     return args.directory, args.pattern
 
 
-def plot_history(history):
+def plot_history(history, file, show):
     # Style with default seaborn, then change background (easier to read)
     sns.set()
     sns.set_style('white')
@@ -40,10 +40,13 @@ def plot_history(history):
     plt.xticks(epochs)
 
     plt.legend()
-    plt.show()
+    plt.savefig(file)
+
+    if show:
+        plt.show()
 
 
-def plot_all_files(directory, pattern):
+def plot_all_files(directory, pattern, show):
     full_path = os.path.join(directory, "*" + pattern + "*.json")
     all_files = glob.glob(full_path)
 
@@ -51,7 +54,7 @@ def plot_all_files(directory, pattern):
         with open(file) as f:
             print("plotting " + f.name)  # show progress to the user
             history = json.load(f)
-            plot_history(history)
+            plot_history(history, file + ".png", show)
 
 
 # Change this to "False" when testing from the command line. Leave set to True
@@ -65,7 +68,7 @@ if ide_test:
     directory = "./mnist/dropout/"
     # ...and a specific pattern to select files
     pattern = "quick_test"
-    plot_all_files(directory, pattern)
+    plot_all_files(directory, pattern, show=True)
 else:
     directory, pattern = parse_command_line()
-    plot_all_files(directory, pattern)
+    plot_all_files(directory, pattern, show=False)
