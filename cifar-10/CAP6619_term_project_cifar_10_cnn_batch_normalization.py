@@ -169,4 +169,6 @@ with open(base_name + "_summary.txt", 'w') as f:
     f.write("Training time: {}\n".format(training_time))
     f.write("Total parameters: {}\n".format(model.count_params()))
     f.write("Optimizer: {}\n".format(type(model.optimizer).__name__))
-    f.write("Learning rate: {}".format(learning_rate))
+    f.write("Learning rate: {}\n".format(learning_rate))
+    f.write("Validation accuracy: {}\n".format(
+        model.history.history["val_acc"]))
