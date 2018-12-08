@@ -25,8 +25,10 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Flatten
 from keras.layers import Conv2D, MaxPooling2D
+from keras import backend
 import numpy as np
 import json
+import time
 
 batch_size = 32
 num_classes = 10
@@ -72,6 +74,8 @@ x_train = x_train.astype('float32')
 x_test = x_test.astype('float32')
 x_train /= 255
 x_test /= 255
+
+start = time.process_time()
 
 if not data_augmentation:
     print('Not using data augmentation.')
@@ -122,6 +126,8 @@ else:
         datagen.flow(x_train, y_train, batch_size=batch_size),
         steps_per_epoch=int(np.ceil(x_train.shape[0] / float(batch_size))),
         epochs=epochs, validation_data=(x_test, y_test), workers=4)
+
+training_time = time.process_time() - start
 
 # Save model
 base_name = "cifar_10_cnn_plain"
