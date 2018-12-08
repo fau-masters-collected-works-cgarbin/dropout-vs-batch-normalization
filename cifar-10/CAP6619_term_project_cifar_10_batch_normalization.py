@@ -1,4 +1,4 @@
-"""CIFAR-10 using CNN with dropout.
+"""CIFAR-10 using CNN with batch normalization.
 
 Based on the Keras CIFAR-10 example.
 
