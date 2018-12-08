@@ -25,6 +25,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras import backend
+from argparse import ArgumentParser
 import numpy as np
 import json
 import time
@@ -33,6 +34,19 @@ batch_size = 32
 num_classes = 10
 epochs = 2  # NOTE: remember to increase this value
 data_augmentation = True
+test_name = "cifar_10_cnn_dropout"
+
+# Command line parameters (defaults are from the Keras sample code, with
+# adjustments recommneded in the dropout paper)
+ap = ArgumentParser(description='CIFAR-10 CNN tests.')
+# Units are adjusted by the dropout rate, as recommended in the paper
+ap.add_argument("--units_dense_layer", type=int, default=1024)
+# Learning rate is increased as recommneded in the paper
+ap.add_argument("--learning_rate", type=float, default=0.001)
+args = ap.parse_args()
+
+print("\n\nTesting {} with learning rate {} and {} units in the dense layer"
+      .format(test_name, args.learning_rate, args.units_dense_layer))
 
 # The data, split between train and test sets:
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
@@ -58,20 +72,14 @@ model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Dropout(0.25))
 
 model.add(Flatten())
-# Note that the dense layer below has twice the number of units used in the
-# plain CNN model, to follow the recommendation in the Dropout paper to adjust
-# the number of units by 1/p (p=0.5 in this case, so we double the number).
-model.add(Dense(1024))
+model.add(Dense(args.units_dense_layer))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 model.add(Dense(num_classes))
 model.add(Activation('softmax'))
 
 # initiate RMSprop optimizer
-# Note that the learning rate has been increased by 10x, to follow the Dropout
-# paper recommendation. In very quick tests (two epochs), it made a significant
-# different in accuracy.
-opt = keras.optimizers.rmsprop(lr=0.001, decay=1e-6)
+opt = keras.optimizers.rmsprop(lr=args.learning_rate, decay=1e-6)
 
 # Let's train the model using RMSprop
 model.compile(loss='categorical_crossentropy',
@@ -137,8 +145,12 @@ else:
 
 training_time = time.process_time() - start
 
+# File to save model and summary - encodes some of the parameters
+learning_rate = "{:0.6f}".format(backend.eval(model.optimizer.lr))
+base_name = "{}_lr={}_udl={:04d}".format(
+    test_name, learning_rate, args.units_dense_layer)
+
 # Save model
-base_name = "cifar_10_cnn_dropout"
 model.save(base_name + "_model.h5")
 
 # Save training history
@@ -150,4 +162,4 @@ with open(base_name + "_summary.txt", 'w') as f:
     f.write("Training time: {}\n".format(training_time))
     f.write("Total parameters: {}\n".format(model.count_params()))
     f.write("Optimizer: {}\n".format(type(model.optimizer).__name__))
-    f.write("Learning rate: {:0.6f}".format(backend.eval(model.optimizer.lr)))
+    f.write("Learning rate: {}".format(learning_rate))

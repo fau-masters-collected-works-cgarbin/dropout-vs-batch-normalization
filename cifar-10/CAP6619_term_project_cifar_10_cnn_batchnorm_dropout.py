@@ -26,6 +26,7 @@ from keras.layers import Dense, Activation, Flatten
 from keras.layers import BatchNormalization, Dropout
 from keras.layers import Conv2D, MaxPooling2D
 from keras import backend
+from argparse import ArgumentParser
 import numpy as np
 import json
 import time
@@ -34,6 +35,19 @@ batch_size = 32
 num_classes = 10
 epochs = 2  # NOTE: remember to increase this value
 data_augmentation = True
+test_name = "cifar_10_cnn_batchnorm_dropout"
+
+# Command line parameters (defaults are from the Keras sample code, with
+# adjustments recommended in the dropout and batchnorm papers)
+ap = ArgumentParser(description='CIFAR-10 CNN tests.')
+ap.add_argument("--units_dense_layer", type=int, default=512)
+# Learning rate is increased as recommneded in the batchnorm paper (not as
+# much as in the dropout case)
+ap.add_argument("--learning_rate", type=float, default=0.0005)
+args = ap.parse_args()
+
+print("\n\nTesting {} with learning rate {} and {} units in the dense layer"
+      .format(test_name, args.learning_rate, args.units_dense_layer))
 
 # The data, split between train and test sets:
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
@@ -66,7 +80,7 @@ model.add(Dropout(0.25))
 
 model.add(Flatten())
 # TODO: test with 2x units
-model.add(Dense(512))
+model.add(Dense(args.units_dense_layer))
 model.add(Activation('relu'))
 # TODO: test if we should add batch normalization here as well
 # model.add(BatchNormalization())
@@ -76,7 +90,7 @@ model.add(Activation('softmax'))
 
 # initiate RMSprop optimizer
 # TODO: check if increasing the rate improve is
-opt = keras.optimizers.rmsprop(lr=0.0005, decay=1e-6)
+opt = keras.optimizers.rmsprop(lr=args.learning_rate, decay=1e-6)
 
 # Let's train the model using RMSprop
 model.compile(loss='categorical_crossentropy',
@@ -142,8 +156,12 @@ else:
 
 training_time = time.process_time() - start
 
+# File to save model and summary - encodes some of the parameters
+learning_rate = "{:0.6f}".format(backend.eval(model.optimizer.lr))
+base_name = "{}_lr={}_udl={:04d}".format(
+    test_name, learning_rate, args.units_dense_layer)
+
 # Save model
-base_name = "cifar_10_cnn_batchnorm_dropout"
 model.save(base_name + "_model.h5")
 
 # Save training history
@@ -155,4 +173,4 @@ with open(base_name + "_summary.txt", 'w') as f:
     f.write("Training time: {}\n".format(training_time))
     f.write("Total parameters: {}\n".format(model.count_params()))
     f.write("Optimizer: {}\n".format(type(model.optimizer).__name__))
-    f.write("Learning rate: {:0.6f}".format(backend.eval(model.optimizer.lr)))
+    f.write("Learning rate: {}".format(learning_rate))
