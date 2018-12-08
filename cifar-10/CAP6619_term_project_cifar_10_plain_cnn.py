@@ -134,4 +134,6 @@ with open(base_name + "_history.json", 'w') as f:
 # Save a summary of the results
 with open(base_name + "_summary.txt", 'w') as f:
     f.write("Training time: {}\n".format(training_time))
-    f.write("Total parameters: {}".format(model.count_params()))
+    f.write("Total parameters: {}\n".format(model.count_params()))
+    f.write("Optimizer: {}\n".format(type(model.optimizer).__name__))
+    f.write("Learning rate: {:0.6f}".format(backend.eval(model.optimizer.lr)))
