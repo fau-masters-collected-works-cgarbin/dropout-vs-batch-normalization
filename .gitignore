@@ -16,6 +16,6 @@ catsvsdogs/
 # Test shell scripts automatically generated, no need to save them
 *.sh
 # Except for this script, manually generated
-!cnn_test_all.sh
+!cnn_test_*.sh
 # Compressed result files
 *gz
