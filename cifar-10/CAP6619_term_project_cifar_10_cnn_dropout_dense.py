@@ -39,7 +39,7 @@ import time
 batch_size = 32
 num_classes = 10
 data_augmentation = True
-test_name = "cifar_10_cnn_dropout"
+test_name = "cifar_10_cnn_dropout_dense"
 
 # Command line parameters (defaults are from the Keras sample code, with
 # adjustments recommneded in the dropout paper)
