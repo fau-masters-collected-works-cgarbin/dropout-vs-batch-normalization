@@ -78,6 +78,19 @@ def get_title(file_name):
     assert False  # Can't parse this file name
 
 
+def get_max_y(file_name):
+    """Get max y value to allow comparison of results (same scale)."""
+
+    # These values were determined by hand. We could be fancy and read
+    # all data files first to determine max y, but too much work for low
+    # return at this point.
+    if "mlp" in file_name:
+        return 1.0
+    else:
+        # Assume it's the CNN test
+        return 3.5
+
+
 def plot_history(history, file_name, show):
     """Plot the loss history created from druing the execution of Keras fit().
 
@@ -92,9 +105,7 @@ def plot_history(history, file_name, show):
     sns.set_style('white')
 
     # Fix the y axis scale for all graphs so we can compare graphs
-    # Commented out for now - not sure it will be needed. If needed, need to
-    # adapt based on the test
-    # plt.ylim(0, 0.8)
+    plt.ylim(0, get_max_y(file_name))
 
     # Create a data source for the epochs - need this for the x axis
     num_epochs = len(history['loss'])
