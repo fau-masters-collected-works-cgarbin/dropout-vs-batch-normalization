@@ -34,7 +34,6 @@ import time
 
 batch_size = 32
 num_classes = 10
-epochs = 2  # NOTE: remember to increase this value
 data_augmentation = True
 test_name = "cifar_10_cnn_plain"
 
@@ -42,6 +41,7 @@ test_name = "cifar_10_cnn_plain"
 ap = ArgumentParser(description='CIFAR-10 CNN tests.')
 ap.add_argument("--units_dense_layer", type=int, default=512)
 ap.add_argument("--learning_rate", type=float, default=0.0001)
+ap.add_argument("--epochs", type=int, default=2)
 args = ap.parse_args()
 
 print("\n\nTesting {} with learning rate {} and {} units in the dense layer"
@@ -95,7 +95,7 @@ if not data_augmentation:
     print('Not using data augmentation.')
     model.fit(x_train, y_train,
               batch_size=batch_size,
-              epochs=epochs,
+              epochs=args.epochs,
               validation_data=(x_test, y_test),
               shuffle=True)
 else:
@@ -139,14 +139,14 @@ else:
     model.fit_generator(
         datagen.flow(x_train, y_train, batch_size=batch_size),
         steps_per_epoch=int(np.ceil(x_train.shape[0] / float(batch_size))),
-        epochs=epochs, validation_data=(x_test, y_test), workers=4)
+        epochs=args.epochs, validation_data=(x_test, y_test), workers=4)
 
 training_time = time.process_time() - start
 
 # File to save model and summary - encodes some of the parameters
 learning_rate = "{:0.6f}".format(backend.eval(model.optimizer.lr))
-base_name = "{}_lr={}_udl={:04d}".format(
-    test_name, learning_rate, args.units_dense_layer)
+base_name = "{}_lr={}_udl={:04d}_e={:03d}".format(
+    test_name, learning_rate, args.units_dense_layer, args.epochs)
 
 # Save model
 model.save(base_name + "_model.h5")
