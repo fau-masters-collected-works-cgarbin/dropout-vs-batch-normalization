@@ -112,8 +112,13 @@ def plot_history(history, file_name, show):
     epochs = range(1, num_epochs+1)
 
     # Plot loss data
+    # TODO: this could be done with one call to sns.lineplot if we first
+    # convert the history JSON object to a dataframe, using the columns we
+    # need (loss, val_loss) and adding a leftmost epoch column. Will be
+    # left for a later pass.
     ax = sns.lineplot(x=epochs, y=history['loss'], label='Training loss')
     sns.lineplot(x=epochs, y=history['val_loss'], label='Test loss')
+    ax.lines[0].set_linestyle('--')
 
     # Add axis labels
     plt.xlabel("Epochs")
@@ -155,7 +160,7 @@ if ide_test:
     # Show a warning to let user now we are ignoring command line parameters
     print("\n\n  --- Running from IDE - ignoring command line\n\n")
     # Get all history files from a directory...
-    directory = "./cifar-10/analysis/quick-test"
+    directory = "./cifar-10/analysis/quick-test-100-epochs"
     # ...and a specific pattern to select files
     pattern = "cnn"
     plot_all_files(directory, pattern, show=True)
