@@ -78,7 +78,7 @@ def get_title(file_name):
     assert False  # Can't parse this file name
 
 
-def plot_history(history, file, show):
+def plot_history(history, file_name, show):
     """Plot the loss history created from druing the execution of Keras fit().
 
     Arguments:
@@ -115,10 +115,10 @@ def plot_history(history, file, show):
     plt.grid(True, axis="x", linestyle="dotted")
 
     plt.legend(frameon=False)
-    plt.title(get_title(file))
+    plt.title(get_title(file_name))
 
     # Save to disk as a .png file
-    png_file = file.replace(".json", ".png")
+    png_file = file_name.replace(".json", ".png")
     plt.savefig(png_file)
 
     if show:
@@ -129,11 +129,11 @@ def plot_all_files(directory, pattern, show):
     full_path = os.path.join(directory, "*" + pattern + "*.json")
     all_files = glob.glob(full_path)
 
-    for file in all_files:
-        with open(file) as f:
+    for file_name in all_files:
+        with open(file_name) as f:
             print("plotting " + f.name)  # show progress to the user
             history = json.load(f)
-            plot_history(history, file, show)
+            plot_history(history, file_name, show)
 
 
 # Change this to "False" when testing from the command line. Leave set to True
@@ -146,7 +146,7 @@ if ide_test:
     # Get all history files from a directory...
     directory = "./cifar-10/analysis/quick-test"
     # ...and a specific pattern to select files
-    pattern = "batch_normalization"
+    pattern = "cnn"
     plot_all_files(directory, pattern, show=True)
 else:
     directory, pattern = parse_command_line()
