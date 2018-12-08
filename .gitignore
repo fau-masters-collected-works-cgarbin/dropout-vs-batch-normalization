@@ -15,5 +15,7 @@ catsvsdogs/
 *history.json
 # Test shell scripts automatically generated, no need to save them
 *.sh
+# Except for this script, manually generated
+!cnn_test_all.sh
 # Compressed result files
 *gz

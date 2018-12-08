@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Run all CNN tests
+
+python3 CAP6619_term_project_cifar_10_cnn_plain.py
+python3 CAP6619_term_project_cifar_10_cnn_dropout.py
+python3 CAP6619_term_project_cifar_10_cnn_batch_normalization.py
+python3 CAP6619_term_project_cifar_10_cnn_batchnorm_dropout.py
