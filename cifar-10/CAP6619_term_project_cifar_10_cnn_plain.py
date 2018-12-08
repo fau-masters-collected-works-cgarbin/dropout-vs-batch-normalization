@@ -124,7 +124,7 @@ else:
         epochs=epochs, validation_data=(x_test, y_test), workers=4)
 
 # Save model
-base_name = "cifar_10_plain_cnn"
+base_name = "cifar_10_cnn_plain"
 model.save(base_name + "_model.h5")
 
 # Save training history

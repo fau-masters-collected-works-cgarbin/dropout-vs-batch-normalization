@@ -1,4 +1,4 @@
-"""CIFAR-10 using CNN with dropout.
+"""CIFAR-10 using CNN with batch normalization.
 
 Based on the Keras CIFAR-10 example.
 
@@ -22,8 +22,9 @@ import keras
 from keras.datasets import cifar10
 from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, Flatten
+from keras.layers import Dense, BatchNormalization, Activation, Flatten
 from keras.layers import Conv2D, MaxPooling2D
+from keras import backend
 import numpy as np
 import json
 import time
@@ -46,31 +47,33 @@ model.add(Conv2D(32, (3, 3), padding='same',
 model.add(Activation('relu'))
 model.add(Conv2D(32, (3, 3)))
 model.add(Activation('relu'))
+# Batch normalization added after activation because of the results reported
+# in https://github.com/ducha-aiki/caffenet-benchmark/blob/master/batchnorm.md
+# shows that it has higher accuracy.
+model.add(BatchNormalization())
 model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
 
 model.add(Conv2D(64, (3, 3), padding='same'))
 model.add(Activation('relu'))
+model.add(BatchNormalization())
 model.add(Conv2D(64, (3, 3)))
 model.add(Activation('relu'))
+model.add(BatchNormalization())
 model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
 
 model.add(Flatten())
-# Note that the dense layer below has twice the number of units used in the
-# plain CNN model, to follow the recommendation in the Dropout paper to adjust
-# the number of units by 1/p (p=0.5 in this case, so we double the number).
-model.add(Dense(1024))
+model.add(Dense(512))
 model.add(Activation('relu'))
-model.add(Dropout(0.5))
+# I couldn't find a good reference about adding a batch normalization layer
+# after the final dense layer(s) in the CNN. Adding it improved accuracy, so
+# I'll leave it in place.
+model.add(BatchNormalization())
 model.add(Dense(num_classes))
 model.add(Activation('softmax'))
 
 # initiate RMSprop optimizer
-# Note that the learning rate has been increased by 10x, to follow the Dropout
-# paper recommendation. In very quick tests (two epochs), it made a significant
-# different in accuracy.
-opt = keras.optimizers.rmsprop(lr=0.001, decay=1e-6)
+# TODO: check if increasing the rate improve is
+opt = keras.optimizers.rmsprop(lr=0.0005, decay=1e-6)
 
 # Let's train the model using RMSprop
 model.compile(loss='categorical_crossentropy',
@@ -137,7 +140,7 @@ else:
 training_time = time.process_time() - start
 
 # Save model
-base_name = "cifar_10_dropout_cnn"
+base_name = "cifar_10_cnn_batch_normalization"
 model.save(base_name + "_model.h5")
 
 # Save training history
