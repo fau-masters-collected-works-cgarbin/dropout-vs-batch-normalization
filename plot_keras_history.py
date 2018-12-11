@@ -38,7 +38,7 @@ def get_title(file_name):
         pretty_network = {"standard": "Standard",
                           "dropout": "Dropout",
                           "dropout_no_adjustment": "Droput w/o adjustment",
-                          "batch_normalization": "Batch normalization"}
+                          "batch": "Batch normalization"}
         pretty_optimizer = {"sgd": "SGD", "rmsprop": "RMSProp"}
 
         # Note: three lines is the most I was able to fit with the standard
@@ -85,7 +85,7 @@ def get_max_y(file_name):
     # all data files first to determine max y, but too much work for low
     # return at this point.
     if "mlp" in file_name:
-        return 1.0
+        return 0.5
     else:
         # Assume it's the CNN test
         return 3.5
@@ -159,10 +159,25 @@ ide_test = True
 if ide_test:
     # Show a warning to let user now we are ignoring command line parameters
     print("\n\n  --- Running from IDE - ignoring command line\n\n")
+
+    # # Standard network - top entry
+    # # Get all history files from a directory...
+    # directory = "./mnist/dropout/analysis/standard/sgd"
+    # # ...and a specific pattern to select files
+    # pattern = "dropout_mnist_mlp_standard_sgd_nw=standard_opt=sgd_hl=002_uhl=2048_e=50_bs=0128_dri=0.10_drh=0.50_lr=0.1000_d=0.0000_m=0.95_mn=none_history"
+
+    # # Droput network - top entry
+    # # Get all history files from a directory...
+    # directory = "./mnist/dropout/analysis/dropout/sgd"
+    # # ...and a specific pattern to select files
+    # pattern = "dropout_mnist_mlp_dropout_sgd_nw=dropout_opt=sgd_hl=002_uhl=2048_e=50_bs=0128_dri=0.10_drh=0.50_lr=0.0100_d=0.0010_m=0.99_mn=3_history"
+
+    # Batchnorm network - top entry
     # Get all history files from a directory...
-    directory = "./cifar-10/analysis/quick-test-100-epochs"
+    directory = "./mnist/batch_normalization/analysis/sgd"
     # ...and a specific pattern to select files
-    pattern = "cnn"
+    pattern = "batchnorm_mnist_mlp_sgd_nw=batch_normalization_opt=sgd_hl=004_uhl=2048_e=50_bs=0128_lr=0.0100_d=0.0000_m=0.95_history"
+
     plot_all_files(directory, pattern, show=True)
 else:
     directory, pattern = parse_command_line()
