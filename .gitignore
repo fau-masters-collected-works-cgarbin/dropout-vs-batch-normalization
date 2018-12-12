@@ -2,7 +2,6 @@
 .RData
 .Rhistory
 *.nb.html
-*.txt
 __pycache__
 *.png
 # Sample images from cat vs. dogs in Kaggle
@@ -11,8 +10,6 @@ catsvsdogs/
 *jpg
 # Keras model files
 *h5
-# Keras history files saved as JSON
-*history.json
 # Test shell scripts automatically generated, no need to save them
 *.sh
 # Except for this script, manually generated
