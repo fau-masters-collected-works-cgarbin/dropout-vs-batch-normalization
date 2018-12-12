@@ -1,9 +1,9 @@
-'''
+"""
 CAP-6619 Deep Learning Fall 2018 term project
 MNIST with standard deep neural network and batch normalization
 
 Read test result files and generate graphs for analysis.
-'''
+"""
 import pandas as pd
 import glob
 

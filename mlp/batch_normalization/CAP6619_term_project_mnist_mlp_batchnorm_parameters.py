@@ -1,7 +1,7 @@
-'''Parameters to control the experiments.
+"""Parameters to control the experiments.
 
 These parameters drive the code. Modify them to test different configurations.
-'''
+"""
 import collections
 
 # Parameters to control the experiments.
