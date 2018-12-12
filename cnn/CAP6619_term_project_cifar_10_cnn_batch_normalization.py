@@ -33,18 +33,18 @@ import time
 batch_size = 32
 num_classes = 10
 data_augmentation = True
-test_name = "cifar_10_cnn_batch_normalization"
+test_name = 'cifar_10_cnn_batch_normalization'
 
 # Command line parameters (defaults are from the Keras sample code, with
 # adjustments recommended in the batchnorm papers)
 ap = ArgumentParser(description='CIFAR-10 CNN tests.')
-ap.add_argument("--units_dense_layer", type=int, default=512)
+ap.add_argument('--units_dense_layer', type=int, default=512)
 # Learning rate is increased as recommneded in the batchnorm paper
-ap.add_argument("--learning_rate", type=float, default=0.0005)
-ap.add_argument("--epochs", type=int, default=2)
+ap.add_argument('--learning_rate', type=float, default=0.0005)
+ap.add_argument('--epochs', type=int, default=2)
 args = ap.parse_args()
 
-print("\n\nTesting {} with learning rate {} and {} units in the dense layer"
+print('\n\nTesting {} with learning rate {} and {} units in the dense layer'
       .format(test_name, args.learning_rate, args.units_dense_layer))
 
 # The data, split between train and test sets:
@@ -128,14 +128,14 @@ else:
         channel_shift_range=0.,  # set range for random channel shifts
         # set mode for filling points outside the input boundaries
         fill_mode='nearest',
-        cval=0.,  # value used for fill_mode = "constant"
+        cval=0.,  # value used for fill_mode = 'constant'
         horizontal_flip=True,  # randomly flip images
         vertical_flip=False,  # randomly flip images
         # set rescaling factor (applied before any other transformation)
         rescale=None,
         # set function that will be applied on each input
         preprocessing_function=None,
-        # image data format, either "channels_first" or "channels_last"
+        # image data format, either 'channels_first' or 'channels_last'
         data_format=None,
         # fraction of images reserved for validation (strictly between 0 and 1)
         validation_split=0.0)
@@ -153,22 +153,22 @@ else:
 training_time = time.process_time() - start
 
 # File to save model and summary - encodes some of the parameters
-learning_rate = "{:0.6f}".format(backend.eval(model.optimizer.lr))
-base_name = "{}_lr={}_udl={:04d}_e={:03d}".format(
+learning_rate = '{:0.6f}'.format(backend.eval(model.optimizer.lr))
+base_name = '{}_lr={}_udl={:04d}_e={:03d}'.format(
     test_name, learning_rate, args.units_dense_layer, args.epochs)
 
 # Save model
-model.save(base_name + "_model.h5")
+model.save(base_name + '_model.h5')
 
 # Save training history
-with open(base_name + "_history.json", 'w') as f:
+with open(base_name + '_history.json', 'w') as f:
     json.dump(model.history.history, f)
 
 # Save a summary of the results
-with open(base_name + "_summary.txt", 'w') as f:
-    f.write("Training time: {}\n".format(training_time))
-    f.write("Total parameters: {}\n".format(model.count_params()))
-    f.write("Optimizer: {}\n".format(type(model.optimizer).__name__))
-    f.write("Learning rate: {}\n".format(learning_rate))
-    f.write("Validation accuracy: {}\n".format(
-        model.history.history["val_acc"]))
+with open(base_name + '_summary.txt', 'w') as f:
+    f.write('Training time: {}\n'.format(training_time))
+    f.write('Total parameters: {}\n'.format(model.count_params()))
+    f.write('Optimizer: {}\n'.format(type(model.optimizer).__name__))
+    f.write('Learning rate: {}\n'.format(learning_rate))
+    f.write('Validation accuracy: {}\n'.format(
+        model.history.history['val_acc']))
