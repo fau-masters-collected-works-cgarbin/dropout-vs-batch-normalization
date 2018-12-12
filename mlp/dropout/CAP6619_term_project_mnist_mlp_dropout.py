@@ -28,19 +28,19 @@ def create_model(parameters):
 
     model = models.Sequential()
 
-    if p.network == "standard":
+    if p.network == 'standard':
         model.add(layers.Dense(p.units_per_layer,
                                activation='relu',
                                input_shape=(pixels_per_image,)))
         for _ in range(p.hidden_layers - 1):
             model.add(layers.Dense(p.units_per_layer, activation='relu'))
-    elif p.network in ("dropout_no_adjustment", "dropout"):
+    elif p.network in ('dropout_no_adjustment', 'dropout'):
         units_hidden_layer = 0
-        if p.network == "dropout":
-            # Adjust number of units in each layer: "...if an n-sized layer is
+        if p.network == 'dropout':
+            # Adjust number of units in each layer: '...if an n-sized layer is
             # optimal for a standard neural net on any given task, a good
-            # dropout net should have at least n/p units." [Note that Keras
-            # uses a "drop" rate, not "keep", hence the "1 -"].
+            # dropout net should have at least n/p units.' [Note that Keras
+            # uses a 'drop' rate, not 'keep', hence the '1 -'].
             units_hidden_layer = int(
                 p.units_per_layer / (1 - p.dropout_rate_hidden_layer))
         else:
@@ -50,8 +50,8 @@ def create_model(parameters):
                                  input_shape=(pixels_per_image,)))
         for _ in range(p.hidden_layers):
             # Reason to use he_normal initializer: source code the paper points
-            # to has "initialization: DENSE_GAUSSIAN_SQRT_FAN_IN" for weights.
-            if p.max_norm_max_value == "none":
+            # to has 'initialization: DENSE_GAUSSIAN_SQRT_FAN_IN' for weights.
+            if p.max_norm_max_value == 'none':
                 model.add(layers.Dense(units_hidden_layer, activation='relu',
                                        kernel_initializer='he_normal'))
             else:
@@ -68,10 +68,10 @@ def create_model(parameters):
 
     # Create the optimizer
     optimizer = None
-    if p.optimizer == "sgd":
+    if p.optimizer == 'sgd':
         optimizer = optimizers.SGD(
             p.learning_rate, momentum=float(p.sgd_momentum), decay=p.decay)
-    elif p.optimizer == "rmsprop":
+    elif p.optimizer == 'rmsprop':
         optimizer = optimizers.RMSprop(p.learning_rate, decay=p.decay)
     else:
         assert False  # Invalid optimizer
@@ -120,8 +120,8 @@ def save_experiment(parameters, model, test_loss, test_acc,
     optimizer_name = type(optimizer).__name__
 
     experiments.loc[len(experiments)] = [
-        p.experiment_name, datetime.now().strftime("%Y-%m-%d_%H:%M:%S"),
-        "MNIST", p.network, optimizer_name, test_loss, test_acc,
+        p.experiment_name, datetime.now().strftime('%Y-%m-%d_%H:%M:%S'),
+        'MNIST', p.network, optimizer_name, test_loss, test_acc,
         p.hidden_layers, p.units_per_layer, p.epochs, p.batch_size,
         p.dropout_rate_input_layer, p.dropout_rate_hidden_layer,
         backend.eval(optimizer.lr), p.decay, p.sgd_momentum,
@@ -131,7 +131,7 @@ def save_experiment(parameters, model, test_loss, test_acc,
     print(experiments)
 
     # Save progress so far into the file used for this experiment
-    results_file = p.experiment_name + "_results.txt"
+    results_file = p.experiment_name + '_results.txt'
     # First, get a formatted string; if we use to_string(header=False) it
     # will use only one space between columns, instead of formatting
     # considering the column name (the header).
@@ -139,16 +139,16 @@ def save_experiment(parameters, model, test_loss, test_acc,
     # keep the columns aligned.
     output = StringIO()
     experiments.to_string(output, formatters={
-                          "Network": "{:>25}".format}, header=True)
+                          'Network': '{:>25}'.format}, header=True)
     if os.path.isfile(results_file):
         # File already exists - append data without column names.
-        with open(results_file, "a") as f:
+        with open(results_file, 'a') as f:
             f.write(os.linesep)
             f.write(output.getvalue().splitlines()[1])
         output.close()
     else:
         # File doesn't exist yet - create and write column names + data
-        with open(results_file, "w") as f:
+        with open(results_file, 'w') as f:
             f.write(output.getvalue())
 
     # Save training history and model for this specific experiment.
@@ -159,9 +159,9 @@ def save_experiment(parameters, model, test_loss, test_acc,
 
     # File where the training history and model will be saved. The name encodes
     # the test the parameters used in the epxeriment.
-    base_name_template = ("{}_nw={}_opt={}_hl={:03d}_uhl={:04d}_e={:02d}"
-                          "_bs={:04d}_dri={:0.2f}_drh={:0.2f}_lr={:0.4f}"
-                          "_d={:0.4f}_m={}_mn={}")
+    base_name_template = ('{}_nw={}_opt={}_hl={:03d}_uhl={:04d}_e={:02d}'
+                          '_bs={:04d}_dri={:0.2f}_drh={:0.2f}_lr={:0.4f}'
+                          '_d={:0.4f}_m={}_mn={}')
     base_name = base_name_template.format(
         p.experiment_name, p.network, p.optimizer, p.hidden_layers,
         p.units_per_layer, p.epochs, p.batch_size,
@@ -169,30 +169,29 @@ def save_experiment(parameters, model, test_loss, test_acc,
         p.learning_rate, p.decay, p.sgd_momentum, p.max_norm_max_value,
     )
 
-    with open(base_name + "_history.json", 'w') as f:
+    with open(base_name + '_history.json', 'w') as f:
         json.dump(model.history.history, f)
     # Uncomment to save the model - it may take quite a bit of disk space
-    # model.save(base_name + "_model.h5")
+    # model.save(base_name + '_model.h5')
 
 
 def parse_command_line():
     """Parse command line parameters into a `Parameters` variable."""
     ap = ArgumentParser(description='Dropout with MNIST data set.')
 
-    # Format: short parameter name, long name, default value (if not specified)
-    ap.add_argument("--experiment_name", type=str)
-    ap.add_argument("--network", type=str)
-    ap.add_argument("--optimizer", type=str)
-    ap.add_argument("--hidden_layers", type=int)
-    ap.add_argument("--units_per_layer", type=int)
-    ap.add_argument("--epochs", type=int)
-    ap.add_argument("--batch_size", type=int)
-    ap.add_argument("--dropout_rate_input_layer", type=float)
-    ap.add_argument("--dropout_rate_hidden_layer", type=float)
-    ap.add_argument("--learning_rate", type=float)
-    ap.add_argument("--decay", type=float)
-    ap.add_argument("--sgd_momentum", type=str)
-    ap.add_argument("--max_norm_max_value", type=str)
+    ap.add_argument('--experiment_name', type=str)
+    ap.add_argument('--network', type=str)
+    ap.add_argument('--optimizer', type=str)
+    ap.add_argument('--hidden_layers', type=int)
+    ap.add_argument('--units_per_layer', type=int)
+    ap.add_argument('--epochs', type=int)
+    ap.add_argument('--batch_size', type=int)
+    ap.add_argument('--dropout_rate_input_layer', type=float)
+    ap.add_argument('--dropout_rate_hidden_layer', type=float)
+    ap.add_argument('--learning_rate', type=float)
+    ap.add_argument('--decay', type=float)
+    ap.add_argument('--sgd_momentum', type=str)
+    ap.add_argument('--max_norm_max_value', type=str)
 
     args = ap.parse_args()
 
@@ -215,11 +214,11 @@ def parse_command_line():
 
 # Store data from the experiments
 experiments = pd.DataFrame(columns=[
-    "ExperimentName", "TestTime", "DataSetName", "Network", "Optimizer",
-    "TestLoss", "TestAccuracy", "HiddenLayers", "UnitsPerLayer", "Epochs",
-    "BatchSize", "DropoutRateInput", "DropoutRateHidden", "LearningRate",
-    "Decay", "SgdMomentum", "MaxNorm", "ModelParamCount", "TrainingCpuTime",
-    "TestCpuTime"])
+    'ExperimentName', 'TestTime', 'DataSetName', 'Network', 'Optimizer',
+    'TestLoss', 'TestAccuracy', 'HiddenLayers', 'UnitsPerLayer', 'Epochs',
+    'BatchSize', 'DropoutRateInput', 'DropoutRateHidden', 'LearningRate',
+    'Decay', 'SgdMomentum', 'MaxNorm', 'ModelParamCount', 'TrainingCpuTime',
+    'TestCpuTime'])
 
 
 # The input shape: pixels_per_image pixels images from MNIST data set
@@ -232,7 +231,7 @@ start = time.process_time()
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
 train_labels = to_categorical(train_labels)
 test_labels = to_categorical(test_labels)
-print("Timing: load and prepare data: {0:.5f}s".format(
+print('Timing: load and prepare data: {0:.5f}s'.format(
     time.process_time() - start))
 
 train_images = train_images.reshape((60000, pixels_per_image))
@@ -240,20 +239,20 @@ train_images = train_images.astype('float32') / 255
 test_images = test_images.reshape((10000, pixels_per_image))
 test_images = test_images.astype('float32') / 255
 
-# Change this to "False" when testing from the command line. Leave set to True
+# Change this to 'False' when testing from the command line. Leave set to True
 # when launching from the IDE and change the parameters below (it's faster
 # than dealing with launch.json).
 ide_test = True
 # Show a warning to let user now we are ignoring command line parameters
 if ide_test:
-    print("\n\n  --- Running from IDE - ignoring command line\n\n")
+    print('\n\n  --- Running from IDE - ignoring command line\n\n')
 
 p = None
 if ide_test:
     p = Parameters(
-        experiment_name="dropout_mnist_mlp",
-        network="dropout",
-        optimizer="rmsprop",
+        experiment_name='dropout_mnist_mlp',
+        network='dropout',
+        optimizer='rmsprop',
         hidden_layers=4,
         units_per_layer=512,
         epochs=5,
@@ -262,8 +261,8 @@ if ide_test:
         dropout_rate_hidden_layer=0.5,
         learning_rate=0.001,
         decay=0.0,
-        sgd_momentum="none",
-        max_norm_max_value="none",
+        sgd_momentum='none',
+        max_norm_max_value='none',
     )
 else:
     p = parse_command_line()
