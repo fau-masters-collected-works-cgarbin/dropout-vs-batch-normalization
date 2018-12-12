@@ -1,0 +1,23 @@
+\documentclass[../CAP6619_term_project_cgarbin.tex]{subfiles}
+
+\begin{document}
+
+Overfitting and long training times are fundamental problems in machine learning. Dropout \cite{Srivastava2014} significantly improved overfitting, while Batch Normalization \cite{Ioffe2015} significantly reduced training time.
+
+These two techniques overlap. Using them is not as simple as adding Dropout layers to improve overfitting and adding Batch Normalization layers to speed up training. Although there are guidelines to use them, there are no well-defined rules that can be applied in all cases, for all network configurations and types of input data.
+
+Getting them to work well in practice requires informed trial and error of different combinations of hyperparameters. Because there is a large number of combinations of hyperparameters, contradicting results have sometimes been published. For example, the paper introducing Batch Normalization \cite{Ioffe2015} recommends removing Dropout because Batch Normalization has enough of a regularization effect in the network, while subsequent work by \cite{Hendrycks2016} and \cite{Li2018} showed that Dropout can indeed be used together with Batch Normalization to improve results.
+
+Compounding all these observations is the fact that, while there are hypotheses to explain how Dropout and Batch Normalization improve accuracy and training time, there are no definitive explanations for their inner works \cite{Nalisnick2018} \cite{Bjorck2018} \cite{Santurkar2018}. Resulting again in the need to experiment with different configurations and sample data to validate empirically the theoretical assumptions.
+
+We conducted experiments to create guidelines for using Dropout and Batch Normalization. The experiments were performed in image classifications tasks (MNIST and CIFAR-10) using multilayer perceptron networks (MLPs) and convolutional neural networks (CNNs).
+
+The goal of these experiments is to analyze the accuracy of the different networks and hyperparameters, their usage of system resources during training and during test (prediction) time. This analysis will be used to derive some general guidelines to use and fine-tune these network configurations.
+
+\end{document}
+
+% Title and Abstract: Your report should have a brief and informative title and an
+% abstract. The abstract should have 200-300 words, which summarizes the problem you
+% intend to address in the report. Briefly describe designs and solutions which will
+% be proposed in the report, and briefly summarize any conclusions the report intends
+% to draw. [200-300 words: 1 pt]

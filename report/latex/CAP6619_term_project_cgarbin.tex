@@ -1,0 +1,96 @@
+\documentclass[conference]{IEEEtran}
+% \IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{subfiles}
+
+\usepackage[colorinlistoftodos]{todonotes}
+
+% For side-by-side figures
+% Source: https://tex.stackexchange.com/questions/271518/multiple-panel-figure-with-figures-side-by-side
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{graphicx}
+
+%To split table headers
+% From https://tex.stackexchange.com/questions/248053/a-header-in-a-table-with-two-lines
+\usepackage{makecell}
+
+% For source code listing
+\usepackage{listings}
+
+% For inline hyperlinks
+\usepackage{hyperref}
+
+\usepackage[
+backend=biber,
+style=alphabetic,
+sorting=ynt
+]{biblatex}
+\addbibresource{CAP6619_term_project.bib}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+
+\title{Comparison of Dropout vs. Batch Normalization accuracy and efficiency}
+
+\author{\IEEEauthorblockN{Christian Garbin}
+\IEEEauthorblockA{\textit{College of Engineering and Computer Science} \\
+\textit{Florida Atlantic University}\\
+Boca Raton, Florida, USA \\
+CAP-6619 Deep Learning, Fall 2018\\
+Term Project}}
+
+\maketitle
+
+\begin{abstract}
+\subfile{sections/CAP6619_term_project_1_abstract}
+\end{abstract}
+
+\begin{IEEEkeywords}
+machine learning, overfitting, dropout, batch normalization, optimization, regularization
+\end{IEEEkeywords}
+
+\section{Introduction}
+\subfile{sections/CAP6619_term_project_2_introduction}
+
+\section{Related Work}
+\subfile{sections/CAP6619_term_project_3_related_work}
+
+\section{Technical Details}
+\subfile{sections/CAP6619_term_project_4_main_body}
+
+\section{Experiments}
+\subfile{sections/CAP6619_term_project_5_experiments}
+
+\section{Conclusions}
+\subfile{sections/CAP6619_term_project_6_conclusions}
+
+
+\printbibliography
+
+\section{Appendix}
+
+\subsection{Source code used for experiments}
+
+The source code used in the experiments is available in Github at \url{https://github.com/cgarbin/cap6619-deep-learning-term-project}.
+
+\subsection{How network model pictures were generated}
+
+Pictures showing network models were generated in Keras with \verb|plot_model(...)|, e.g. 
+
+\begin{lstlisting}[language=Python]
+plot_model(model, to_file="modelplot.png",
+           show_layer_names=False,
+           show_shapes=True)
+\end{lstlisting}
+
+The pictures were created right after adding the layers to the models and calling \verb|model.compile()|. The pictures reflect the model exactly as they were trained and tested.
+
+\end{document}

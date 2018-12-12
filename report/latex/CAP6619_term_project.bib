@@ -1,0 +1,285 @@
+% Encoding: UTF-8
+
+@Article{Ioffe2015,
+  author        = {Sergey Ioffe and Christian Szegedy},
+  title         = {Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift},
+  __markedentry = {[cgarbin:]},
+  abstract      = {Training Deep Neural Networks is complicated by the fact that the distribution of each layer's inputs changes during training, as the parameters of the previous layers change. This slows down the training by requiring lower learning rates and careful parameter initialization, and makes it notoriously hard to train models with saturating nonlinearities. We refer to this phenomenon as internal covariate shift, and address the problem by normalizing layer inputs. Our method draws its strength from making normalization a part of the model architecture and performing the normalization for each training mini-batch. Batch Normalization allows us to use much higher learning rates and be less careful about initialization. It also acts as a regularizer, in some cases eliminating the need for Dropout. Applied to a state-of-the-art image classification model, Batch Normalization achieves the same accuracy with 14 times fewer training steps, and beats the original model by a significant margin. Using an ensemble of batch-normalized networks, we improve upon the best published result on ImageNet classification: reaching 4.9\% top-5 validation error (and 4.8\% test error), exceeding the accuracy of human raters.},
+  date          = {2015-02-11},
+  eprint        = {http://arxiv.org/abs/1502.03167v3},
+  eprintclass   = {cs.LG},
+  eprinttype    = {arXiv},
+  file          = {:http\://arxiv.org/pdf/1502.03167v3:PDF},
+  keywords      = {cs.LG},
+}
+
+@Article{Srivastava2014,
+  author        = {Srivastava, Nitish and Hinton, Geoffrey and Krizhevsky, Alex and Sutskever, Ilya and Salakhutdinov, Ruslan},
+  title         = {Dropout: A Simple Way to Prevent Neural Networks from Overfitting},
+  journal       = {J. Mach. Learn. Res.},
+  year          = {2014},
+  volume        = {15},
+  number        = {1},
+  pages         = {1929--1958},
+  month         = jan,
+  issn          = {1532-4435},
+  __markedentry = {[cgarbin:6]},
+  abstract      = {Deep neural nets with a large number of parameters are very powerful machine learning systems. However, overfitting is a serious problem in such networks. Large networks are also slow to use, making it difficult to deal with overfitting by combining the predictions of many different large neural nets at test time. Dropout is a technique for addressing this problem. The key idea is to randomly drop units (along with their connections) from the neural network during training. This prevents units from co-adapting too much. During training, dropout samples from an exponential number of different "thinned" networks. At test time, it is easy to approximate the effect of averaging the predictions of all these thinned networks by simply using a single unthinned network that has smaller weights. This significantly reduces overfitting and gives major improvements over other regularization methods. We show that dropout improves the performance of neural networks on supervised learning tasks in vision, speech recognition, document classification and computational biology, obtaining state-of-the-art results on many benchmark data sets.},
+  acmid         = {2670313},
+  issue_date    = {January 2014},
+  keywords      = {deep learning, model combination, neural networks, regularization},
+  numpages      = {30},
+  publisher     = {JMLR.org},
+  url           = {http://dl.acm.org/citation.cfm?id=2627435.2670313},
+}
+
+
+@Article{Li2018,
+  author        = {Xiang Li and Shuo Chen and Xiaolin Hu and Jian Yang},
+  title         = {Understanding the Disharmony between Dropout and Batch Normalization by Variance Shift},
+  abstract      = {This paper first answers the question "why do the two most powerful techniques Dropout and Batch Normalization (BN) often lead to a worse performance when they are combined together?" in both theoretical and statistical aspects. Theoretically, we find that Dropout would shift the variance of a specific neural unit when we transfer the state of that network from train to test. However, BN would maintain its statistical variance, which is accumulated from the entire learning procedure, in the test phase. The inconsistency of that variance (we name this scheme as "variance shift") causes the unstable numerical behavior in inference that leads to more erroneous predictions finally, when applying Dropout before BN. Thorough experiments on DenseNet, ResNet, ResNeXt and Wide ResNet confirm our findings. According to the uncovered mechanism, we next explore several strategies that modifies Dropout and try to overcome the limitations of their combination by avoiding the variance shift risks.},
+  date          = {2018-01-16},
+  eprint        = {http://arxiv.org/abs/1801.05134v1},
+  eprintclass   = {cs.LG},
+  eprinttype    = {arXiv},
+  file          = {:http\://arxiv.org/pdf/1801.05134v1:PDF},
+  keywords      = {cs.LG, stat.ML},
+}
+
+
+@Article{Nalisnick2018,
+  author        = {Eric Nalisnick and Padhraic Smyth},
+  title         = {Unifying the Dropout Family Through Structured Shrinkage Priors},
+  abstract      = {Dropout regularization of deep neural networks has been a mysterious yet effective tool to prevent overfitting. Explanations for its success range from the prevention of "co-adapted" weights to it being a form of cheap Bayesian inference. We propose a novel framework for understanding multiplicative noise in neural networks, considering continuous distributions as well as Bernoulli (i.e. dropout). We show that multiplicative noise induces structured shrinkage priors on a network's weights. We derive the equivalence through reparametrization properties of scale mixtures and not via any approximation. Given the equivalence, we then show that dropout's usual Monte Carlo training objective approximates marginal MAP estimation. We analyze this MAP objective under strong shrinkage, showing the expanded parametrization (i.e. likelihood noise) is more stable than a hierarchical representation. Lastly, we derive analogous priors for ResNets, RNNs, and CNNs and reveal their equivalent implementation as noise.},
+  date          = {2018-10-09},
+  eprint        = {http://arxiv.org/abs/1810.04045v1},
+  eprintclass   = {stat.ML},
+  eprinttype    = {arXiv},
+  file          = {:http\://arxiv.org/pdf/1810.04045v1:PDF},
+  keywords      = {stat.ML, cs.LG},
+}
+
+
+@Article{Hendrycks2016,
+  author        = {Dan Hendrycks and Kevin Gimpel},
+  title         = {Adjusting for Dropout Variance in Batch Normalization and Weight Initialization},
+  abstract      = {We show how to adjust for the variance introduced by dropout with corrections to weight initialization and Batch Normalization, yielding higher accuracy. Though dropout can preserve the expected input to a neuron between train and test, the variance of the input differs. We thus propose a new weight initialization by correcting for the influence of dropout rates and an arbitrary nonlinearity's influence on variance through simple corrective scalars. Since Batch Normalization trained with dropout estimates the variance of a layer's incoming distribution with some inputs dropped, the variance also differs between train and test. After training a network with Batch Normalization and dropout, we simply update Batch Normalization's variance moving averages with dropout off and obtain state of the art on CIFAR-10 and CIFAR-100 without data augmentation.},
+  date          = {2016-07-08},
+  eprint        = {http://arxiv.org/abs/1607.02488v2},
+  eprintclass   = {cs.LG},
+  eprinttype    = {arXiv},
+  file          = {:http\://arxiv.org/pdf/1607.02488v2:PDF},
+  keywords      = {cs.LG, cs.NE},
+}
+
+
+@Article{Bjorck2018,
+  author        = {Johan Bjorck and Carla Gomes and Bart Selman and Kilian Q. Weinberger},
+  title         = {Understanding Batch Normalization},
+  abstract      = {Batch normalization (BN) is a technique to normalize activations in intermediate layers of deep neural networks. Its tendency to improve accuracy and speed up training have established BN as a favorite technique in deep learning. Yet, despite its enormous success, there remains little consensus on the exact reason and mechanism behind these improvements. In this paper we take a step towards a better understanding of BN, following an empirical approach. We conduct several experiments, and show that BN primarily enables training with larger learning rates, which is the cause for faster convergence and better generalization. For networks without BN we demonstrate how large gradient updates can result in diverging loss and activations growing uncontrollably with network depth, which limits possible learning rates. BN avoids this problem by constantly correcting activations to be zero-mean and of unit standard deviation, which enables larger gradient steps, yields faster convergence and may help bypass sharp local minima. We further show various ways in which gradients and activations of deep unnormalized networks are ill-behaved. We contrast our results against recent findings in random matrix theory, shedding new light on classical initialization schemes and their consequences.},
+  date          = {2018-06-01},
+  eprint        = {http://arxiv.org/abs/1806.02375v4},
+  eprintclass   = {cs.LG},
+  eprinttype    = {arXiv},
+  file          = {:http\://arxiv.org/pdf/1806.02375v4:PDF},
+  keywords      = {cs.LG, cs.AI, stat.ML},
+}
+
+
+@Article{Santurkar2018,
+  author        = {Shibani Santurkar and Dimitris Tsipras and Andrew Ilyas and Aleksander Madry},
+  title         = {How Does Batch Normalization Help Optimization?},
+  abstract      = {Batch Normalization (BatchNorm) is a widely adopted technique that enables faster and more stable training of deep neural networks (DNNs). Despite its pervasiveness, the exact reasons for BatchNorm's effectiveness are still poorly understood. The popular belief is that this effectiveness stems from controlling the change of the layers' input distributions during training to reduce the so-called "internal covariate shift". In this work, we demonstrate that such distributional stability of layer inputs has little to do with the success of BatchNorm. Instead, we uncover a more fundamental impact of BatchNorm on the training process: it makes the optimization landscape significantly smoother. This smoothness induces a more predictive and stable behavior of the gradients, allowing for faster training.},
+  date          = {2018-05-29},
+  eprint        = {http://arxiv.org/abs/1805.11604v3},
+  eprintclass   = {stat.ML},
+  eprinttype    = {arXiv},
+  file          = {:http\://arxiv.org/pdf/1805.11604v3:PDF},
+  keywords      = {stat.ML, cs.LG, cs.NE},
+}
+
+@Comment{jabref-meta: databaseType:bibtex;}
+
+@Book{Goodfellow2016,
+  title         = {Deep Learning},
+  publisher     = {{MIT} Press},
+  year          = {2016},
+  author        = {Ian J. Goodfellow and Yoshua Bengio and Aaron C. Courville},
+  series        = {Adaptive computation and machine learning},
+  isbn          = {978-0-262-03561-3},
+  bibsource     = {dblp computer science bibliography, https://dblp.org},
+  biburl        = {https://dblp.org/rec/bib/books/daglib/0040158},
+  comment       = {Fundamental issue overfitting: section 5.2
+
+},
+  url           = {http://www.deeplearningbook.org/},
+}
+
+@Article{Ruder2016,
+  author        = {Sebastian Ruder},
+  title         = {An overview of gradient descent optimization algorithms},
+  abstract      = {Gradient descent optimization algorithms, while increasingly popular, are often used as black-box optimizers, as practical explanations of their strengths and weaknesses are hard to come by. This article aims to provide the reader with intuitions with regard to the behaviour of different algorithms that will allow her to put them to use. In the course of this overview, we look at different variants of gradient descent, summarize challenges, introduce the most common optimization algorithms, review architectures in a parallel and distributed setting, and investigate additional strategies for optimizing gradient descent.},
+  date          = {2016-09-15},
+  eprint        = {http://arxiv.org/abs/1609.04747v2},
+  eprintclass   = {cs.LG},
+  eprinttype    = {arXiv},
+  file          = {:http\://arxiv.org/pdf/1609.04747v2:PDF},
+  keywords      = {cs.LG},
+}
+
+@Article{Perez2017,
+  author        = {Luis Perez and Jason Wang},
+  title         = {The Effectiveness of Data Augmentation in Image Classification using Deep Learning},
+  abstract      = {In this paper, we explore and compare multiple solutions to the problem of data augmentation in image classification. Previous work has demonstrated the effectiveness of data augmentation through simple techniques, such as cropping, rotating, and flipping input images. We artificially constrain our access to data to a small subset of the ImageNet dataset, and compare each data augmentation technique in turn. One of the more successful data augmentations strategies is the traditional transformations mentioned above. We also experiment with GANs to generate images of different styles. Finally, we propose a method to allow a neural net to learn augmentations that best improve the classifier, which we call neural augmentation. We discuss the successes and shortcomings of this method on various datasets.},
+  date          = {2017-12-13},
+  eprint        = {http://arxiv.org/abs/1712.04621v1},
+  eprintclass   = {cs.CV},
+  eprinttype    = {arXiv},
+  file          = {:http\://arxiv.org/pdf/1712.04621v1:PDF},
+  keywords      = {cs.CV},
+}
+
+@Misc{Tieleman2012,
+  author       = {Tieleman, T. and Hinton, G.},
+  title        = {{Lecture 6.5---RmsProp: Divide the gradient by a running average of its recent magnitude}},
+  howpublished = {COURSERA: Neural Networks for Machine Learning},
+  year         = {2012},
+}
+
+@Article{Bengio2012,
+  author        = {Yoshua Bengio},
+  title         = {Practical recommendations for gradient-based training of deep architectures},
+  abstract      = {Learning algorithms related to artificial neural networks and in particular for Deep Learning may seem to involve many bells and whistles, called hyper-parameters. This chapter is meant as a practical guide with recommendations for some of the most commonly used hyper-parameters, in particular in the context of learning algorithms based on back-propagated gradient and gradient-based optimization. It also discusses how to deal with the fact that more interesting results can be obtained when allowing one to adjust many hyper-parameters. Overall, it describes elements of the practice used to successfully and efficiently train and debug large-scale and often deep multi-layer neural networks. It closes with open questions about the training difficulties observed with deeper architectures.},
+  date          = {2012-06-24},
+  eprint        = {http://arxiv.org/abs/1206.5533v2},
+  eprintclass   = {cs.LG},
+  eprinttype    = {arXiv},
+  file          = {:http\://arxiv.org/pdf/1206.5533v2:PDF},
+  keywords      = {cs.LG},
+}
+\@Article{Luo2018,
+  author        = {Ping Luo and Xinjiang Wang and Wenqi Shao and Zhanglin Peng},
+  title         = {Towards Understanding Regularization in Batch Normalization},
+  abstract      = {Batch Normalization (BN) improves both convergence and generalization in training neural networks. This work understands these phenomena theoretically. We analyze BN by using a basic block of neural networks, consisting of a kernel layer, a BN layer, and a nonlinear activation function. This basic network helps us understand the impacts of BN in three aspects. First, by viewing BN as an implicit regularizer, BN can be decomposed into population normalization (PN) and gamma decay as an explicit regularization. Second, learning dynamics of BN and the regularization show that training converged with large maximum and effective learning rate. Third, generalization of BN is explored by using statistical mechanics. Experiments demonstrate that BN in convolutional neural networks share the same traits of regularization as the above analyses.},
+  date          = {2018-09-04},
+  eprint        = {http://arxiv.org/abs/1809.00846v3},
+  eprintclass   = {cs.LG},
+  eprinttype    = {arXiv},
+  file          = {:http\://arxiv.org/pdf/1809.00846v3:PDF},
+  keywords      = {cs.LG, cs.CV, cs.SY, stat.ML},
+}
+
+@Article{Kohler2018,
+  author        = {Jonas Moritz Kohler and Hadi Daneshmand and Aur{\'{e}}lien Lucchi and Ming Zhou and Klaus Neymeyr and Thomas Hofmann},
+  title         = {Towards a Theoretical Understanding of Batch Normalization},
+  journal       = {CoRR},
+  year          = {2018},
+  volume        = {abs/1805.10694},
+  archiveprefix = {arXiv},
+  bibsource     = {dblp computer science bibliography, https://dblp.org},
+  biburl        = {https://dblp.org/rec/bib/journals/corr/abs-1805-10694},
+  eprint        = {1805.10694},
+  url           = {http://arxiv.org/abs/1805.10694},
+}
+
+@Article{LeCun1999,
+  author = {LeCun, Yann},
+  title  = {The MNIST database of handwritten digits},
+  year   = {1999},
+  url    = {http://yann.lecun.com/exdb/mnist/},
+}
+@Online{Steppana,
+  author  = {Josef Steppan},
+  title   = {MNIST Examples},
+  url     = {https://commons.wikimedia.org/wiki/File:MnistExamples.png},
+  urldate = {2018-12-08},
+}
+
+@Online{Karpathy,
+  author  = {Karpathy},
+  title   = {ConvNetJS},
+  url     = {https://cs.stanford.edu/people/karpathy/convnetjs/},
+  urldate = {2018-12-08},
+}
+
+@Online{KerasTeam2016,
+  author  = {KerasTeam},
+  title   = {Using test data as validation data during training},
+  year    = {2016},
+  url     = {https://github.com/keras-team/keras/issues/1753},
+  urldate = {2018-12-09},
+}
+
+@Online{Mishkin2016,
+  author  = {Dmytro Mishkin},
+  year    = {2016},
+  url     = {https://github.com/ducha-aiki/caffenet-benchmark/blob/master/batchnorm.md},
+  urldate = {2018-12-09},
+}
+
+@InProceedings{Krizhevsky2012,
+  author        = {Alex Krizhevsky and Ilya Sutskever and Geoffrey E. Hinton},
+  title         = {ImageNet Classification with Deep Convolutional Neural Networks},
+  booktitle     = {Advances in Neural Information Processing Systems 25: 26th Annual Conference on Neural Information Processing Systems 2012. Proceedings of a meeting held December 3-6, 2012, Lake Tahoe, Nevada, United States.},
+  year          = {2012},
+  editor        = {Peter L. Bartlett and Fernando C. N. Pereira and Christopher J. C. Burges and L{\'{e}}on Bottou and Kilian Q. Weinberger},
+  pages         = {1106--1114},
+  bibsource     = {dblp computer science bibliography, https://dblp.org},
+  biburl        = {https://dblp.org/rec/bib/conf/nips/KrizhevskySH12},
+  url           = {http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks},
+}
+
+@Article{Gal2015,
+  author        = {Yarin Gal and Zoubin Ghahramani},
+  title         = {Bayesian Convolutional Neural Networks with Bernoulli Approximate Variational Inference},
+  abstract      = {Convolutional neural networks (CNNs) work well on large datasets. But labelled data is hard to collect, and in some applications larger amounts of data are not available. The problem then is how to use CNNs with small data -- as CNNs overfit quickly. We present an efficient Bayesian CNN, offering better robustness to over-fitting on small data than traditional approaches. This is by placing a probability distribution over the CNN's kernels. We approximate our model's intractable posterior with Bernoulli variational distributions, requiring no additional model parameters. On the theoretical side, we cast dropout network training as approximate inference in Bayesian neural networks. This allows us to implement our model using existing tools in deep learning with no increase in time complexity, while highlighting a negative result in the field. We show a considerable improvement in classification accuracy compared to standard techniques and improve on published state-of-the-art results for CIFAR-10.},
+  date          = {2015-06-06},
+  eprint        = {http://arxiv.org/abs/1506.02158v6},
+  eprintclass   = {stat.ML},
+  eprinttype    = {arXiv},
+  file          = {:http\://arxiv.org/pdf/1506.02158v6:PDF},
+  keywords      = {stat.ML, cs.LG},
+}
+
+@InProceedings{Nair2010,
+  author    = {Vinod Nair and Geoffrey E. Hinton},
+  title     = {Rectified Linear Units Improve Restricted Boltzmann Machines},
+  booktitle = {Proceedings of the 27th International Conference on Machine Learning (ICML-10), June 21-24, 2010, Haifa, Israel},
+  year      = {2010},
+  editor    = {Johannes F{\"{u}}rnkranz and Thorsten Joachims},
+  pages     = {807--814},
+  publisher = {Omnipress},
+  bibsource = {dblp computer science bibliography, https://dblp.org},
+  biburl    = {https://dblp.org/rec/bib/conf/icml/NairH10},
+  url       = {http://www.icml2010.org/papers/432.pdf},
+}
+
+@Online{Krizhevsky2009,
+  author  = {Alex Krizhevsky},
+  title   = {Learning Multiple Layers of Features from Tiny Images},
+  year    = {2009},
+  type    = {Technical Report},
+  url     = {https://www.cs.toronto.edu/~kriz/learning-features-2009-TR.pdf},
+  urldate = {2018-12-09},
+}
+
+@Online{Google2018,
+  author  = {Google},
+  title   = {TensorBoard: Visualizing Learning},
+  year    = {2018},
+  url     = {https://www.tensorflow.org/guide/summaries_and_tensorboard},
+  urldate = {2018-12-09},
+}
+
+@InProceedings{Morgan1989,
+  author        = {Nelson Morgan and Herv{\'{e}} Bourlard},
+  title         = {Generalization and Parameter Estimation in Feedforward Netws: Some Experiments},
+  booktitle     = {Advances in Neural Information Processing Systems 2, {[NIPS} Conference, Denver, Colorado, USA, November 27-30, 1989]},
+  year          = {1989},
+  editor        = {David S. Touretzky},
+  pages         = {630--637},
+  publisher     = {Morgan Kaufmann},
+  bibsource     = {dblp computer science bibliography, https://dblp.org},
+  biburl        = {https://dblp.org/rec/bib/conf/nips/MorganB89},
+  url           = {http://papers.nips.cc/paper/275-generalization-and-parameter-estimation-in-feedforward-nets-some-experiments},
+}
