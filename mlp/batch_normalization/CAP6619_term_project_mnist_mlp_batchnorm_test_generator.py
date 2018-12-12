@@ -1,5 +1,4 @@
-"""
-CAP-6619 Deep Learning Fall 2018 term project
+"""CAP-6619 Deep Learning Fall 2018 term project
 MNIST with standard deep neural network and batch normalization
 
 Create shell scripts with all tests we need to execute.

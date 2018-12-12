@@ -1,6 +1,6 @@
-# From chapter 5 of Deep Learning with Python
-# This is the MINST CNN example in the book
-
+"""From chapter 5 of Deep Learning with Python.
+This is the MINST CNN example in the book
+"""
 from keras import models
 from keras import layers
 from keras.utils import to_categorical

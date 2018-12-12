@@ -1,6 +1,5 @@
-"""
-Cat vs. Dogs based on chapter 5 of Deep Learning with Python
-With dropout layers
+"""Cat vs. Dogs based on chapter 5 of Deep Learning with Python.
+With dropout layers.
 """
 
 import os

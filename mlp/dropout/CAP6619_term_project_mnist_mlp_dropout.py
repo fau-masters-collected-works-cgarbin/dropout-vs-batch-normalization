@@ -1,8 +1,7 @@
-"""
-CAP-6619 Deep Learning Fall 2018 term project
+"""CAP-6619 Deep Learning Fall 2018 term project
 MNIST with standard deep neural network and dropout
 
-Dropout paper: http://jmlr.org/papers/volume15/srivastava14a.old/srivastava14a.pdf
+Dropout paper: http://jmlr.org/papers/volume15/srivastava14a.old/srivastava14a.pdf  # noqa
 """
 import time
 import pandas as pd

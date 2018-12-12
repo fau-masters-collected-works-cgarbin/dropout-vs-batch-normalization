@@ -1,10 +1,9 @@
-'''
-CAP-6619 Deep Learning Fall 2018 term project
+"""CAP-6619 Deep Learning Fall 2018 term project
 MNIST with standard deep neural network and dropout
 
 Create shell scripts with all tests we need to execute.
 
-Dropout paper: http://jmlr.org/papers/volume15/srivastava14a.old/srivastava14a.pdf
+Dropout paper: http://jmlr.org/papers/volume15/srivastava14a.old/srivastava14a.pdf # noqa
 
 Some default values from Keras to keep in mind:
 
@@ -30,10 +29,10 @@ Some notes from the paper about the tests they conducted:
   real-valued inputs (image patches or speech frames), a typical value is 0.8.'
 * Optimizer: the paper is not clear. It seems to use SGD.
 
-From the source code the paper points to (http://www.cs.toronto.edu/~nitish/dropout/mnist.pbtxt):
+From the source code the paper points to (http://www.cs.toronto.edu/~nitish/dropout/mnist.pbtxt): # noqa
 
 * l2_decay: 0.001
-'''
+"""
 import itertools
 import os
 import stat

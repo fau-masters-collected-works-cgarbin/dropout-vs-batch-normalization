@@ -1,7 +1,4 @@
-"""
-Cat vs. Dogs based on chapter 5 of Deep Learning with Python
-"""
-
+""" Cat vs. Dogs based on chapter 5 of Deep Learning with Python."""
 import os
 import collections
 

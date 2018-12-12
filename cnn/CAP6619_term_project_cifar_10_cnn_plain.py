@@ -1,13 +1,13 @@
-'''CIFAR-10 using a plain CNN, no dropout, no batch normalization. Meant to
+"""CIFAR-10 using a plain CNN, no dropout, no batch normalization. Meant to
 be used as a baseline to compare with dropout and batch normalization.
 
 Based on the Keras CIFAR-10 example.
 
-Source: https://github.com/keras-team/keras/blob/d2803c0fb7d0ba9361dcba8eb9bcebbf2f774958/examples/cifar10_cnn.py
+Source: https://github.com/keras-team/keras/blob/d2803c0fb7d0ba9361dcba8eb9bcebbf2f774958/examples/cifar10_cnn.py # noqa
 
 Note: to make it work I had to re-introduce `steps_per_epoch` that was removed
 # diff-96f332e007bcdf35ed78e7cba091d6f8.
-in https://github.com/keras-team/keras/commit/bc285462ad8ec9b8bc00bd6e09f9bcd9ae3d84a2
+in https://github.com/keras-team/keras/commit/bc285462ad8ec9b8bc00bd6e09f9bcd9ae3d84a2 # noqa
 
 Discussions in that PR say it's not needed in this case, but it didn't work for
 me without it.
@@ -18,7 +18,7 @@ Train a simple deep CNN on the CIFAR10 small images dataset.
 
 It gets to 75% validation accuracy in 25 epochs, and 79% after 50 epochs.
 (it's still underfitting at that point, though).
-'''
+"""
 
 import keras
 from keras.datasets import cifar10
@@ -104,7 +104,7 @@ else:
     datagen = ImageDataGenerator(
         featurewise_center=False,  # set input mean to 0 over the dataset
         samplewise_center=False,  # set each sample mean to 0
-        featurewise_std_normalization=False,  # divide inputs by std of the dataset
+        featurewise_std_normalization=False,  # divide inputs by std of the dataset # noqa
         samplewise_std_normalization=False,  # divide each input by its std
         zca_whitening=False,  # apply ZCA whitening
         zca_epsilon=1e-06,  # epsilon for ZCA whitening

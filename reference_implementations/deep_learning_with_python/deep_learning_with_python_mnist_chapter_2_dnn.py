@@ -1,6 +1,6 @@
-# From chapter 2 of Deep Learning with Python
-# This is the simplest MNIST example from the book
-
+"""From chapter 2 of Deep Learning with Python.
+This is the simplest MNIST example from the book.
+"""
 from keras import models
 from keras import layers
 from keras.utils import to_categorical

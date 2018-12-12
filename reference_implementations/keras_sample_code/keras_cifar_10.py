@@ -1,9 +1,9 @@
 """Keras CIFAR-10 example, using CNN.
 
-Source: https://github.com/keras-team/keras/blob/d2803c0fb7d0ba9361dcba8eb9bcebbf2f774958/examples/cifar10_cnn.py
+Source: https://github.com/keras-team/keras/blob/d2803c0fb7d0ba9361dcba8eb9bcebbf2f774958/examples/cifar10_cnn.py # noqa
 
 Note: to make it work I had to re-introduce `steps_per_epoch` that was removed
-in https://github.com/keras-team/keras/commit/bc285462ad8ec9b8bc00bd6e09f9bcd9ae3d84a2#diff-96f332e007bcdf35ed78e7cba091d6f8.
+in https://github.com/keras-team/keras/commit/bc285462ad8ec9b8bc00bd6e09f9bcd9ae3d84a2#diff-96f332e007bcdf35ed78e7cba091d6f8. # noqa
 
 Discussions in that PR say it's not needed in this case, but it didn't work for
 me without it.
@@ -15,7 +15,6 @@ Train a simple deep CNN on the CIFAR10 small images dataset.
 It gets to 75% validation accuracy in 25 epochs, and 79% after 50 epochs.
 (it's still underfitting at that point, though).
 """
-
 from __future__ import print_function
 import keras
 from keras.datasets import cifar10
