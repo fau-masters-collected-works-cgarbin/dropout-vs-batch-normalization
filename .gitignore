@@ -19,3 +19,5 @@ catsvsdogs/
 !cnn_test_*.sh
 # Compressed result files
 *gz
+# Allow the Python requirements file
+!requirements.txt
