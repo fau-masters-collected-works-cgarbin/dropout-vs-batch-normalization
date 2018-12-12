@@ -14,8 +14,8 @@ import seaborn as sns
 def parse_command_line():
     """Parse command line parameters and return them."""
     ap = ArgumentParser(description='Plot Keras history from a JSON file.')
-    ap.add_argument("--directory", type=str)
-    ap.add_argument("--pattern", type=str)
+    ap.add_argument('--directory', type=str)
+    ap.add_argument('--pattern', type=str)
     args = ap.parse_args()
 
     return args.directory, args.pattern
@@ -24,51 +24,51 @@ def parse_command_line():
 def get_title(file_name):
     """Create a title by extracting pieces of the file name."""
 
-    if "mlp" in file_name:
-        network = re.search(r"nw=(.*?)_", file_name).group(1)
-        optimizer = re.search(r"opt=(.*?)_", file_name).group(1)
-        hidden_layers = re.search(r"hl=(.*?)_", file_name).group(1)
-        units_per_layer = re.search(r"uhl=(.*?)_", file_name).group(1)
-        epochs = re.search(r"e=(.*?)_", file_name).group(1)
-        learning_rate = re.search(r"lr=(.*?)_", file_name).group(1)
-        weight_decay = re.search(r"_d=(.*?)_", file_name).group(1)
+    if 'mlp' in file_name:
+        network = re.search(r'nw=(.*?)_', file_name).group(1)
+        optimizer = re.search(r'opt=(.*?)_', file_name).group(1)
+        hidden_layers = re.search(r'hl=(.*?)_', file_name).group(1)
+        units_per_layer = re.search(r'uhl=(.*?)_', file_name).group(1)
+        epochs = re.search(r'e=(.*?)_', file_name).group(1)
+        learning_rate = re.search(r'lr=(.*?)_', file_name).group(1)
+        weight_decay = re.search(r'_d=(.*?)_', file_name).group(1)
 
         # Nicer text for humans for title and optimizer
-        pretty_network = {"standard": "Standard",
-                          "dropout": "Dropout",
-                          "dropout_no_adjustment": "Droput w/o adjustment",
-                          "batch": "Batch normalization"}
-        pretty_optimizer = {"sgd": "SGD", "rmsprop": "RMSProp"}
+        pretty_network = {'standard': 'Standard',
+                          'dropout': 'Dropout',
+                          'dropout_no_adjustment': 'Droput w/o adjustment',
+                          'batch': 'Batch normalization'}
+        pretty_optimizer = {'sgd': 'SGD', 'rmsprop': 'RMSProp'}
 
         # Note: three lines is the most I was able to fit with the standard
         # matlibplot title formatting (there are solutions to fit more lines,
         # but none are simple - at least the ones I could find)
-        title = ("{} network, {} optimizer, trained for {} epochs\n"
-                 "{} hidden layers, {} units per layer \n"
-                 "Learning rate = {}, weight decay = {}").format(
+        title = ('{} network, {} optimizer, trained for {} epochs\n'
+                 '{} hidden layers, {} units per layer \n'
+                 'Learning rate = {}, weight decay = {}').format(
             pretty_network[network], pretty_optimizer[optimizer], int(epochs),
             int(hidden_layers), int(units_per_layer), float(learning_rate),
             float(weight_decay))
 
         return title
 
-    if "cnn" in file_name:
-        network = re.search(r"cifar_10_cnn_(.*?)_lr", file_name).group(1)
-        learning_rate = re.search(r"lr=(.*?)_", file_name).group(1)
-        units_dense_layer = re.search(r"udl=(.*?)_", file_name).group(1)
-        epochs = re.search(r"e=(.*?)_", file_name).group(1)
+    if 'cnn' in file_name:
+        network = re.search(r'cifar_10_cnn_(.*?)_lr', file_name).group(1)
+        learning_rate = re.search(r'lr=(.*?)_', file_name).group(1)
+        units_dense_layer = re.search(r'udl=(.*?)_', file_name).group(1)
+        epochs = re.search(r'e=(.*?)_', file_name).group(1)
 
         # Nicer text for humans for title and optimizer
-        pretty_network = {"plain": "Plain",
-                          "dropout": "Dropout",
-                          "batch_normalization": "Batch Normalization",
-                          "batchnorm_dropout": "Droput + Batch normalization"}
+        pretty_network = {'plain': 'Plain',
+                          'dropout': 'Dropout',
+                          'batch_normalization': 'Batch Normalization',
+                          'batchnorm_dropout': 'Droput + Batch normalization'}
 
         # Note: three lines is the most I was able to fit with the standard
         # matlibplot title formatting (there are solutions to fit more lines,
         # but none are simple - at least the ones I could find)
-        title = ("{} network, trained for {} epochs\n"
-                 "{} units in dense layer, learning rate = {}").format(
+        title = ('{} network, trained for {} epochs\n'
+                 '{} units in dense layer, learning rate = {}').format(
             pretty_network[network], int(epochs),
             int(units_dense_layer), float(learning_rate))
 
@@ -83,7 +83,7 @@ def get_max_y(file_name):
     # These values were determined by hand. We could be fancy and read
     # all data files first to determine max y, but too much work for low
     # return at this point.
-    if "mlp" in file_name:
+    if 'mlp' in file_name:
         return 0.5
     else:
         # Assume it's the CNN test
@@ -120,20 +120,20 @@ def plot_history(history, file_name, show):
     ax.lines[0].set_linestyle('--')
 
     # Add axis labels
-    plt.xlabel("Epochs")
-    plt.ylabel("Loss")
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
 
     # Change x-axis tick labels (epoch) from float to integers
     plt.xticks(epochs)
     ax.xaxis.set_major_locator(plt.MaxNLocator(10))
     ax.set_xlim(0, num_epochs)
-    plt.grid(True, axis="x", linestyle="dotted")
+    plt.grid(True, axis='x', linestyle='dotted')
 
     plt.legend(frameon=False)
     plt.title(get_title(file_name))
 
     # Save to disk as a .png file
-    png_file = file_name.replace(".json", ".png")
+    png_file = file_name.replace('.json', '.png')
     plt.savefig(png_file)
 
     if show:
@@ -141,12 +141,12 @@ def plot_history(history, file_name, show):
 
 
 def plot_all_files(directory, pattern, show):
-    full_path = os.path.join(directory, "*" + pattern + "*.json")
+    full_path = os.path.join(directory, '*' + pattern + '*.json')
     all_files = glob.glob(full_path)
 
     for file_name in all_files:
         with open(file_name) as f:
-            print("plotting " + f.name)  # show progress to the user
+            print('plotting ' + f.name)  # show progress to the user
             history = json.load(f)
             plot_history(history, file_name, show)
 
@@ -157,25 +157,25 @@ def plot_all_files(directory, pattern, show):
 ide_test = True
 if ide_test:
     # Show a warning to let user now we are ignoring command line parameters
-    print("\n\n  --- Running from IDE - ignoring command line\n\n")
+    print('\n\n  --- Running from IDE - ignoring command line\n\n')
 
     # # Standard network - top entry
     # # Get all history files from a directory...
-    # directory = "./mlp/dropout/analysis/standard/sgd"
+    # directory = './mlp/dropout/analysis/standard/sgd'
     # # ...and a specific pattern to select files
-    # pattern = "dropout_mnist_mlp_standard_sgd_nw=standard_opt=sgd_hl=002_uhl=2048_e=50_bs=0128_dri=0.10_drh=0.50_lr=0.1000_d=0.0000_m=0.95_mn=none_history"
+    # pattern = 'dropout_mnist_mlp_standard_sgd_nw=standard_opt=sgd_hl=002_uhl=2048_e=50_bs=0128_dri=0.10_drh=0.50_lr=0.1000_d=0.0000_m=0.95_mn=none_history'  # noqa
 
     # # Droput network - top entry
     # # Get all history files from a directory...
-    # directory = "./mlp/dropout/analysis/dropout/sgd"
+    # directory = './mlp/dropout/analysis/dropout/sgd'
     # # ...and a specific pattern to select files
-    # pattern = "dropout_mnist_mlp_dropout_sgd_nw=dropout_opt=sgd_hl=002_uhl=2048_e=50_bs=0128_dri=0.10_drh=0.50_lr=0.0100_d=0.0010_m=0.99_mn=3_history"
+    # pattern = 'dropout_mnist_mlp_dropout_sgd_nw=dropout_opt=sgd_hl=002_uhl=2048_e=50_bs=0128_dri=0.10_drh=0.50_lr=0.0100_d=0.0010_m=0.99_mn=3_history' # noqa
 
     # Batchnorm network - top entry
     # Get all history files from a directory...
-    directory = "./mlp/batch_normalization/analysis/sgd"
+    directory = './mlp/batch_normalization/analysis/sgd'
     # ...and a specific pattern to select files
-    pattern = "batchnorm_mnist_mlp_sgd_nw=batch_normalization_opt=sgd_hl=004_uhl=2048_e=50_bs=0128_lr=0.0100_d=0.0000_m=0.95_history"
+    pattern = 'batchnorm_mnist_mlp_sgd_nw=batch_normalization_opt=sgd_hl=004_uhl=2048_e=50_bs=0128_lr=0.0100_d=0.0000_m=0.95_history'  # noqa
 
     plot_all_files(directory, pattern, show=True)
 else:

@@ -1,5 +1,6 @@
 """From chapter 5 of Deep Learning with Python.
-This is the MINST CNN example in the book
+
+This is the MINST CNN example in the book.
 """
 from keras import models
 from keras import layers
