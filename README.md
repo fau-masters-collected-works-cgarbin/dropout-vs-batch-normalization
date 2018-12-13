@@ -15,3 +15,8 @@ the report I delivered for the class. Every so often I correct a mistake in it o
 item. To see the original report, go to the first version in the file history.
 
 The LaTeX files used to create the report are available [here](./report).
+
+# License
+
+Licensed as [MIT](./LICENSE). If you use parts of this project, I'd appreciate a reference to
+this work (and please let me know you are referring to - personal curiosity).
