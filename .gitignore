@@ -18,3 +18,10 @@ catsvsdogs/
 *gz
 # Allow the Python requirements file
 !requirements.txt
+# Ignore history (.json) and results (.txt) file, except the ones in the
+# test_results directory. This allows us to run tests from with the IDE,
+# without inadvertently commiting result files from those tests.
+*json
+*txt
+!test_results/*json
+!test_results/*txt
