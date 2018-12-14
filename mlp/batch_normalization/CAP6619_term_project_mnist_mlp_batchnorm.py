@@ -166,11 +166,11 @@ def parse_command_line():
     ap.add_argument('--experiment_name', type=str)
     ap.add_argument('--network', type=str)
     ap.add_argument('--optimizer', type=str)
-    ap.add_argument('--hidden_layers', default=2, type=int)
-    ap.add_argument('--units_per_layer', default=512, type=int)
-    ap.add_argument('--epochs', default=5, type=int)
-    ap.add_argument('--batch_size', default=128, type=int)
-    ap.add_argument('--learning_rate', default=0.01, type=float)
+    ap.add_argument('--hidden_layers', type=int)
+    ap.add_argument('--units_per_layer', type=int)
+    ap.add_argument('--epochs', type=int)
+    ap.add_argument('--batch_size', type=int)
+    ap.add_argument('--learning_rate', type=float)
     ap.add_argument('--decay', type=float)
     ap.add_argument('--sgd_momentum', type=str)
 
@@ -212,17 +212,14 @@ train_images = train_images.astype('float32') / 255
 test_images = test_images.reshape((10000, 28 * 28))
 test_images = test_images.astype('float32') / 255
 
-# Change this to 'False' when testing from the command line. Leave set to True
-# when launching from the IDE and change the parameters below (it's faster
-# than dealing with launch.json).
-ide_test = False
-# Show a warning to let user now we are ignoring command line parameters
-if ide_test:
+p = parse_command_line()
+
+if all(param is None for param in p):
+    # No command line parameter provided - running from within IDE. Build the
+    # test configuration, warn the user and run in verbose mode.
     print('\n\n  --- Running from IDE - ignoring command line\n\n')
 
-p = None
-if ide_test:
-    p = Parameters(
+    test_params = Parameters(
         experiment_name='batchnorm_mnist_mlp',
         network='batch_normalization',
         optimizer='rmsprop',
@@ -234,7 +231,8 @@ if ide_test:
         decay=0.0,
         sgd_momentum=0.95,
     )
+    test_model(test_params, save_experiment, verbose=1)
 else:
-    p = parse_command_line()
-
-test_model(p, save_experiment, verbose=1 if ide_test else 2)
+    # Running from the command line - use those parameters and reduce amount
+    # of output from Keras to support nohup execution.
+    test_model(p, save_experiment, verbose=2)
