@@ -238,17 +238,14 @@ train_images = train_images.astype('float32') / 255
 test_images = test_images.reshape((10000, pixels_per_image))
 test_images = test_images.astype('float32') / 255
 
-# Change this to 'False' when testing from the command line. Leave set to True
-# when launching from the IDE and change the parameters below (it's faster
-# than dealing with launch.json).
-ide_test = True
-# Show a warning to let user now we are ignoring command line parameters
-if ide_test:
+p = parse_command_line()
+
+if all(param is None for param in p):
+    # No command line parameter provided - running from within IDE. Build the
+    # test configuration, warn the user and run in verbose mode.
     print('\n\n  --- Running from IDE - ignoring command line\n\n')
 
-p = None
-if ide_test:
-    p = Parameters(
+    test_params = Parameters(
         experiment_name='dropout_mnist_mlp',
         network='dropout',
         optimizer='rmsprop',
@@ -263,7 +260,8 @@ if ide_test:
         sgd_momentum='none',
         max_norm_max_value='none',
     )
+    test_model(test_params, save_experiment, verbose=1)
 else:
-    p = parse_command_line()
-
-test_model(p, save_experiment, verbose=1 if ide_test else 2)
+    # Running from the command line - use those parameters and reduce amount
+    # of output from Keras to support nohup execution.
+    test_model(p, save_experiment, verbose=2)
