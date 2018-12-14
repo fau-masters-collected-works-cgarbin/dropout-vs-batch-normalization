@@ -9,6 +9,7 @@ import re
 from argparse import ArgumentParser
 from matplotlib import pyplot as plt
 import seaborn as sns
+import pandas as pd
 
 
 def parse_command_line():
@@ -99,38 +100,27 @@ def plot_history(history, file_name, show):
       show {[Boolean]} -- True to also show on screen, False to just save it
     """
 
+    # Extract only what we need to plot
+    history = history[['loss', 'val_loss']]
+
+    # Rename columns to a more user-friendly text
+    history = history.rename(columns={'loss': 'Training loss',
+                                      'val_loss': 'Validation Loss'})
+
     # Style with default seaborn, then change background (easier to read)
     sns.set()
     sns.set_style('white')
 
-    # Fix the y axis scale for all graphs so we can compare graphs
+    # Fix the y axis scale for all graphs so we can compare tests
     plt.ylim(0, get_max_y(file_name))
 
-    # Create a data source for the epochs - need this for the x axis
-    num_epochs = len(history['loss'])
-    epochs = range(1, num_epochs+1)
-
-    # Plot loss data
-    # TODO: this could be done with one call to sns.lineplot if we first
-    # convert the history JSON object to a dataframe, using the columns we
-    # need (loss, val_loss) and adding a leftmost epoch column. Will be
-    # left for a later pass.
-    ax = sns.lineplot(x=epochs, y=history['loss'], label='Training loss')
-    sns.lineplot(x=epochs, y=history['val_loss'], label='Test loss')
-    ax.lines[0].set_linestyle('--')
-
-    # Add axis labels
+    # Plot, add title, labels, etc.
+    sns.lineplot(data=history)
+    plt.title(get_title(file_name))
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
-
-    # Change x-axis tick labels (epoch) from float to integers
-    plt.xticks(epochs)
-    ax.xaxis.set_major_locator(plt.MaxNLocator(10))
-    ax.set_xlim(0, num_epochs)
-    plt.grid(True, axis='x', linestyle='dotted')
-
     plt.legend(frameon=False)
-    plt.title(get_title(file_name))
+    plt.grid(True, axis='x', linestyle='dotted')
 
     # Save to disk as a .png file
     png_file = file_name.replace('.json', '.png')
@@ -148,7 +138,7 @@ def plot_all_files(directory, pattern, show):
         with open(file_name) as f:
             print('plotting ' + f.name)  # show progress to the user
             history = json.load(f)
-            plot_history(history, file_name, show)
+            plot_history(pd.DataFrame.from_dict(history), file_name, show)
 
 
 p = parse_command_line()
