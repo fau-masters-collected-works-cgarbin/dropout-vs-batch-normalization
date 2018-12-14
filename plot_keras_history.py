@@ -151,12 +151,11 @@ def plot_all_files(directory, pattern, show):
             plot_history(history, file_name, show)
 
 
-# Change this to "False" when testing from the command line. Leave set to True
-# when launching from the IDE and change the parameters below (it's faster
-# than dealing with launch.json).
-ide_test = True
-if ide_test:
-    # Show a warning to let user now we are ignoring command line parameters
+p = parse_command_line()
+
+if all(param is None for param in p):
+    # No command line parameter provided - running from within IDE. Build the
+    # test configuration, warn the user and run in verbose mode.
     print('\n\n  --- Running from IDE - ignoring command line\n\n')
 
     # # Standard network - top entry
