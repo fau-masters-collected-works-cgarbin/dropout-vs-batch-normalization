@@ -1,4 +1,4 @@
-"""CIFAR-10 using a plain CNN, no dropout, no batch normalization. Meant to
+"""CIFAR-10 using a standard CNN, no dropout, no batch normalization. Meant to
 be used as a baseline to compare with dropout and batch normalization.
 
 Based on the Keras CIFAR-10 example.
@@ -35,7 +35,7 @@ import time
 batch_size = 32
 num_classes = 10
 data_augmentation = True
-test_name = 'cifar_10_cnn_plain'
+test_name = 'cifar_10_cnn_standard'
 
 # Command line parameters (defaults are from the Keras sample code)
 ap = ArgumentParser(description='CIFAR-10 CNN tests.')
