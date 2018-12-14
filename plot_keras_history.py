@@ -161,19 +161,19 @@ if ide_test:
 
     # # Standard network - top entry
     # # Get all history files from a directory...
-    # directory = './mlp/dropout/analysis/standard/sgd'
+    # directory = './test_results/mlp/standard/sgd'
     # # ...and a specific pattern to select files
     # pattern = 'dropout_mnist_mlp_standard_sgd_nw=standard_opt=sgd_hl=002_uhl=2048_e=50_bs=0128_dri=0.10_drh=0.50_lr=0.1000_d=0.0000_m=0.95_mn=none_history'  # noqa
 
     # # Droput network - top entry
     # # Get all history files from a directory...
-    # directory = './mlp/dropout/analysis/dropout/sgd'
+    # directory = './test_results/mlp/dropout/sgd'
     # # ...and a specific pattern to select files
-    # pattern = 'dropout_mnist_mlp_dropout_sgd_nw=dropout_opt=sgd_hl=002_uhl=2048_e=50_bs=0128_dri=0.10_drh=0.50_lr=0.0100_d=0.0010_m=0.99_mn=3_history' # noqa
+    # pattern = 'dropout_mnist_mlp_dropout_sgd_nw=dropout_opt=sgd_hl=002_uhl=2048_e=50_bs=0128_dri=0.10_drh=0.50_lr=0.0100_d=0.0010_m=0.99_mn=3_history'  # noqa
 
     # Batchnorm network - top entry
     # Get all history files from a directory...
-    directory = './mlp/batch_normalization/analysis/sgd'
+    directory = './test_results/mlp/batch_normalization/sgd'
     # ...and a specific pattern to select files
     pattern = 'batchnorm_mnist_mlp_sgd_nw=batch_normalization_opt=sgd_hl=004_uhl=2048_e=50_bs=0128_lr=0.0100_d=0.0000_m=0.95_history'  # noqa
 
