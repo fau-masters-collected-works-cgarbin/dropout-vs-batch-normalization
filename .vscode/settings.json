@@ -3,5 +3,7 @@
   "python.unitTest.pyTestEnabled": false,
   "python.unitTest.unittestEnabled": false,
   "python.unitTest.nosetestsEnabled": false,
-  "python.pythonPath": "/usr/local/bin/python3"
+  "python.pythonPath": "/usr/local/bin/python3",
+  "python.linting.pep8Enabled": true,
+  "python.linting.pylintEnabled": true
 }
