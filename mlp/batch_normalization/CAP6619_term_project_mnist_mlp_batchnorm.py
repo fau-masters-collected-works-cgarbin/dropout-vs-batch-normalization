@@ -217,7 +217,7 @@ p = parse_command_line()
 if all(param is None for param in p):
     # No command line parameter provided - running from within IDE. Build the
     # test configuration, warn the user and run in verbose mode.
-    print('\n\n  --- Running from IDE - ignoring command line\n\n')
+    print('\n\n  --- No command-line parameters - running with defaults\n\n')
 
     test_params = Parameters(
         experiment_name='batchnorm_mnist_mlp',
