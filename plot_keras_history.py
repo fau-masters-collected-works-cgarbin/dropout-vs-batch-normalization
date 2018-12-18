@@ -141,9 +141,9 @@ def plot_all_files(directory, pattern, show):
             plot_history(pd.DataFrame.from_dict(history), file_name, show)
 
 
-p = parse_command_line()
+directory, pattern = parse_command_line()
 
-if all(param is None for param in p):
+if directory is None and pattern is None:
     # No command line parameter provided - running from within IDE. Build the
     # test configuration, warn the user and run in verbose mode.
     print('\n\n  --- No command-line parameters - running with defaults\n\n')
@@ -168,5 +168,4 @@ if all(param is None for param in p):
 
     plot_all_files(directory, pattern, show=True)
 else:
-    directory, pattern = parse_command_line()
     plot_all_files(directory, pattern, show=False)
