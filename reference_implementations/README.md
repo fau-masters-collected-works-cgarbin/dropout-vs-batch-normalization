@@ -1,1 +1,1 @@
-This folder has reference implmentations used for the initial investigations and as baseline for accuracy.
+This folder has reference implementations used for the initial investigations and as baseline for accuracy.
