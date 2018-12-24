@@ -42,7 +42,7 @@ learning rate, weigth decay, dropout rates for input layer and hidden layer. See
 
 The raw results are available [in this folder](./test_results). The 
 [report](./report/CAP6619_term_project_cgarbin.pdf) has some analysis of those results.
-More analysis could be done.
+More analysis could be done on those results.
 
 # How the code is structured
 
@@ -99,7 +99,7 @@ Results are saved in these files:
 - A `..._results.txt` file collects the data for each test, e.g. training time, 
   model parameter count, etc. There is one line for each test. See an example
   [here](./test_results/mlp/batch_normalization/sgd/batchnorm_mnist_mlp_sgd_results.txt).
-- Several `..._hustory.json` files, one for each test. It contains the training
+- Several `..._history.json` files, one for each test. It contains the training
   and validation loss/accuracy. It's a JSON file with the contents of the `History`
   object created by Keras during training. The name of the file encodes the values
   of the hyperparameters used for that text.
@@ -130,11 +130,11 @@ have done a few things differently:
   momentum changes, etc., could be done. 
 - Extract repeated code: there is a fair bit of copy and paste in the code,
   especially in the CNN tests. It should be refactored and removed.
-- Split the standard MLP tests from the Droput MLP tests: they are embedded in
+- Split the standard MLP tests from the Dropout MLP tests: they are embedded in
   one file. It would be easier to manage them if they were in separate files,
   like it was it was done for the CNN code.
 - See more "TODO" in the code: there are few "TODO" in the code, pointing to 
-  more specific improvements to do.
+  more specific improvements that could be done.
 
 # License
 
