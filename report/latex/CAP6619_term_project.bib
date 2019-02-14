@@ -1,36 +1,34 @@
 % Encoding: UTF-8
 
 @Article{Ioffe2015,
-  author        = {Sergey Ioffe and Christian Szegedy},
-  title         = {Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift},
-  __markedentry = {[cgarbin:]},
-  abstract      = {Training Deep Neural Networks is complicated by the fact that the distribution of each layer's inputs changes during training, as the parameters of the previous layers change. This slows down the training by requiring lower learning rates and careful parameter initialization, and makes it notoriously hard to train models with saturating nonlinearities. We refer to this phenomenon as internal covariate shift, and address the problem by normalizing layer inputs. Our method draws its strength from making normalization a part of the model architecture and performing the normalization for each training mini-batch. Batch Normalization allows us to use much higher learning rates and be less careful about initialization. It also acts as a regularizer, in some cases eliminating the need for Dropout. Applied to a state-of-the-art image classification model, Batch Normalization achieves the same accuracy with 14 times fewer training steps, and beats the original model by a significant margin. Using an ensemble of batch-normalized networks, we improve upon the best published result on ImageNet classification: reaching 4.9\% top-5 validation error (and 4.8\% test error), exceeding the accuracy of human raters.},
-  date          = {2015-02-11},
-  eprint        = {http://arxiv.org/abs/1502.03167v3},
-  eprintclass   = {cs.LG},
-  eprinttype    = {arXiv},
-  file          = {:http\://arxiv.org/pdf/1502.03167v3:PDF},
-  keywords      = {cs.LG},
+  author      = {Sergey Ioffe and Christian Szegedy},
+  title       = {Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift},
+  abstract    = {Training Deep Neural Networks is complicated by the fact that the distribution of each layer's inputs changes during training, as the parameters of the previous layers change. This slows down the training by requiring lower learning rates and careful parameter initialization, and makes it notoriously hard to train models with saturating nonlinearities. We refer to this phenomenon as internal covariate shift, and address the problem by normalizing layer inputs. Our method draws its strength from making normalization a part of the model architecture and performing the normalization for each training mini-batch. Batch Normalization allows us to use much higher learning rates and be less careful about initialization. It also acts as a regularizer, in some cases eliminating the need for Dropout. Applied to a state-of-the-art image classification model, Batch Normalization achieves the same accuracy with 14 times fewer training steps, and beats the original model by a significant margin. Using an ensemble of batch-normalized networks, we improve upon the best published result on ImageNet classification: reaching 4.9\% top-5 validation error (and 4.8\% test error), exceeding the accuracy of human raters.},
+  date        = {2015-02-11},
+  eprint      = {http://arxiv.org/abs/1502.03167v3},
+  eprintclass = {cs.LG},
+  eprinttype  = {arXiv},
+  file        = {:http\://arxiv.org/pdf/1502.03167v3:PDF},
+  keywords    = {cs.LG},
 }
 
 @Article{Srivastava2014,
-  author        = {Srivastava, Nitish and Hinton, Geoffrey and Krizhevsky, Alex and Sutskever, Ilya and Salakhutdinov, Ruslan},
-  title         = {Dropout: A Simple Way to Prevent Neural Networks from Overfitting},
-  journal       = {J. Mach. Learn. Res.},
-  year          = {2014},
-  volume        = {15},
-  number        = {1},
-  pages         = {1929--1958},
-  month         = jan,
-  issn          = {1532-4435},
-  __markedentry = {[cgarbin:6]},
-  abstract      = {Deep neural nets with a large number of parameters are very powerful machine learning systems. However, overfitting is a serious problem in such networks. Large networks are also slow to use, making it difficult to deal with overfitting by combining the predictions of many different large neural nets at test time. Dropout is a technique for addressing this problem. The key idea is to randomly drop units (along with their connections) from the neural network during training. This prevents units from co-adapting too much. During training, dropout samples from an exponential number of different "thinned" networks. At test time, it is easy to approximate the effect of averaging the predictions of all these thinned networks by simply using a single unthinned network that has smaller weights. This significantly reduces overfitting and gives major improvements over other regularization methods. We show that dropout improves the performance of neural networks on supervised learning tasks in vision, speech recognition, document classification and computational biology, obtaining state-of-the-art results on many benchmark data sets.},
-  acmid         = {2670313},
-  issue_date    = {January 2014},
-  keywords      = {deep learning, model combination, neural networks, regularization},
-  numpages      = {30},
-  publisher     = {JMLR.org},
-  url           = {http://dl.acm.org/citation.cfm?id=2627435.2670313},
+  author     = {Srivastava, Nitish and Hinton, Geoffrey and Krizhevsky, Alex and Sutskever, Ilya and Salakhutdinov, Ruslan},
+  title      = {Dropout: A Simple Way to Prevent Neural Networks from Overfitting},
+  journal    = {J. Mach. Learn. Res.},
+  year       = {2014},
+  volume     = {15},
+  number     = {1},
+  pages      = {1929--1958},
+  month      = jan,
+  issn       = {1532-4435},
+  abstract   = {Deep neural nets with a large number of parameters are very powerful machine learning systems. However, overfitting is a serious problem in such networks. Large networks are also slow to use, making it difficult to deal with overfitting by combining the predictions of many different large neural nets at test time. Dropout is a technique for addressing this problem. The key idea is to randomly drop units (along with their connections) from the neural network during training. This prevents units from co-adapting too much. During training, dropout samples from an exponential number of different "thinned" networks. At test time, it is easy to approximate the effect of averaging the predictions of all these thinned networks by simply using a single unthinned network that has smaller weights. This significantly reduces overfitting and gives major improvements over other regularization methods. We show that dropout improves the performance of neural networks on supervised learning tasks in vision, speech recognition, document classification and computational biology, obtaining state-of-the-art results on many benchmark data sets.},
+  acmid      = {2670313},
+  issue_date = {January 2014},
+  keywords   = {deep learning, model combination, neural networks, regularization},
+  numpages   = {30},
+  publisher  = {JMLR.org},
+  url        = {http://dl.acm.org/citation.cfm?id=2627435.2670313},
 }
 
 
@@ -98,7 +96,6 @@
   keywords      = {stat.ML, cs.LG, cs.NE},
 }
 
-@Comment{jabref-meta: databaseType:bibtex;}
 
 @Book{Goodfellow2016,
   title         = {Deep Learning},
@@ -283,3 +280,38 @@
   biburl        = {https://dblp.org/rec/bib/conf/nips/MorganB89},
   url           = {http://papers.nips.cc/paper/275-generalization-and-parameter-estimation-in-feedforward-nets-some-experiments},
 }
+
+@Article{Brock2017,
+  author        = {Andrew Brock and Theodore Lim and James M. Ritchie and Nick Weston},
+  title         = {FreezeOut: Accelerate Training by Progressively Freezing Layers},
+  journal       = {CoRR},
+  year          = {2017},
+  volume        = {abs/1706.04983},
+  __markedentry = {[cgarbin:]},
+  archiveprefix = {arXiv},
+  bibsource     = {dblp computer science bibliography, https://dblp.org},
+  biburl        = {https://dblp.org/rec/bib/journals/corr/BrockLRW17},
+  eprint        = {1706.04983},
+  url           = {http://arxiv.org/abs/1706.04983},
+}
+
+@Article{LeCun2015a,
+  author        = {Yann LeCun and Yoshua Bengio and Geoffrey Hinton},
+  title         = {Deep learning},
+  year          = {2015},
+  volume        = {521},
+  pages         = {436-444},
+  issn          = {0028-0836},
+  __markedentry = {[cgarbin:6]},
+  doi           = {10.1038/nature14539},
+}
+
+@Online{StanfordCS231n-NN,
+  author  = {Stanford University},
+  title   = {Stanford University CS231n: Convolutional Neural Networks for Visual Recognition},
+  year    = {2018},
+  url     = {http://cs231n.github.io/classification/#nn},
+  urldate = {2019-02-12},
+}
+
+@Comment{jabref-meta: databaseType:bibtex;}
