@@ -3,11 +3,11 @@
 @Article{Ioffe2015,
   author      = {Sergey Ioffe and Christian Szegedy},
   title       = {Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift},
-  abstract    = {Training Deep Neural Networks is complicated by the fact that the distribution of each layer's inputs changes during training, as the parameters of the previous layers change. This slows down the training by requiring lower learning rates and careful parameter initialization, and makes it notoriously hard to train models with saturating nonlinearities. We refer to this phenomenon as internal covariate shift, and address the problem by normalizing layer inputs. Our method draws its strength from making normalization a part of the model architecture and performing the normalization for each training mini-batch. Batch Normalization allows us to use much higher learning rates and be less careful about initialization. It also acts as a regularizer, in some cases eliminating the need for Dropout. Applied to a state-of-the-art image classification model, Batch Normalization achieves the same accuracy with 14 times fewer training steps, and beats the original model by a significant margin. Using an ensemble of batch-normalized networks, we improve upon the best published result on ImageNet classification: reaching 4.9\% top-5 validation error (and 4.8\% test error), exceeding the accuracy of human raters.},
   date        = {2015-02-11},
   eprint      = {1502.03167v3},
   eprintclass = {cs.LG},
   eprinttype  = {arXiv},
+  abstract    = {Training Deep Neural Networks is complicated by the fact that the distribution of each layer's inputs changes during training, as the parameters of the previous layers change. This slows down the training by requiring lower learning rates and careful parameter initialization, and makes it notoriously hard to train models with saturating nonlinearities. We refer to this phenomenon as internal covariate shift, and address the problem by normalizing layer inputs. Our method draws its strength from making normalization a part of the model architecture and performing the normalization for each training mini-batch. Batch Normalization allows us to use much higher learning rates and be less careful about initialization. It also acts as a regularizer, in some cases eliminating the need for Dropout. Applied to a state-of-the-art image classification model, Batch Normalization achieves the same accuracy with 14 times fewer training steps, and beats the original model by a significant margin. Using an ensemble of batch-normalized networks, we improve upon the best published result on ImageNet classification: reaching 4.9\% top-5 validation error (and 4.8\% test error), exceeding the accuracy of human raters.},
   file        = {:http\://arxiv.org/pdf/1502.03167v3:PDF},
   keywords    = {cs.LG},
 }
@@ -34,11 +34,11 @@
 @Article{Li2018,
   author      = {Xiang Li and Shuo Chen and Xiaolin Hu and Jian Yang},
   title       = {Understanding the Disharmony between Dropout and Batch Normalization by Variance Shift},
-  abstract    = {This paper first answers the question "why do the two most powerful techniques Dropout and Batch Normalization (BN) often lead to a worse performance when they are combined together?" in both theoretical and statistical aspects. Theoretically, we find that Dropout would shift the variance of a specific neural unit when we transfer the state of that network from train to test. However, BN would maintain its statistical variance, which is accumulated from the entire learning procedure, in the test phase. The inconsistency of that variance (we name this scheme as "variance shift") causes the unstable numerical behavior in inference that leads to more erroneous predictions finally, when applying Dropout before BN. Thorough experiments on DenseNet, ResNet, ResNeXt and Wide ResNet confirm our findings. According to the uncovered mechanism, we next explore several strategies that modifies Dropout and try to overcome the limitations of their combination by avoiding the variance shift risks.},
   date        = {2018-01-16},
   eprint      = {1801.05134v1},
   eprintclass = {cs.LG},
   eprinttype  = {arXiv},
+  abstract    = {This paper first answers the question "why do the two most powerful techniques Dropout and Batch Normalization (BN) often lead to a worse performance when they are combined together?" in both theoretical and statistical aspects. Theoretically, we find that Dropout would shift the variance of a specific neural unit when we transfer the state of that network from train to test. However, BN would maintain its statistical variance, which is accumulated from the entire learning procedure, in the test phase. The inconsistency of that variance (we name this scheme as "variance shift") causes the unstable numerical behavior in inference that leads to more erroneous predictions finally, when applying Dropout before BN. Thorough experiments on DenseNet, ResNet, ResNeXt and Wide ResNet confirm our findings. According to the uncovered mechanism, we next explore several strategies that modifies Dropout and try to overcome the limitations of their combination by avoiding the variance shift risks.},
   file        = {:http\://arxiv.org/pdf/1801.05134v1:PDF},
   keywords    = {cs.LG, stat.ML},
 }
@@ -114,11 +114,11 @@
 @Article{Ruder2016,
   author      = {Sebastian Ruder},
   title       = {An overview of gradient descent optimization algorithms},
-  abstract    = {Gradient descent optimization algorithms, while increasingly popular, are often used as black-box optimizers, as practical explanations of their strengths and weaknesses are hard to come by. This article aims to provide the reader with intuitions with regard to the behaviour of different algorithms that will allow her to put them to use. In the course of this overview, we look at different variants of gradient descent, summarize challenges, introduce the most common optimization algorithms, review architectures in a parallel and distributed setting, and investigate additional strategies for optimizing gradient descent.},
   date        = {2016-09-15},
   eprint      = {1609.04747},
   eprintclass = {cs.LG},
   eprinttype  = {arXiv},
+  abstract    = {Gradient descent optimization algorithms, while increasingly popular, are often used as black-box optimizers, as practical explanations of their strengths and weaknesses are hard to come by. This article aims to provide the reader with intuitions with regard to the behaviour of different algorithms that will allow her to put them to use. In the course of this overview, we look at different variants of gradient descent, summarize challenges, introduce the most common optimization algorithms, review architectures in a parallel and distributed setting, and investigate additional strategies for optimizing gradient descent.},
   file        = {:http\://arxiv.org/pdf/1609.04747:PDF},
   keywords    = {cs.LG},
 }
@@ -126,11 +126,11 @@
 @Article{Perez2017,
   author      = {Luis Perez and Jason Wang},
   title       = {The Effectiveness of Data Augmentation in Image Classification using Deep Learning},
-  abstract    = {In this paper, we explore and compare multiple solutions to the problem of data augmentation in image classification. Previous work has demonstrated the effectiveness of data augmentation through simple techniques, such as cropping, rotating, and flipping input images. We artificially constrain our access to data to a small subset of the ImageNet dataset, and compare each data augmentation technique in turn. One of the more successful data augmentations strategies is the traditional transformations mentioned above. We also experiment with GANs to generate images of different styles. Finally, we propose a method to allow a neural net to learn augmentations that best improve the classifier, which we call neural augmentation. We discuss the successes and shortcomings of this method on various datasets.},
   date        = {2017-12-13},
   eprint      = {1712.04621v1},
   eprintclass = {cs.CV},
   eprinttype  = {arXiv},
+  abstract    = {In this paper, we explore and compare multiple solutions to the problem of data augmentation in image classification. Previous work has demonstrated the effectiveness of data augmentation through simple techniques, such as cropping, rotating, and flipping input images. We artificially constrain our access to data to a small subset of the ImageNet dataset, and compare each data augmentation technique in turn. One of the more successful data augmentations strategies is the traditional transformations mentioned above. We also experiment with GANs to generate images of different styles. Finally, we propose a method to allow a neural net to learn augmentations that best improve the classifier, which we call neural augmentation. We discuss the successes and shortcomings of this method on various datasets.},
   file        = {:http\://arxiv.org/pdf/1712.04621v1:PDF},
   keywords    = {cs.CV},
 }
@@ -145,11 +145,11 @@
 @Article{Bengio2012,
   author      = {Yoshua Bengio},
   title       = {Practical recommendations for gradient-based training of deep architectures},
-  abstract    = {Learning algorithms related to artificial neural networks and in particular for Deep Learning may seem to involve many bells and whistles, called hyper-parameters. This chapter is meant as a practical guide with recommendations for some of the most commonly used hyper-parameters, in particular in the context of learning algorithms based on back-propagated gradient and gradient-based optimization. It also discusses how to deal with the fact that more interesting results can be obtained when allowing one to adjust many hyper-parameters. Overall, it describes elements of the practice used to successfully and efficiently train and debug large-scale and often deep multi-layer neural networks. It closes with open questions about the training difficulties observed with deeper architectures.},
   date        = {2012-06-24},
   eprint      = {1206.5533v2},
   eprintclass = {cs.LG},
   eprinttype  = {arXiv},
+  abstract    = {Learning algorithms related to artificial neural networks and in particular for Deep Learning may seem to involve many bells and whistles, called hyper-parameters. This chapter is meant as a practical guide with recommendations for some of the most commonly used hyper-parameters, in particular in the context of learning algorithms based on back-propagated gradient and gradient-based optimization. It also discusses how to deal with the fact that more interesting results can be obtained when allowing one to adjust many hyper-parameters. Overall, it describes elements of the practice used to successfully and efficiently train and debug large-scale and often deep multi-layer neural networks. It closes with open questions about the training difficulties observed with deeper architectures.},
   file        = {:http\://arxiv.org/pdf/1206.5533v2:PDF},
   keywords    = {cs.LG},
 }
@@ -319,14 +319,20 @@
 @Article{Smith2018,
   author        = {Leslie N. Smith},
   title         = {A disciplined approach to neural network hyper-parameters: Part 1 -- learning rate, batch size, momentum, and weight decay},
-  __markedentry = {[cgarbin:6]},
-  abstract      = {Although deep learning has produced dazzling successes for applications of image, speech, and video processing in the past few years, most trainings are with suboptimal hyper-parameters, requiring unnecessarily long training times. Setting the hyper-parameters remains a black art that requires years of experience to acquire. This report proposes several efficient ways to set the hyper-parameters that significantly reduce training time and improves performance. Specifically, this report shows how to examine the training validation/test loss function for subtle clues of underfitting and overfitting and suggests guidelines for moving toward the optimal balance point. Then it discusses how to increase/decrease the learning rate/momentum to speed up training. Our experiments show that it is crucial to balance every manner of regularization for each dataset and architecture. Weight decay is used as a sample regularizer to show how its optimal value is tightly coupled with the learning rates and momentums. Files to help replicate the results reported here are available.},
   date          = {2018-03-26},
   eprint        = {1803.09820v2},
   eprintclass   = {cs.LG},
   eprinttype    = {arXiv},
+  __markedentry = {[cgarbin:6]},
+  abstract      = {Although deep learning has produced dazzling successes for applications of image, speech, and video processing in the past few years, most trainings are with suboptimal hyper-parameters, requiring unnecessarily long training times. Setting the hyper-parameters remains a black art that requires years of experience to acquire. This report proposes several efficient ways to set the hyper-parameters that significantly reduce training time and improves performance. Specifically, this report shows how to examine the training validation/test loss function for subtle clues of underfitting and overfitting and suggests guidelines for moving toward the optimal balance point. Then it discusses how to increase/decrease the learning rate/momentum to speed up training. Our experiments show that it is crucial to balance every manner of regularization for each dataset and architecture. Weight decay is used as a sample regularizer to show how its optimal value is tightly coupled with the learning rates and momentums. Files to help replicate the results reported here are available.},
   file          = {:http\://arxiv.org/pdf/1803.09820v2:PDF},
   keywords      = {cs.LG, cs.CV, cs.NE, stat.ML},
 }
 
-@Comment{jabref-meta: databaseType:bibtex;}
+@Online{KerasCnnSample,
+  author  = {Keras Team},
+  url     = {https://github.com/keras-team/keras/blob/master/examples/mnist_cnn.py},
+  urldate = {2019-02-18},
+}
+
+@Comment{jabref-meta: databaseType:biblatex;}
