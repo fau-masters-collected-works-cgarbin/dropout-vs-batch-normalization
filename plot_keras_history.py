@@ -91,12 +91,13 @@ def get_max_y(file_name):
         return 3.5
 
 
-def plot_history(history, file_name, show):
+def plot_history(history, file_name, title, show):
     """Plot the loss history created from druing the execution of Keras fit().
 
     Arguments:
       history {[dataframe]} -- The history data from the call to fit()
       file {[string]} -- Name of the input file (the one with the history)
+      title {[String]} -- Picture title or `None` to generate a title based on the data used in the tests
       show {[Boolean]} -- True to also show on screen, False to just save it
     """
 
@@ -116,7 +117,9 @@ def plot_history(history, file_name, show):
 
     # Plot, add title, labels, etc.
     sns.lineplot(data=history)
-    plt.title(get_title(file_name))
+    if title is None:
+        title = get_title(file_name)
+    plt.title(title)
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend(frameon=False)
@@ -130,7 +133,7 @@ def plot_history(history, file_name, show):
         plt.show()
 
 
-def plot_all_files(directory, pattern, show):
+def plot_all_files(directory, pattern, title, show):
     full_path = os.path.join(directory, '*' + pattern + '*.json')
     all_files = glob.glob(full_path)
 
@@ -138,7 +141,8 @@ def plot_all_files(directory, pattern, show):
         with open(file_name) as f:
             print('plotting ' + f.name)  # show progress to the user
             history = json.load(f)
-            plot_history(pd.DataFrame.from_dict(history), file_name, show)
+            plot_history(pd.DataFrame.from_dict(
+                history), file_name, title, show)
 
 
 directory, pattern = parse_command_line()
@@ -148,24 +152,28 @@ if directory is None and pattern is None:
     # test configuration, warn the user and run in verbose mode.
     print('\n\n  --- No command-line parameters - running with defaults\n\n')
 
+    # Entries below are for the MLP tests. It shows the top network in each
+    # category (standard, dropout, batch normalization)
+
     # # Standard network - top entry
     # # Get all history files from a directory...
     # directory = './test_results/mlp/standard/sgd'
     # # ...and a specific pattern to select files
     # pattern = 'dropout_mnist_mlp_standard_sgd_nw=standard_opt=sgd_hl=002_uhl=2048_e=50_bs=0128_dri=0.10_drh=0.50_lr=0.1000_d=0.0000_m=0.95_mn=none_history'  # noqa
+    # plot_all_files(directory, pattern, title="MLP-NDNB", show=True)
 
     # # Droput network - top entry
     # # Get all history files from a directory...
     # directory = './test_results/mlp/dropout/sgd'
     # # ...and a specific pattern to select files
     # pattern = 'dropout_mnist_mlp_dropout_sgd_nw=dropout_opt=sgd_hl=002_uhl=2048_e=50_bs=0128_dri=0.10_drh=0.50_lr=0.0100_d=0.0010_m=0.99_mn=3_history'  # noqa
+    # plot_all_files(directory, pattern, title="MLP-WDNB", show=True)
 
     # Batchnorm network - top entry
     # Get all history files from a directory...
     directory = './test_results/mlp/batch_normalization/sgd'
     # ...and a specific pattern to select files
     pattern = 'batchnorm_mnist_mlp_sgd_nw=batch_normalization_opt=sgd_hl=004_uhl=2048_e=50_bs=0128_lr=0.0100_d=0.0000_m=0.95_history'  # noqa
-
-    plot_all_files(directory, pattern, show=True)
+    plot_all_files(directory, pattern, title="MLP-NDWB", show=True)
 else:
-    plot_all_files(directory, pattern, show=False)
+    plot_all_files(directory, pattern, title=True, show=False)
