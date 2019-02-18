@@ -1,23 +1,34 @@
+# Python virtual environment
+env
+
 .DS_Store
 .RData
 .Rhistory
 *.nb.html
 __pycache__
 *.png
+
 # Sample images from cat vs. dogs in Kaggle
 catsvsdogs/
+
 # And for good measure, any image (if we save them in another folder)
 *jpg
+
 # Keras model files
 *h5
+
 # Test shell scripts automatically generated, no need to save them
 *.sh
+
 # Except for this script, manually generated
 !cnn_test_*.sh
+
 # Compressed result files
 *gz
+
 # Allow the Python requirements file
 !requirements.txt
+
 # Ignore history (.json) and results (.txt) file, except the ones in the
 # test_results directory. This allows us to run tests from with the IDE,
 # without inadvertently commiting result files from those tests.
