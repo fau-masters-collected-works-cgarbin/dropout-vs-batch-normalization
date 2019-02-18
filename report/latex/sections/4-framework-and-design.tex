@@ -1,0 +1,58 @@
+\documentclass[../dropout-vs-batch-normalization.tex]{subfiles}
+
+\begin{document}
+
+
+\subsection{Dropout}
+
+Dropout \cite{Srivastava2014} is a technique to reduce overfitting. Its central idea is to take a model that is overfitting and train sub-models derived from it by randomly removing units for each training batch. A conceptual view of the standard dense network \textit{vs.} the network structure after applying the dropout is shown in Figure~\ref{fig:DropoutHowItWorks}.
+
+\begin{figure}
+\centerline{\includegraphics[width=0.9\columnwidth]{figures/figures-other/DropoutHowItWorks.png}}
+\caption{How dropout works: randomly removing units from a fully connected network (left) to create a sub-model (right).}
+\label{fig:DropoutHowItWorks}
+\end{figure}
+
+By repeatedly eliminating random units, Dropout forces the units to be more robust, learning feature on their own, without depending on other units. In this context it can be thought of as simplified model-ensembling.
+
+The number of units to retain is controlled by a new hyperparameter, the \textit{dropout rate}.\footnote{Note that the Keras API uses this parameter to control the number of units to \textit{remove} (the opposite meaning of what is used in the Dropout paper). This paper follows the Keras API, i.e. units to remove.} The recommended values for the dropout rate are 0.1 for the input layer and between 0.5 and 0.8 for internal layers.
+
+Using Dropout requires some adjustments to the hyperparameters. The more significant changes are:
+
+\begin{itemize}
+\item \textbf{Increase the network size:} Dropout removes units during training, reducing the capacity of the network. To compensate for that the number of units has to be adjusted by the dropout rate, i.e. the number of units has to be multiplied by 1/(dropout rate). For example, if the dropout rate is 0.5, it will double the number of units.
+\item \textbf{Increase learning rate and momentum:} Dropout introduces noise in the gradients, causing them to cancel each other sometimes. Increasing the learning rate by 10-100x and adding momentum between 0.95 and 0.99 compensates that effect.
+\item \textbf{Add max-norm regularization:} increasing the learning rate and adding momentum may result in large weight values. Adding max-norm regularization counteracts that effect.
+\end{itemize}
+
+When applying these rules, note that the paper seems to have tested these guidelines with a regular, non-adaptive SGD optimizer. They may not apply exactly as described for adaptive optimizers.
+
+\subsection{Batch Normalization}
+
+During training of a neural network, the distribution of the input values of each layer is affected by all layers that come before it. This variability reduces training speed (lower learning rates). Batch Normalization \cite{Ioffe2015} was created to resolve this variability and speed up learning.
+
+Normalizing the values of each sample before presenting it to the network's input layer was already a well-known technique. Batch Normalization goes one step further and normalizes the input in every layer of the network, not only the input layer. The normalization is computed for each batch. This normalization allows the use of higher learning rates during training (although the paper does not recommend a specific value or a range).
+
+The way Batch Normalization operates, by adjusting the value of the units for each batch, and the fact that batches are created randomly during training, results in more noise during the training process. The noise acts as a regularizer. This regularization effect is similar to the one introduced by Dropout. As a result, Dropout can be removed completely from the network or should have its rate reduced significantly if used in conjunction with Batch Normalization.
+
+Using Batch Normalization requires some adjustments to the hyperparameters. The more significant changes are:
+
+\begin{itemize}
+\item \textbf{Increase the learning rate}: the normalization stabilizes the training process, allowing higher learning rates.
+\item \textbf{Remove Dropout or use lower dropout rates}: Batch Normalization also has a regularization effect. This effect reduces the need for Dropout to the point it is no longer needed. If it is used, it should be used with lower rates. 
+\end{itemize}
+
+
+\subsection{Empirical Study Framework}
+
+In order to study the interplay between Dropout, Batch Normalization, and deep neural network training, we carry empirical study by following the framework shown in Fig.~\ref{fig:framework}. Given a benchmark dataset and a deep learning algorithm (detailed in Section \ref{sec:experiments}), we test systematically  four combinations: No Dropout, no Batch Normalization (NDNB); with Dropout, no Batch Normalization (WDNB); no Dropout, with Batch Normalization (NDWB); and with Dropout, with Batch Normalization (WDWB). By empirically testing each of the four combinations using different parameter settings (the feedback loop showing in Fig.~\ref{fig:framework}), and collecting outcomes of the trained models, including training times, classification accuracy, number of parameters, our study intends to understand how Dropout and Batch Normalization behave to improve (or negatively impact) the deep learning. 
+
+\begin{figure}
+\centerline{\includegraphics[width=0.9\columnwidth]{figures/figures-other/framework.png}}
+\caption{Empirical study framework and designs.}
+\label{fig:framework}
+\end{figure}
+
+In the following section, we will detail experimental settings, including benchmark data, deep learning algorithms, and performance measures, followed by detailed experimental results and analysis in Section \ref{sec:results}.
+
+\end{document}

@@ -1,0 +1,506 @@
+\documentclass[../dropout-vs-batch-normalization.tex]{subfiles}
+
+\begin{document}
+
+Based on the designed framework and the experimental settings detailed in the above sections, this section reports and analyzes the experiments and their results using multilayer perceptron networks (MLPs) and convolutional neural networks (CNNs).
+
+\subsection{Multilayer Perceptron Network Results}
+
+This section reports the experiments performed with multilayer perceptron networks and analyzes the results under different settings. %First the details of the experiments are described, then the results are analyzed.
+
+\medskip
+\subsubsection{MLP Architectures, Configurations, and Parameter Settings}
+%MLPs are the networks that have only dense layers (no convolution or other operation is applied).
+
+Since the goal of our experiments is to compare the relative performance of the different configurations tested, the baseline for those experiments is an MLP that does not use Dropout or Batch Normalization. This network is referred to as \textit{Standard MLP} in the text. Therefore, we use the following three network configurations for comparisons
+
+%\subsubsection{Baseline MLP Architecture}
+
+%Since the goal of these experiments is to compare the relative performance of the different configurations tested, the baseline for those experiments is an MLP that does not use Dropout or Batch Normalization. This network is referred to as \textit{Standard MLP} in the text.
+
+%\medskip
+%\textbf{Configurations Tested}
+
+%Three MLP configurations were tested using the MNIST dataset:
+
+\begin{enumerate}
+\item \textbf{MLP-NDNB (Standard MLP no Dropout, no Batch Normalization:} A standard multilayer perceptron network, with dense layers connected to each other without Dropout or Batch Normalization. This configuration is used as the baseline.
+\item \textbf{MLP-WDNB (MLP with Dropout, no Batch Normalization):} added Dropout layers to the standard network, following the guidelines in the Dropout paper \cite{Srivastava2014}.
+\item \textbf{MLP-NDWB (MLP no Dropout, with Batch Normalization):} added Batch Normalization layers to the standard network, following the guidelines in the Batch Normalization paper \cite{Ioffe2015}.
+\end{enumerate}
+
+%\medskip
+%\textbf{Hyperparameters Tested}
+
+For each of the above three network architectures, we test their performance with a combination of these hyperparameters:
+
+\begin{itemize}
+\item \textbf{Hidden layers:} We use 2, 3 and 4 hidden layers. These numbers were chosen because they were described in the Dropout paper~\cite{Srivastava2014}.
+\item \textbf{Units in each hidden layer:} we use 1,024 and 2,048 units in the experiments. These numbers were chosen for the same reason as above.
+\item \textbf{Batch size:} 128 samples in each batch.
+\item \textbf{Epochs:} We use 5, 20 and 50 epochs in the experiments. 
+\item \textbf{Optimizer:} a non-adaptive stochastic gradient descent (SGD) optimizer and RMSProp~\cite{Tieleman2012}. The SGD optimizer was chosen because there are indications that most published results use such an optimizer~\cite{Ruder2016}. The RMSProp optimizer was chosen to compare the performance of SGD with an adaptive optimizer.
+\item \textbf{Activation function:} ReLU~\cite{Nair2010} in all cases. It was chosen because the Dropout paper \cite{Srivastava2014} and the Batch Normalization paper \cite{Ioffe2015} also use it. A small-scale test was performed with sigmoid to test its behavior and found that accuracy was comparable to the ReLU (slightly lower, but not significantly). Because that test did not point to major differences, the investigations proceeded only with ReLU.
+\end{itemize}
+
+Besides the list above, each network was also tested with different values for learning rate, weight decay, SGD momentum and max-norm values. These hyperparameters depend on the network being tested. The range of values for them is documented within the respective sections below.
+
+
+\medskip
+\subsubsection{MLP-NDNB: No Dropout, No Batch Normalization}
+
+In this subsection, we report the results of MLP-NDNB, which are standard MLPs, without Dropout or Batch Normalization.
+
+\smallskip
+\noindent\textbf{Network Architecture:} A standard MLP network in this context is a network made of only dense layers, without any Dropout or Batch Normalization layer. Figure~\ref{fig:MlpStandardModel} shows an example of a standard MLP network used in the tests.
+
+\begin{figure}
+\centerline{\includegraphics[angle=90, width=0.9\columnwidth]{figures/figures-mlp/MlpStandardModel.png}}
+\caption{MLP-NDNB: Sample standard MLP network architecture used in the tests (without Dropout and without Batch Normalization).}
+\label{fig:MlpStandardModel}
+\end{figure}
+
+\medskip
+\noindent\textbf{Hyperparameter Settings:} We use following hyperparameter settings in the experiments.
+
+\begin{itemize}
+\item Learning rates for SGD: the default Keras rate 0.01 and a higher rate 0.1 to compare the behavior of this network with the Dropout network (also tested with higher learning rate).
+\item Learning rate for RMSProp: the default Keras rate 0.001 and a higher rate 0.002. The higher rate is not as high as the SGD based on experiments. A 10x higher rate resulted in low accuracy in small-scale tests.
+\item Decay for SGD: the default Keras value 0.0 (no decay applied) and a small decay 0.001 to compare with the Dropout and Batch Normalization tests where decay was also applied.
+\item Decay for RMSProp: the default Keras value 0.0 (no decay applied) and a small decay 0.00001 to compare with the Dropout and Batch Normalization tests where decay was also applied. The small decay value was chosen based on values used in the Keras examples, then verified empirically with small-scale tests.
+\item Momentum for SGD: the default Keras value of 0.0 (no momentum applied) and the value 0.95, also used in Dropout and Batch Normalization test. Momentum is not applicable to RMSProp.
+\item Max-norm constraint: no max-norm and a max-norm constraint with max value set to 2.
+\end{itemize}
+
+The combination of these hyperparameters and the hyperparameters applicable to all MLP networks listed above resulted in 288 tests using the SGD optimizer and 144 tests with the RMSProp optimizer.
+
+\medskip
+\noindent\textbf{Results:} The top 10 best results of these tests are listed in Table~\ref{tab:MlpStandardTop10} on page~\pageref{tab:MlpStandardTop10}.
+
+% Tip to make table span two columns from https://stackoverflow.com/questions/33971693/latex-ieee-template-use-single-column-table-in-multicolumn-latex-content
+
+\begin{table*}
+\centering
+
+\caption{Top 10 test accuracy for the standard MLP network MLP-NDNW (no Dropout or Batch Normalization)}
+\label{tab:MlpStandardTop10}
+
+% Reduced space between columns from https://tex.stackexchange.com/questions/201105/reduce-cell-margins-in-a-table
+\setlength\tabcolsep{2pt}
+
+\begin{tabular}{lrccrcrrccrrr}
+\hline\hline
+\thead{Optimizer} & \thead{Test\\accuracy} & \thead{Hidden\\layers} & \thead{Units per\\layer} & \thead{Epochs} & \thead{Batch\\size} & \thead{Learning\\rate} & \thead{Decay} & \thead{SGD\\moment.} & \thead{max-\\norm} & \thead{Parameters\\count} & \thead{Training\\time (s)} & \thead{Test\\time (s)} \\
+\hline
+
+SGD & 0.9879 & 2 & 2048 & 50 & 128 & 0.1 & 0 & 0.95 & none & 5,824,522 & 137 & 0.609 \\
+SGD & 0.9878 & 3 & 2048 & 50 & 128 & 0.1 & 0 & 0.95 & 2 & 10,020,874 & 165 & 0.677 \\
+SGD & 0.9869 & 3 & 2048 & 50 & 128 & 0.1 & 0 & 0.95 & none & 10,020,874 & 167 & 0.650 \\
+SGD & 0.9866 & 4 & 2048 & 50 & 128 & 0.1 & 0 & 0.95 & none & 14,217,226 & 191 & 0.696 \\
+SGD & 0.9865 & 2 & 2048 & 5 & 128 & 0.1 & 0.001 & 0.95 & none & 5,824,522 & 17 & 0.704 \\
+\hline
+SGD & 0.9864 & 4 & 2048 & 50 & 128 & 0.1 & 0 & 0.95 & 2 & 14,217,226 & 191 & 0.698 \\
+SGD & 0.9863 & 2 & 1024 & 50 & 128 & 0.1 & 0 & 0.95 & none & 1,863,690 & 125 & 0.584 \\
+SGD & 0.9861 & 3 & 2048 & 50 & 128 & 0.1 & 0.001 & 0.95 & 2 & 10,020,874 & 170 & 0.787 \\
+RMSprop & 0.9860 & 2 & 2048 & 20 & 128 & 0.001 & 0.00001 & 0 & 2 & 5,824,522 & 69 & 0.644 \\
+SGD & 0.9859 & 3 & 1024 & 50 & 128 & 0.1 & 0 & 0.95 & 2 & 2,913,290 & 135 & 0.583 \\
+\hline\hline
+\end{tabular}
+\end{table*}
+
+\medskip
+\subsubsection{MLP-WDNB: With Dropout, No Batch Normalization}
+%\textbf{MLP Network with Dropout}
+In this subsection, we report the results of MLP-WDNB, which are MLPs with Dropout layers but without Batch Normalization.
+
+\smallskip
+\noindent\textbf{Network Architecture:} The MLP Dropout network was modeled using a similar approach as the original Dropout paper \cite{Srivastava2014}. The significant changes compared to the standard MLP network are summarized as follows:
+
+\begin{itemize}
+\item A Dropout layer was added after the input layer, using a lower dropout rate (compared to the dropout rate in dense layers).
+\item A Dropout layer was added after each dense layers, with a higher dropout rate, also as recommended.
+\end{itemize}
+
+Figure~\ref{fig:MlpDropoutModel} shows an example of a Dropout network used in the tests.
+
+\begin{figure}
+\centerline{\includegraphics[angle=90, width=1.0\columnwidth]{figures/figures-mlp/MlpDropoutModel.png}}
+\caption{MLP-WDNB: Sample Dropout MLP network architecture used in the tests (with Dropout but without Batch Normalization).}
+\label{fig:MlpDropoutModel}
+\end{figure}
+
+\medskip
+\noindent\textbf{Hyperparameter Settings:} We use following hyperparameter settings in the experiments.
+
+\begin{itemize}
+\item Dropout rate for the input layer: 0.1, as recommended in \cite{Srivastava2014}.
+\item Dropout rate for hidden layers: 0.5, the high end of the rate recommended in \cite{Srivastava2014}.
+\item Learning rates for SGD: the default Keras rate 0.01 and 10x the default rate (0.1) as recommended in \cite{Srivastava2014}.
+\item Learning rate for RMSProp: the default Keras rate 0.001 and a higher rate 0.01. Although the standard MLP network did not use such a high rate, the 10x rate was used here to test the recommendation in \cite{Srivastava2014}.
+\item Decay for SGD: the default Keras value 0.0 (no decay applied) and a small decay 0.001 to compare with the Dropout and Batch Normalization tests where decay was also applied.
+\item Decay for RMSProp: the default Keras value 0.0 (no decay applied) and a small decay 0.00001 to compare with the Dropout and Batch Normalization tests where decay was also applied. The small decay value was chosen based on values used in the Keras examples, then verified empirically with small-scale tests.
+\item Momentum for SGD: the default Keras value of 0.0 (no momentum applied) and the two extremes of the range recommended in \cite{Srivastava2014}: 0.95 and 0.99. Momentum is not applicable to RMSProp.
+\item Max-norm constraint: no max-norm to test the behavior of the network when using the same value as the standard MLP and two of the values recommended in \cite{Srivastava2014}: 2 and 3.
+\end{itemize}
+
+The combination of these hyperparameters and the hyperparameters applicable to all MLP networks listed above resulted in 648 tests using the SGD optimizer and 216 tests with the RMSProp optimizer.
+
+\medskip
+\noindent\textbf{Results:} The top 10 results of these tests are listed in table~\ref{tab:MlpDropoutTop10} on page~\pageref{tab:MlpDropoutTop10}.
+
+\begin{table*}
+\centering
+
+\caption{Top 10 test accuracy for the Dropout MLP network MLP-WDNB}
+\label{tab:MlpDropoutTop10}
+
+% Reduced space between columns from https://tex.stackexchange.com/questions/201105/reduce-cell-margins-in-a-table
+\setlength\tabcolsep{2pt}
+
+\begin{tabular}{lrccrcccrrccrrr}
+\hline\hline
+\thead{Optimizer} & \thead{Test\\accuracy} & \thead{Hidden\\layers} & \thead{Units per\\layer} & \thead{Epochs} & \thead{Batch\\size} & \thead{Dropout\\rate input} & \thead{Dropout\\rate hidden} & \thead{Learning\\rate} & \thead{Decay} & \thead{SGD\\moment.} & \thead{max-\\norm} & \thead{Parameters\\count} & \thead{Training\\time (s)} & \thead{Test\\time (s)} \\
+\hline
+
+SGD & 0.9881 & 2 & 2048 & 50 & 128 & 0.1 & 0.5 & 0.01 & 0.001 & 0.99 & 3 & 20,037,642 & 244 & 0.701 \\
+SGD & 0.9879 & 3 & 2048 & 50 & 128 & 0.1 & 0.5 & 0.01 & 0 & 0.95 & 3 & 36,818,954 & 335 & 0.779 \\
+SGD & 0.9879 & 4 & 2048 & 50 & 128 & 0.1 & 0.5 & 0.01 & 0.001 & 0.99 & 2 & 53,600,266 & 429 & 0.808 \\
+SGD & 0.9876 & 3 & 1024 & 50 & 128 & 0.1 & 0.5 & 0.01 & 0 & 0.95 & none & 10,020,874 & 180 & 0.725 \\
+SGD & 0.9876 & 4 & 2048 & 50 & 128 & 0.1 & 0.5 & 0.01 & 0.001 & 0.99 & 3 & 53,600,266 & 429 & 0.826 \\
+\hline
+SGD & 0.9875 & 2 & 1024 & 50 & 128 & 0.1 & 0.5 & 0.01 & 0.001 & 0.99 & none & 5,824,522 & 161 & 0.662 \\
+SGD & 0.9875 & 2 & 2048 & 50 & 128 & 0.1 & 0.5 & 0.1 & 0 & 0 & 3 & 20,037,642 & 241 & 0.730 \\
+SGD & 0.9875 & 4 & 1024 & 50 & 128 & 0.1 & 0.5 & 0.01 & 0 & 0.95 & none & 14,217,226 & 204 & 0.671 \\
+SGD & 0.9874 & 2 & 2048 & 50 & 128 & 0.1 & 0.5 & 0.01 & 0 & 0.95 & 2 & 20,037,642 & 242 & 0.722 \\
+SGD & 0.9874 & 3 & 2048 & 50 & 128 & 0.1 & 0.5 & 0.01 & 0.001 & 0.99 & 3 & 36,818,954 & 340 & 0.771 \\
+\hline\hline
+
+\end{tabular}
+\end{table*}
+
+%\medskip
+%\textbf{MLP Network with Batch Normalization}
+
+\medskip
+\subsubsection{MLP-NDWB: No Dropout, With Batch Normalization}
+%\textbf{MLP Network with Dropout}
+In this subsection, we report the results of MLP-NDWB, which are MLPs without Dropout layers but with Batch Normalization.
+
+
+\smallskip
+\noindent\textbf{Network Architecture:} The MLP Batch Normalization network was modeled after the Batch Normalization paper \cite{Ioffe2015}. The significant change compared to the standard MLP network is the addition of a Batch Normalization layer after the dense layers.
+
+Figure~\ref{fig:MlpBatchNormalizationModel} shows an example of a Batch Normalization network used in the tests.
+
+\begin{figure}
+\centerline{\includegraphics[angle=90,width=1.0\columnwidth]{figures/figures-mlp/MlpBatchNormalizationModel.png}}
+\caption{MLP-NDWB: Sample Batch Normalization MLP network used in the tests (with Batch Normalization but without Dropout).}
+\label{fig:MlpBatchNormalizationModel}
+\end{figure}
+
+\medskip
+\noindent\textbf{Hyperparameter Settings:} We use following hyperparameter settings in the experiments.
+
+\begin{itemize}
+\item Learning rates for SGD: the default Keras rate 0.01 and 10x the default rate (0.1). \cite{Ioffe2015} recommends a higher learning rate but does not give a range of values. These values were chosen to match the ones used in the Dropout MLP tests, making the comparison more meaningful.
+\item Learning rate for RMSProp: the default Keras rate 0.001 a higher rate 0.005. Although the standard MLP network did not use such a high rate, \cite{Ioffe2015} recommends a higher rate.
+\item Decay for SGD: the default Keras value 0.0 (no decay applied) and a small decay 0.001 to compare with the other tests where decay was also applied.
+\item Decay for RMSProp: the default Keras value 0.0 (no decay applied) and a small decay 0.00001 to compare with the other tests where decay was also applied. The small decay value was chosen based on values used in the Keras examples, then verified empirically with small-scale tests.
+\item Momentum for SGD: the default Keras value of 0.0 (no momentum applied) and the two extremes of the range recommended in \cite{Srivastava2014}: 0.95 and 0.99.  Momentum is not applicable to RMSProp.
+\item Max-norm constraint: no max-norm to test the behavior of the network when using the same value as the standard MLP and two of the values recommended in \cite{Srivastava2014}: 2 and 3.
+\end{itemize}
+
+The combination of these hyperparameters and the hyperparameters applicable to all MLP networks listed above resulted in 144 tests using the SGD optimizer and 72 tests with the RMSProp optimizer.
+
+\medskip
+\noindent\textbf{Results:} The top 10 results of these tests are listed in table~\ref{tab:MlpBatchNormalizationTop10} on page~\pageref{tab:MlpBatchNormalizationTop10}.
+
+\begin{table*}
+\centering
+
+\caption{Top 10 test accuracy for the Batch Normalization MLP network MLP-NDWB}
+\label{tab:MlpBatchNormalizationTop10}
+
+% Reduced space between columns from https://tex.stackexchange.com/questions/201105/reduce-cell-margins-in-a-table
+\setlength\tabcolsep{2pt}
+
+\begin{tabular}{lrccrcrrcrrr}
+\hline\hline
+\thead{Optimizer} & \thead{Test\\accuracy} & \thead{Hidden\\layers} & \thead{Units per\\layer} & \thead{Epochs} & \thead{Batch\\size} & \thead{Learning\\rate} & \thead{Decay} & \thead{SGD\\moment.} & \thead{Parameters\\count} & \thead{Training\\time (s)} & \thead{Test\\time (s)} \\
+\hline
+
+SGD & 0.9868 & 4 & 2048 & 50 & 128 & 0.01 & 0 & 0.95 & 14,243,850 & 394 & 0.933 \\
+SGD & 0.9867 & 2 & 1024 & 50 & 128 & 0.1 & 0.0001 & 0.95 & 1,870,858 & 241 & 0.765 \\
+RMSprop & 0.9867 & 4 & 2048 & 50 & 128 & 0.001 & 0.0001 & 0 & 14,243,850 & 439 & 0.927 \\
+SGD & 0.9865 & 3 & 1024 & 50 & 128 & 0.1 & 0.0001 & 0.95 & 2,923,530 & 293 & 0.857 \\
+SGD & 0.9864 & 2 & 2048 & 50 & 128 & 0.1 & 0.0001 & 0.95 & 5,838,858 & 255 & 0.795 \\
+\hline
+SGD & 0.9864 & 4 & 2048 & 50 & 128 & 0.01 & 0.0001 & 0.95 & 14,243,850 & 388 & 0.901 \\
+RMSprop & 0.9862 & 3 & 1024 & 20 & 128 & 0.001 & 0.0001 & 0 & 2,923,530 & 125 & 0.868 \\
+SGD & 0.9860 & 2 & 2048 & 50 & 128 & 0.01 & 0 & 0.95 & 5,838,858 & 255 & 0.780 \\
+SGD & 0.9860 & 4 & 2048 & 20 & 128 & 0.01 & 0 & 0.95 & 14,243,850 & 161 & 0.927 \\
+SGD & 0.9859 & 2 & 2048 & 20 & 128 & 0.01 & 0 & 0.95 & 5,838,858 & 101 & 0.764 \\
+\hline\hline
+
+\end{tabular}
+\end{table*}
+
+\medskip
+\subsubsection{MLP Result Analysis} We compare and analyze the MLP results using classification accuracy, CPU time, model sizes, and combination of hyperparameters.
+
+\noindent\textbf{Classification Accuracy:} All networks resulted in similar accuracy, with a small edge for Dropout.
+
+Figure~\ref{fig:MlpLossGraph} shows that the accuracy is not reached at the same time. The figure plots the training (blue, dotted line) and test (solid orange line) loss during training.
+
+The Batch Normalization network (MLP-NDWB) reaches its lower value much earlier than other networks, as expected, given that one of its purposes is to accelerate learning \cite{Ioffe2015}. This can be taken advantage of to shorten training times when very high accuracy is not needed. Early stopping would stop training with the Batch Normalization sooner than with the other networks.
+
+\begin{figure}
+    \centering
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[width=\textwidth]{figures/figures-mlp/MlpStandardLossGraph} 
+        \caption{Loss for MLP-NDNB (Standard MLP) - 2 hidden layers, learning rate = 0.1, no weight decay } \label{fig:MlpStandardLossGraph}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[width=\textwidth]{figures/figures-mlp/MlpDropoutLossGraph} 
+        \caption{Loss for MLP-WDNB (MLP with only Dropout) - 2 hidden layers, learning rate = 0.01, weight decay = 0.001} \label{fig:MlpDropoutLossGraph}
+    \end{subfigure}
+    \begin{subfigure}{0.5\textwidth}
+        \includegraphics[width=\textwidth]{figures/figures-mlp/MlpBatchNormLossGraph} 
+        \caption{Loss for MLP-NDWB (MLP with only Batch Normalization) - 4 hidden layers, learning rate = 0.01, no weight decay} \label{fig:MlpBatchNormLossGraph}
+    \end{subfigure}
+    \caption{Model training and test loss with respect to epochs for the top network in each category (MLP-NDNB, MLP-WDNB, and MLP-NDWB). All networks configured with 2,048 units in the hidden layers, trained with an SGD optimizer for 50 epochs. Parameters specific to a network noted under each graph. 
+    %Loss graphs for the top MLP network in each test
+    }
+    \label{fig:MlpLossGraph}
+\end{figure}
+
+
+\smallskip
+\noindent\textbf{Training and test CPU time, parameter count:} To evaluate the training and test CPU and parameter count, the best results of each network configuration using two hidden layers was extracted into table~\ref{tab:MlpPerformance}.\footnote{Note that the Dropout network is listed in the top 10 results as "1,024 hidden units". The number of units is adjusted by the dropout rate, 0.5 in this case. The adjustment results in a Dropout network configured to run with 1,024 units in a layer to effectively have 2,048 units in that layer.}
+
+It shows these behaviors of the different networks:
+
+\begin{itemize}
+\item Training CPU time: Dropout increases training time by approximately 17\%. Batch Normalization increases training time by approximately 86\%. As shown in figure~\ref{fig:MlpTrainingTime}, this increase in training time happens in all combinations of hyperparameters. It is not the product of a specific set of hyperparameters. From that we can make the general statement that Batch Normalization training time is approximately 80\% longer than the standard and Dropout networks.
+\item Test CPU time: Batch Normalization is significantly slower (30+\%) at test time. This result is surprising, given that the network architecture is effectively the same. It could be a fluctuation of the environment. It needs some further research. If it does indeed increase the test time by this much, it has significant implications for uses in restricted environments, e.g. mobile phones, were battery conservation is a high-priority concern.
+\item Parameter count: as expected, Batch Normalization uses more parameters than the standard MLP and Dropout and therefore more memory (parameter count is used as a proxy for memory usage). However, the increase is small (less than 1\%) and occurs only at training time (where usually more memory is available).
+\end{itemize}
+
+\begin{figure}
+\centerline{\includegraphics[width=0.9\columnwidth]{figures/figures-mlp/MlpTrainingTime.png}}
+\caption{Training time in seconds for MLP-NDNB (Standard MLP), MLP-WDNB (MLP with only Dropout), and MLP-NDWB (MLP with only Batch Normalization) networks using two hidden layers, 2,048 units in each layer, trained for 50 epochs. The vertical axis shows the training time (time to execute all epochs) in seconds. The horizontal axis shows the test executed, with different hyperparameters (MLP-WDNB has more tests because of its larger combination of hyperparameters to test).}
+\label{fig:MlpTrainingTime}
+\end{figure}
+
+\begin{table}
+\centering
+
+\caption{Performance evaluation comparing networks with two hidden layers and 2,048 hidden units (note that Dropout is divided by 0.5, the dropout rate). All tests were done with 50 epochs, SGD optimizer, 0.1 learning rate and 0.99 momentum for Dropout, 0.95 for the other networks.}
+\label{tab:MlpPerformance}
+
+% Reduced space between columns from https://tex.stackexchange.com/questions/201105/reduce-cell-margins-in-a-table
+\setlength\tabcolsep{2pt}
+
+\begin{tabular}{lrrrr}
+\thead{Network} & \thead{Accuracy} & \thead{Training\\time (s)} & \thead{Test\\time (s)} & \thead{Parameters\\count} \\
+\hline
+
+Standard & 0.9879 & 137 & 0.609 & 5,824,522 \\
+Dropout & 0.9875 & 161 & 0.662 & 5,824,522 \\
+Batch Normalization & 0.9864 & 255 & 0.795 & 5,838,858
+
+\end{tabular}
+\end{table}
+
+\smallskip
+\textbf{Combination of hyperparameters:} Inspecting the top 10 results for each network reveals some patterns.
+
+The non-adaptive optimizer SGD performed unexpectedly well compared to the adaptive RMSProp. However, changing the default learning rate and adding momentum were needed to achieve that performance. Adding a max-norm constraint was needed in most cases as well.
+
+Getting to that performance level requires experimentation with those hyperparameters, which translates in more test time.
+
+
+\medskip
+\subsubsection{Recommendations and Discussions}
+The MLP results suggest the following findings and recommendations:
+\begin{itemize}
+\item Use Batch Normalization if the convergence time is more important than absolute accuracy. Together with early stopping, it could significantly reduce training time.
+\item But be aware of Batch Normalization's training time increase. Unless it can be shown that it is helping converge faster during training, it may not be worth using it for experiments. Each experiment will take significantly longer to complete. It may be better to start with a standard network to run experiments faster, then switch to Batch Normalization in a later phase.
+\item Start with an adaptive optimizer (e.g. RMSProp). The experiments show that a non-adaptive SGD optimizer can be fine-tuned to outperform an adaptive one, but that comes at the cost of trying combinations of hyperparameters to find one that performs well. This adds to the training time. The accuracy of the adaptive optimizer with its default settings is not much lower. Starting with that configuration quickly provides a baseline for the tests and frees up time to experiment with other hyperparameters (e.g. the number of hidden layers, batch size, etc.). 
+\end{itemize}
+
+
+\medskip
+\noindent\textbf{Future Investigations:} Considering the results so far and what was learned in producing this report, these are some improvements that could be done in the experiments and data collection process:
+
+\begin{itemize}
+\item Batch Normalization test time validation: tests showed that that Batch Normalization test time is significantly higher than the standard MLP and Dropout. This is unexpected and warrants more investigations.
+\item Force overfitting in each test: to better evaluate the effect of the hyperparameters, the test should begin by verifying that overfitting is taking place and where it does so (which epoch). Forcing overfitting would have triggered more differences in accuracy across the network types, providing more actionable recommendations for the readers. Once the network is overfitting we can verify if the hyperparameter changes resolve the overfitting and how soon it does so (which epoch). A possible way to force overfitting in these tests is to reduce the number of samples in the training set.
+\item Effect of different Dropout rates: the tests were performed with the Dropout rates recommended in \cite{Srivastava2014} because of the limited amount of time. Since the Dropout rate is a key hyperparameter, another investigation path could be to explore its effect on the top 10 results (e.g. could we improve the Dropout network further with different Dropout rates?).
+\item Capture \href{https://www.tensorflow.org/guide/summaries_and_tensorboard}{tensorboard} data: Keras can save data during training into a format that \href{https://www.tensorflow.org/guide/summaries_and_tensorboard}{tensorboard} can read. Making the data available in this format allows a deeper, more detailed exploration of the results by other readers, potentially resulting in more insights.
+\end{itemize}
+
+
+
+
+
+
+%------------------------------------------------------------------
+
+\subsection{Convolutional Neural Network Results}
+
+This section reports empirical studies using convolutional neural networks. CNNs are one of the most commonly used deep learning architectures. Convolution and max-pooling layers are their main feature, followed by flattening and dense layers before an output layer.
+
+\medskip
+\subsubsection{CNN  Architectures, Configurations, and Parameter Settings}
+
+Since the goal of these experiments is to compare the relative performance of the different configurations tested, the baseline for those experiments is a CNN that does not use Dropout or Batch Normalization. This network is referred to as \textit{Standard CNN}. In summary, we use the following five network configurations for comparisons: 
+
+\begin{itemize}
+\item \textbf{CNN-NDNB (Standard CNN no Dropout, no Batch Normalization):} a standard CNN, with convolution and max-pooling layers, without using any Dropout or Batch Normalization layer. This configuration is used as the baseline. This CNN was based on the official Keras example~\cite{KerasCnnSample} and similar to the CNN used in \cite{Srivastava2014} for the Google Street View House Numbers tests. Figure~\ref{fig:CnnStandardModel} shows this network configuration.
+\item \textbf{CNN-WDNB$_d$ (CNN with Dropout, no Batch Normalization):} This architecture adds Dropout before the dense layer. Starting with the standard CNN, added a Dropout layer right before the dense layer. No other Dropout or Batch Normalization layer was added. Figure~\ref{fig:CnnDropoutDenseModel} shows this network configuration.
+\item \textbf{CNN-WDNB$_a$ (CNN with Dropout no, Batch Normalization):} This architecture includes Dropout after all layers. Starting with the standard CNN, added Dropout to the convolutions and also before the dense layer. The Dropout layer was added after the max-pooling layers. Figure~\ref{fig:CnnDropoutAllModel} shows this network configuration.
+ \item \textbf{CNN-NDWB (CNN no Dropout, with Batch Normalization):} starting with the standard CNN, added Batch Normalization layers between the convolution and the max-pooling layers. Although \cite{Ioffe2015} adds Batch Normalization before the non-linearity, subsequent experiments reported that adding Batch Normalization after the non-linearity improves accuracy \cite{Mishkin2016}. Because of such reports, tests were executed with the Batch Normalization layer after the non-linearity layer. Figure~\ref{fig:CnnBatchNormalizationModel} shows this network configuration.
+ \item \textbf{CNN-WDWB (CNN with Dropout and Batch Normalization):} This architecture includes both Dropout and Batch Normalization networks. Figure~\ref{fig:CnnBatchNormDropoutModel} shows this network configuration.
+\end{itemize}
+
+All tests were executed with data augmentation using Keras \verb|ImageDataGenerator| using these transformations:
+
+\begin{itemize}
+\item Random vertical shift with a factor of 0.1 (of total height), filling the new pixels with the nearest neighbor.
+\item Random horizontal shift with a factor of 0.1 (of total width), filling the new pixels with the nearest neighbor.
+\item Random horizontal flipping of images.
+
+\end{itemize}
+
+\begin{figure*}
+\centerline{\includegraphics[angle=90, width=2.0\columnwidth]{figures/figures-cnn/CnnStandardModel.png}}
+\caption{CNN-NDNB: Standard CNN network architecture used in the tests (without dropout and without batch normalization).}
+\label{fig:CnnStandardModel}
+\end{figure*}
+
+\begin{figure*}
+\centerline{\includegraphics[angle=90, width=2.0\columnwidth]{figures/figures-cnn/CnnDropoutDenseModel.png}}
+\caption{CNN-WDNB$_d$: CNN network architecture with Dropout after the dense layer used in the tests}
+\label{fig:CnnDropoutDenseModel}
+\end{figure*}
+
+\begin{figure*}
+\centerline{\includegraphics[angle=90, width=2.0\columnwidth]{figures/figures-cnn/CnnDropoutAllModel.png}}
+\caption{CNN-WDNB$_a$: CNN network architecture with Dropout in all layers used in the tests}
+\label{fig:CnnDropoutAllModel}
+\end{figure*}
+
+\begin{figure*}
+\centerline{\includegraphics[angle=90, width=2.0\columnwidth]{figures/figures-cnn/CnnBatchNormalizationModel.png}}
+\caption{CNN-NDWB: CNN network architecture with Batch Normalization in all layers used in the tests}
+\label{fig:CnnBatchNormalizationModel}
+\end{figure*}
+
+\begin{figure*}
+\centerline{\includegraphics[angle=90, width=2.0\columnwidth]{figures/figures-cnn/CnnBatchNormDropoutModel.png}}
+\caption{CNN-WDWB: CNN network architecture with Dropout and Batch Normalization in all layers used in the tests}
+\label{fig:CnnBatchNormDropoutModel}
+\end{figure*}
+
+\medskip
+\noindent\textbf{Hyperparameter Settings:} Each of these networks was tested with a combination of the hyperparameters listed below, using the CIFAR-10 dataset.
+
+Because testing a CNN with a meaningful data set such as CIFAR-10, even with a small number of layers, is time-consuming, a small combination of hyperparameters was tested (compared to the MLP test).
+
+\begin{itemize}
+\item Optimizer: all tests used RMSProp. Although testing with SGD may have provided a useful contrast between an adaptive optimizer (RMSProp) and a non-adaptive one (SGD), time and resources considerations limited the tests to RMSProp.
+\item Learning rate: all CNNs were tested with learning rates 0.0001, the default Keras value. In addition to that the Dropout CNNs were tested with 0.001 (the 10x value recommended in the Dropout paper \cite{Srivastava2014}); Batch Normalization CNNs were tested with 0.0005, a higher rate as recommended in general terms (without providing specific values) in \cite{Ioffe2015}. The standard CNN was tested with 0.001 and 0.0005 for comparison.
+\item Units in the dense layer: All CNNs were tested with 512 units in the dense layer, as shown in the official Keras example. In addition to that test, the Dropout CNNs were tested with 1024 units to follow the recommendation in \cite{Srivastava2014} to adjust the number of units based on the dropout rate (0.5 in this case).
+\item Epochs: all networks were tested with 50 epochs. This number was chosen to let the networks stabilize and to have a reasonable test execution time. Even with this relatively small number of epochs, training one network in a GPU-enable machine took 20 minutes.
+\item Dropout rate: a dropout rate of 0.25 was used after convolution layers and 0.5 after dense layers. A smaller dropout rate for the convolution layers was used as documented in \cite{Srivastava2014}.
+\item Activation function: ReLU \cite{Nair2010} in all cases. \cite{Krizhevsky2012} showed that ReLU speeds up the training significantly.
+\end{itemize}
+
+\medskip
+\subsubsection{CNN Result Analysis} Results from the tests are summarized in Table~\ref{tab:CnnTestResults}.
+
+\begin{table*}
+\centering
+
+\caption{CNN test results and comparisons.}
+\label{tab:CnnTestResults}
+
+% Reduced space between columns from https://tex.stackexchange.com/questions/201105/reduce-cell-margins-in-a-table
+\setlength\tabcolsep{2pt}
+
+\begin{tabular}{rlrrrcrr}
+\hline\hline
+\thead{Test} & \thead{Network} & \thead{Test\\accuracy} & \thead{Learning\\rate} & \thead{Units in\\dense layer} & \thead{Epochs} & \thead{Parameters\\count} & \thead{Training\\time (s)} \\
+\hline
+
+1 & CNN-NDNB (Standard CNN, no Dropout, no Batch Normalization) & 0.3226 & 0.001 & 1024 & 50 & 2,436,138 & 2920 \\
+2 & CNN-NDNB (Standard CNN, no Dropout, no Batch Normalization) & 0.6945 & 0.0005 & 512 & 50 & 1,250,858 & 2878 \\
+3 & CNN-NDNB (Standard CNN, no Dropout, no Batch Normalization) & 0.8041 & 0.0001 & 1024 & 50 & 2,436,138 & 2884 \\
+4 & CNN-NDNB (Standard CNN, no Dropout, no Batch Normalization) & 0.5717 & 0.001 & 512 & 50 & 1,250,858 & 2872 \\
+5 & CNN-NDNB (Standard CNN, no Dropout, no Batch Normalization) & 0.8021 & 0.0001 & 512 & 50 & 1,250,858 & 2866 \\
+\hline
+6 & CNN-WDNB$_d$ (CNN with Dropout, no Batch Normalization) & 0.7426 & 0.0001 & 512 & 50 & 1,250,858 & 2881 \\
+7 & CNN-WDNB$_d$ (CNN with Dropout, no Batch Normalization) & 0.1001 & 0.001 & 1024 & 50 & 2,436,138 & 2894 \\
+8 & CNN-WDNB$_a$ (CNN with Dropout, no Batch Normalization) & 0.7575 & 0.0001 & 512 & 50 & 1,250,858 & 2904 \\
+9 & CNN-WDNB$_a$ (CNN with Dropout, no Batch Normalization) & 0.3226 & 0.001 & 1024 & 50 & 2,436,138 & 2920 \\
+10 & CNN-NDWB (CNN no Dropout, with Batch Normalization) & 0.8447 & 0.001 & 512 & 50 & 1,253,546 & 3185 \\
+\hline
+11 & CNN-NDWB (CNN no Dropout, with Batch Normalization) & 0.8266 & 0.0001 & 512 & 50 & 1,253,546 & 3174 \\
+12 & CNN-NDWB (CNN no Dropout, with Batch Normalization) & 0.8395 & 0.0005 & 512 & 50 & 1,253,546 & 3189 \\
+13 & CNN-WDWB (CNN with Dropout and Batch Normalization) & 0.8002 & 0.0001 & 512 & 50 & 1,251,498 & 3092 \\
+14 & CNN-WDWB (CNN with Dropout and Batch Normalization) & 0.8087 & 0.001 & 1024 & 50 & 2,436,778 & 3094 \\
+15 & CNN-WDWB (CNN with Dropout and Batch Normalization) & 0.7774 & 0.0005 & 512 & 50 & 1,251,498 & 3083 \\
+\hline\hline
+\end{tabular}
+\end{table*}
+
+\smallskip
+\noindent\textbf{Classification Accuracy:} Adding Batch Normalization significantly improves the accuracy. Dropout, on the other hand, was always detrimental to accuracy (as used in these experiments - see recommendations for further tests).
+
+\smallskip
+\noindent\textbf{Training CPU time and Parameter count:} Adding Batch Normalization increased training time, as expected. However, contrary to the MLP test, adding Batch Normalization did not result in a large increase in training time. It increased training time by approximately 10\%.
+
+\smallskip
+\noindent\textbf{Effects of learning rate:} Increasing the learning rate yields better accuracy only when Batch Normalization is used. In all other cases it is detrimental to accuracy. Although not a surprising result for the standard CNN, increasing the learning rate when Dropout is used in all layers (test 9) also resulted in a much lower accuracy. 
+
+\medskip
+\subsubsection{Recommendations and Discussions}
+
+\begin{itemize}
+\item Add Batch Normalization before attempting other changes: combined with increasing the learning rate (see next item), adding Batch Normalization improved accuracy by a significant value without a significant increase of training time. Because it is simple to add Batch Normalization, it is recommended to add it as a baseline for further improvements in the network performance, before attempting more costly hyperparameter changes.
+\item Learning rate value: increase it only when using Batch Normalization. \cite{Ioffe2015} recommends to increase it and it does make a significant difference. Tests 10 and 11 in table~\ref{tab:CnnTestResults} shows that increasing it by 10x improves accuracy by 3\%, without any other change in the test parameters. However, adding it for any other configuration, including Dropout, reduces the accuracy.
+\end{itemize}
+
+
+\medskip
+\noindent\textbf{Future Investigation:} Based on the results collected so far, these are some areas that could be investigated further:
+
+\begin{itemize}
+\item The low accuracy of Dropout combined with Batch Normalization: contrary to the tests performed here, \cite{Li2018} reported that Dropout can be used to improve accuracy. Investigating the reasons for the low accuracy could provide more information to understand the interactions between Dropout and Batch Normalization.
+\item The low accuracy of Dropout in general: this was perhaps the most unexpected result. Several examples, including the official Keras example, add Dropout to the network. Further tests should explore other Dropout rates. Two places to start are increasing the batch size, as recommended in \cite{Luo2018}, and reducing the Dropout rate, as recommended in \cite{Li2018}.
+\item Add max-norm and momentum: as seen in the MLP results, max-norm and momentum make a difference in the behavior of the network. They were not used in the CNN tests due to the limited time (each CNN test takes 20 minutes in a GPU-enabled system). These tests could help explain the low accuracy when Dropout is used.
+\item Deeper networks: the CNN used in the tests is relatively shallow. Further tests should be executed in deeper networks to verify these results.
+\item Capture \href{https://www.tensorflow.org/guide/summaries_and_tensorboard}{tensorboard} data: same as noted in the MLP recommendation. Making the data available in this format allows a deeper, more detailed exploration of the results by other readers, potentially resulting in more insights.
+\end{itemize}
+
+
+\subsection{Summary of the Results}
+
+Overall, the experiments and analysis in the previous subsections indicate the following major findings. 
+
+For MLP networks, the empirical study showed that:
+\begin{itemize}
+\item Training with Dropout and Batch Normalization is slower, as expected. However, Batch Normalization turned out to be significantly slower, increasing training time by over 80\%.
+\item A non-adaptive optimizer (SGD) can outperform an adaptive optimizer (RMSProp). But to do so it required experimentation with other hyperparameters (learning rate, momentum, max-norm), consuming more training time. As a general guideline tests should start with an adaptive optimizer because it will perform better with default parameters. Switching to a non-adaptive optimizer should be reserved for a later phase, when other major decisions have been made (e.g. validate the dataset, explore different network architectures, etc.).
+\item Test (prediction) time of a network trained with Batch Normalization is approximately 30\% slower. This may be a factor for some applications because it also results in more energy use, draining batteries faster. This was an unexpected result of the tests and needs further validation.
+\end{itemize}
+
+For CNN networks, the empirical study showed that:
+\begin{itemize}
+\item Adding Batch Normalization improved accuracy without other observable side effects. Since it can be added without major structural changes to the network architecture, adding Batch Normalization should be one of the first steps taken to optimize a CNN.
+\item Increasing the learning rate, as recommended in the Batch Normalization paper \cite{Ioffe2015} improves accuracy by 2 to 3\%. Since this is a simple step to take, it should be done in the initial optimization steps, before investing time in more complex optimizations.
+\item Adding Dropout reduced accuracy significantly. This could be a deficiency of the experiments conducted here because other sources reported improvements when Dropout was used. At a minimum, it is a cautionary sign that using Dropout in CNNs require careful consideration. As a practical suggestion, remove all Dropout layers from the network and test it again to check it is not harming performance.
+\end{itemize}
+\end{document}

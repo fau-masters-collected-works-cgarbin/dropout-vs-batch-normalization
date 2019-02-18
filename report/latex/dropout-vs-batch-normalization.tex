@@ -12,12 +12,12 @@
 
 % For side-by-side figures
 % Source: https://tex.stackexchange.com/questions/271518/multiple-panel-figure-with-figures-side-by-side
-\usepackage{caption}
+% \usepackage{caption} -- already included by subcaption
 \usepackage{subcaption}
 \usepackage{graphicx}
 
-%To split table headers
-% From https://tex.stackexchange.com/questions/248053/a-header-in-a-table-with-two-lines
+% For multi-line table headers
+% Source: https://tex.stackexchange.com/questions/248053/a-header-in-a-table-with-two-lines
 \usepackage{makecell}
 
 % For source code listing
@@ -31,14 +31,14 @@ backend=biber,
 style=alphabetic,
 sorting=ynt
 ]{biblatex}
-\addbibresource{CAP6619_term_project.bib}
+\addbibresource{dropout-vs-batch-normalization.bib}
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
 \begin{document}
 
-\title{Comparison of Dropout vs. Batch Normalization accuracy and efficiency}
+\title{Dropout \textit{vs.} Batch Normalization: An Empirical Study of Their Impact to Deep Learning}
 
 \author{\IEEEauthorblockN{Christian Garbin}
 \IEEEauthorblockA{\textit{College of Engineering and Computer Science} \\
@@ -50,36 +50,43 @@ Term Project}}
 \maketitle
 
 \begin{abstract}
-\subfile{sections/CAP6619_term_project_1_abstract}
+\subfile{sections/1-abstract}
 \end{abstract}
 
 \begin{IEEEkeywords}
-machine learning, overfitting, dropout, batch normalization, optimization, regularization
+Deep learning, overfitting, dropout, batch normalization, optimization, regularization
 \end{IEEEkeywords}
 
 \section{Introduction}
-\subfile{sections/CAP6619_term_project_2_introduction}
+\subfile{sections/2-introduction}
 
 \section{Related Work}
-\subfile{sections/CAP6619_term_project_3_related_work}
+\subfile{sections/3-related-work}
 
-\section{Technical Details}
-\subfile{sections/CAP6619_term_project_4_main_body}
+\section{Empirical Study Framework and Designs}
+\subfile{sections/4-framework-and-design}
 
-\section{Experiments}
-\subfile{sections/CAP6619_term_project_5_experiments}
+\section{Experiments and Settings}\label{sec:experiments}
+\subfile{sections/5-experiments}
+
+\section{Results and Analysis}\label{sec:results}
+\subfile{sections/6-results-and-analysis}
 
 \section{Conclusions}
-\subfile{sections/CAP6619_term_project_6_conclusions}
+\subfile{sections/7-conclusions}
 
 
 \printbibliography
 
 \section{Appendix}
 
+\subsection{Picture attribution}
+
+Picture to illustrate machine learning types is from Guyspeakwell at English Wikipedia, provided under the \href{https://creativecommons.org/licenses/by/3.0/deed.en}{Attribution 3.0 Unported} license. Color-coded rectangles were added to the picture to illustrate image segmentation and classification.
+
 \subsection{Source code used for experiments}
 
-The source code used in the experiments is available in Github at \url{https://github.com/cgarbin/cap6619-deep-learning-term-project}.
+The source code used in the experiments is available in Github at \url{https://github.com/fau-masters-collected-works-cgarbin/cap6619-deep-learning-term-project}.
 
 \subsection{How network model pictures were generated}
 

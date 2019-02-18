@@ -1,0 +1,74 @@
+\documentclass[../dropout-vs-batch-normalization.tex]{subfiles}
+
+\begin{document}
+
+Machine learning is a ``generalization'' process which learns mathematical models from sample data (\textit{i.e.} training data) in order to make accurate predictions on previously unseen data (\textit{i.e.} test data), without using explicitly programmed rules~\cite{Goodfellow2016}. Many methods exist to carry out learning on the training, using supervised, unsupervised, or semi-supervised learning paradigms~\cite{Goodfellow2016}~\cite{zhu05survey}. For all these learning algorithms, two commonly used  measures to evaluate their performance are learning efficiency, \textit{i.e.} model training speed, and prediction accuracy. The former determines the scalability of the algorithms and defines how well they can be applied to large scale data, and the latter determines the utility of the model and its usefulness for real-world usages. 
+
+%The fundamental problem in machine learning is \textit{generalization}, the accuracy of a trained model when it evaluates previously unseen data \cite{Goodfellow2016}.
+
+When carrying out learning on the training data, conventional machine learning algorithms, such as nearest neighbor classification~\cite{StanfordCS231n-NN}, decision trees~\cite{}, multilayer perceptrons~\cite{}, support vector machines~\cite{}, etc., require each training instance (or sample) to be represented using some feature values, and the whole training data is provided in instance-feature tabular format, as shown in Fig.~\ref{fig:conventionallearning}. Recently, deep learning, such as convolutional neural networks (CNN)~\cite{LeCun2015a}, recurrent neural networks (RNN), is emerging as a new machine learning tools which have shown tremendous performance gain compared to conventional machine learning algorithms, especially for applications such as voice recognition~\cite{}, computer vision~\cite{}, and spatial-temporal data applications~\cite{}. The power of deep learning stems from its feature representation capability, which is able to repetitively learn new features (or feature representation) from training data. This is essentially better than conventional machine learning methods, because the repetitive feature learning, carried out in multiple or tens-of-thousands deep layers, allow new features to be explored from the training data to learn better separation of the training data, as shown in Fig.~\ref{fig:deeplearning}. 
+
+\begin{figure*}[!htbp]
+\centerline{\includegraphics[width=1.5\columnwidth]{figures/figures-other/MLConventional.png}}
+\caption{A conventional machine learning process, where training data, represented in instance-feature tabular format are provided to learn generalization models, which are further applied to make predictions on the previously unseen test data.}
+\label{fig:conventionallearning}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+\centerline{\includegraphics[width=1.5\columnwidth]{figures/figures-other/MLDeepLearning.png}}
+\caption{A typical deep learning learning routine, where training data, represented in the original format, such as image, texts etc., are provided to learn new features through multilayer deep networks, and learn generalization models for predictions.}
+\label{fig:deeplearning}
+\end{figure*}
+
+For all deep learning algorithms, the repetitive parameter training, carried out across different layers is often a time-consuming process. On the other hand, as many stacked deep learning network designs, such as stacked Boltzmann machines or stacked autoencoders, are becoming increasingly popular, it's easy to have a deep learning architectures with billions of parameters which not only makes the training time consuming, but is also vulnerable to overfitting. As a result, many methods/approaches, such as layer-wise freeze training~\cite{Brock2017}, Dropout~\cite{Srivastava2014}, Batch Normalization~\cite{Ioffe2015}, have been proposed to ensure steady and efficient training of reliable deep learning models. 
+
+% TO CHECK: popularity of stacked Boltzman machines - reference
+% TO CHECK: popularity of stacked autoencoders - reference
+% TO CHECK: billions of parameters - example of such a network
+
+\subsection{Overfitting and Dropout}
+\textit{Overfitting} is a common challenge in training machine learning models~\cite{Goodfellow2016}. In general, overfitting happens when the model performs well on the training data, but performs poorly on new data, \textit{i.e.} the model has low training error and high test error. \textit{Regularization} is a set of techniques used to reduce overfitting. Some of these techniques are model-specific, such as preprunning and postprunning for decision trees, some techniques act on the gradient descent optimization algorithms~\cite{Ruder2016}, and others act on the input data, artificially creating new training data~\cite{Perez2017}.
+
+Some techniques go beyond acting on only one model. One such technique is \textit{model ensembling}, combining the output of several models, each trained differently in some respect, to generate one final answer. It has dominated recent machine learning competitions~\cite{Goodfellow2016}. Although model ensembling performs well, it requires a much larger training time by definition (compared to training only one model). Each model in the ensemble has to be trained either from scratch or derived from a base model in significant ways. 
+
+When tackling overfitting for deep learning, \textit{Dropout} \cite{Srivastava2014} proposed to randomly change the network architecture, in order to minimize the risks that the learned weight values are highly customized to the underlying training data, and therefore cannot be generalized well to test data. In summary, Dropout simulates model ensembling without creating multiple networks. It has been widely adopted since its publication, in part because it doesn't require fundamental changes to the network architecture, other than adding the Dropout layers. 
+
+Despite its simplicity, Dropout still requires tuning of hyperparameters to work well in different applications. The original paper~\cite{Srivastava2014} mentions the need to change the learning rate, weight decay, momentum, max-norm, number of units in a layer, among others. Getting Dropout to work well for a given network architecture and input data requires experimentation with these hyperparameters. Adding Dropout to a network increases the convergence time~\cite{Srivastava2014}. Then, after adding Dropout, we need to train models with different combinations of hyperparameters that affect its behavior, further increasing training time.
+
+Another equally important, if not more significant, complicating factor is that existing Dropout evaluations were tested with the standard stochastic descent gradient (SGD) optimizer (as it's done in most papers \cite{Ruder2016}). Most networks today use adaptive optimizers, \textit{e.g.} RMSProp \cite{Tieleman2012}, commonly used in Keras examples. Some of the recommendations in the paper, for example, learning rates and weight decay values, do not necessarily apply when an adaptive optimizer is used.
+
+This observation naturally leads to techniques focusing on improving the model training efficiency by helping the models converge faster. One such technique commonly used for deep learning is \textit{Batch Normalization}~\cite{Ioffe2015}.
+
+\subsection{Training Efficiency and Batch Normalization}
+
+Before \textit{Batch Normalization}~\cite{Ioffe2015} was introduced, the time to train a network to converge depended significantly on careful initialization of hyperparameters (\textit{e.g.} initial weight values) and on the use of small learning rates, which lengthened the training time. The learning process was further complicated by the dependency of one layer on its preceding layers. Small changes in one layer could be amplified when flowing through the other network layers. Batch Normalization significantly reduces training time by normalizing the input of each layer in the network, not only the input layer. This approach allows the use of higher learning rates, which in turn reduces the number of training steps the network need to converge (the original paper reported 14 times fewer steps in some cases).
+
+Similar to Dropout, using Batch Normalization is simple: add Batch Normalization layers in the network. Because of this simplicity, using Batch Normalization would be a natural candidate to be used to speed up training of different combinations of hyperparameters needed to optimize the use of Dropout layers (it would not speed up overall training, but would help converge faster).
+
+However, Batch Normalization also has a regularization effect that renders Dropout unnecessary in some cases, as documented in the original paper~\cite{Ioffe2015}, in \cite{Luo2018}, and \cite{Kohler2018}.
+
+\subsection{Dropout and Batch Normalization Combination}
+
+With the overlapping and sometimes contradicting recommendations for Dropout and Batch Normalization usage, choosing the best architecture for a network, one that can be trained in a short amount of time and generalizes well, now becomes a four-fold question:
+
+\begin{enumerate}
+\item How do Dropout and Batch Normalization behave with respect to different types of deep learning architectures?
+\item Should it use Dropout or Batch Normalization? Both claim to regularize the network, but do they regularize equally well, and at the same cost of training time and network size?
+\item Should it use both Dropout and Batch Normalization? Despite the claim in~\cite{Ioffe2015}, other experiments showed that they can be used together to improve a network~\cite{Li2018}.
+\item Should it use any of them? Could an adaptive optimizer (\textit{e.g.} RMSProp) be enough to quickly converge to an acceptable accuracy for some problem spaces and input data?
+\end{enumerate}
+
+Indeed, if Dropout should be encouraged for some (if not all) deep learning architectures, there are two more questions to answer:
+
+\begin{itemize}
+\item What values should be used for the hyperparameters that affect Dropout (learning rate, weight decay, momentum, optimizer, etc.)?
+\item What are the reasonable Dropout parameter settings to ensure performance gain of the underlying models?
+\end{itemize}
+
+Motivated by the above observations, in this paper we conduct empirical studies to derive some guidelines for using Dropout and Batch Normalization to train deep learning models. The experiments are performed in image classifications tasks (MNIST and CIFAR-10) using multilayer perceptron networks (MLP) and convolutional neural networks (CNN). We carry out controlled experiments to test networks without Dropout or Batch Normalization to create a baseline, followed by networks only with Dropout, only with Batch Normalization and with both. Each network was further tested with a combination of hyperparameters. The hyperparameters selected for the tests are the ones mentioned in the Dropout paper~\cite{Srivastava2014} and the Batch Normalization paper~\cite{Ioffe2015}.
+
+Overall, our experiments draw valuable findings to answer the above questions. The observations show that training multilayer perception networks with Dropout and Batch Normalization is much slower, compared to the ones without using these two approaches. Such extra time consumption is also observed when testing the network, indicating that applications with limited energy consumption should be cautious about using them in practice. Meanwhile, applying Batch Normalization to CNNs often result in improved accuracy, but using Dropout in CNNs results in deteriorated model accuracy, suggesting that using Dropout in CNNs requires careful consideration.
+
+The remainder of the paper is structured as follows. Section 2 reviews related works on hyperparameters configuration for neural networks, Dropout, Batch Normalization and works that investigate both of them together. Section 3 describes the most important design parameters that affect the experiments performed in this paper, starting with the recommendations from the original Dropout and Batch Normalization works. Section 4 describes the datasets, networks architectures, hardware and software configurations used in the experiments. Section 5 reports the results of the experiments, documents conclusions and recommendations derived from these experiments, and suggests topics for future investigations. Section 6 reviews the goals of the work and its results. 
+
+\end{document}
