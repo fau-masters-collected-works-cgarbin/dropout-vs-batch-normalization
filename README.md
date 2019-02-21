@@ -37,8 +37,9 @@ The network configurations tested:
 [CIFAR-10](https://www.cs.toronto.edu/~kriz/cifar.html).
 
 A number of hyperparameters were tested: number of layers, number of units in each layer,
-learning rate, weigth decay, dropout rates for input layer and hidden layer. See the
-[report](./report/CAP6619_term_project_cgarbin.pdf) for more details.
+learning rate, weigth decay, dropout rates for input layer and hidden layer. The MLP network
+was also tested with a non-adaptive optimizer (SGD) and an adaptive optimizer (RMSProp). See
+the [report](./report/CAP6619_term_project_cgarbin.pdf) for more details.
 
 The raw results are available [in this folder](./test_results). The 
 [report](./report/CAP6619_term_project_cgarbin.pdf) has some analysis of those results.
