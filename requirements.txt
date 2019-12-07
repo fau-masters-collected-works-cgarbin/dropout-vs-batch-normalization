@@ -1,5 +1,8 @@
-numpy~=1.14.0
+numpy~=1.16.0
 Keras~=2.2.0
 matplotlib~=2.2.0
 seaborn~=0.9.0
 pandas~=0.23.0
+tensorflow~=1.13.0
+# Replace line above with tensorflow-gpu if running on
+# a system with GPU installed
