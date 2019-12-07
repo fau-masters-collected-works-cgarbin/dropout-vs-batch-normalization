@@ -71,8 +71,6 @@ From this point on, the instructions assume that **Python 3 is installed as `pyt
 
 #### Clone the repository
 
-Clone the repository:
-
 ```bash
 git clone https://github.com/fau-masters-collected-works-cgarbin/cap6619-deep-learning-term-project.git
 ```
@@ -82,7 +80,7 @@ The repository is now in the directory `cap6619-deep-learning-term-project`.
 #### Create a Python virtual environment
 
 The project depends on specific versions of Keras and TensorFlow. The safest way to install the
-correct versions, without affect other projects you have on your computer, is to create a Python
+correct versions, without affecting other projects you have on your computer, is to create a Python
 virtual environment specifically for this project.
 
 The official guide to Python virtual environment is [here](https://docs.python.org/3/tutorial/venv.html).
@@ -112,6 +110,8 @@ The code is split into these directories:
 
 Within each directory, the files are named with the network configuration they test.
 
+### MLP experiments
+
 The experiments are driven by the combination of parameters defined in the test generator
 file. The parameters are specified in named tuples. This is the one used to generate MLP
 Batch Normalization tests with the SGD optimizer:
@@ -134,8 +134,6 @@ Batch Normalization tests with the SGD optimizer:
         sgd_momentum=['0.0', '0.95'],
     )
 ```
-
-### MLP experiments
 
 #### MLP with batch normalization
 
@@ -181,6 +179,9 @@ python3 CAP6619_term_project_mnist_mlp_dropout_test_generator.py
 ```
 
 ### CNN experiments
+
+The experiments are driven by command line parameters. Shell scripts encapsulate the
+experiements.
 
 ```bash
 cd cnn
