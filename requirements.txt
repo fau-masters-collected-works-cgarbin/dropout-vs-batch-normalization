@@ -1,5 +1,5 @@
-numpy==1.14.2
-Keras==2.2.4
-matplotlib==2.2.2
-seaborn==0.9.0
-pandas==0.23.3
+numpy~=1.14.0
+Keras~=2.2.0
+matplotlib~=2.2.0
+seaborn~=0.9.0
+pandas~=0.23.0
