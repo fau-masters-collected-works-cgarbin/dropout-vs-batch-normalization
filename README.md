@@ -79,6 +79,8 @@ The repository is now in the directory `cap6619-deep-learning-term-project`.
 
 #### Create a Python virtual environment
 
+**IMPORTANT**: The project is configured for TensorFlow without GPU. If you are using it on a GPU-enabled system, open `requirements.txt` and follow th instructions there to use the GPU version of TensorFlow.
+
 The project depends on specific versions of Keras and TensorFlow. The safest way to install the
 correct versions, without affecting other projects you have on your computer, is to create a Python
 virtual environment specifically for this project.
