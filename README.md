@@ -44,6 +44,10 @@ The raw results are available [in this folder](./test_results). The
 [report](./report/CAP6619_term_project_cgarbin.pdf) has some analysis of those results.
 More analysis could be done on those results.
 
+## Publication in 
+
+This report was later published in [Springer's Multimedia Tools and Applications](https://link.springer.com/article/10.1007/s11042-019-08453-9).
+
 # Results from experiments
 
 Raw data generated from the experiments executed for the report are available
