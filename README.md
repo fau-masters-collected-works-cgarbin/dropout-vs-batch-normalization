@@ -234,8 +234,9 @@ have done a few things differently:
 
 # License
 
-Licensed as [MIT](./LICENSE). If you use parts of this project, I'd appreciate a
-reference to this work.
+Licensed as [MIT](./LICENSE). If you use parts of this project, I'd linking back to
+this repository and a citation of the
+[Springer Multimedia Tools and Applications paper](https://link.springer.com/article/10.1007/s11042-019-08453-9#citeas).
 
 And please let me know you are referring to it - personal curiosity.
 
