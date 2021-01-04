@@ -132,7 +132,7 @@ def plot_accuracy_loss(history):
         history {History} -- A Keras History object returned from model.fit
     """
     acc = history.history['acc']
-    val_acc = history.history['val_acc']
+    val_acc = history.history['val_accuracy']
     loss = history.history['loss']
     val_loss = history.history['val_loss']
     epochs = range(1, len(acc) + 1)

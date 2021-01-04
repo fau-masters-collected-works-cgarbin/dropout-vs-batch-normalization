@@ -7,12 +7,12 @@ import time
 import pandas as pd
 import json
 import os
-from keras import models
-from keras import layers
-from keras import optimizers
-from keras.utils import to_categorical
-from keras import backend
-from keras.datasets import mnist
+from tensorflow.keras import models
+from tensorflow.keras import layers
+from tensorflow.keras import optimizers
+from tensorflow.keras.utils import to_categorical
+from tensorflow.keras import backend
+from tensorflow.keras.datasets import mnist
 from datetime import datetime
 from io import StringIO
 from argparse import ArgumentParser

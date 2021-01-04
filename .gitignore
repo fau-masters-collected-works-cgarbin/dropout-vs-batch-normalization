@@ -36,3 +36,7 @@ catsvsdogs/
 *txt
 !test_results/*json
 !test_results/*txt
+
+# Datasets we download manually
+*.zip
+kaggledataset/

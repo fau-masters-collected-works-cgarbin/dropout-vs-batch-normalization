@@ -17,6 +17,11 @@ The report is available [here](./report/CAP6619_term_project_cgarbin.pdf). Note 
 the report I delivered for the class. Every so often I correct a mistake in it or improve an
 item. To see the original report, go to the first version in the file history.
 
+Since its publication, the project has been updated to use TensorFlow 2.x. There are no changes to
+the logic, just enough changes to adapt to TensorFlow 2.x. Migration notes are available
+[in this file](./upgrade-to-tensorflow-2.0.md). The TensorFlow 1.x is available through the
+[v1.2 tag in the code](https://github.com/fau-masters-collected-works-cgarbin/cap6619-deep-learning-term-project/releases/tag/v1.2).
+
 ## What the report covers
 
 The report compares the performance and accuracy of [Dropout](https://arxiv.org/abs/1207.0580) and
