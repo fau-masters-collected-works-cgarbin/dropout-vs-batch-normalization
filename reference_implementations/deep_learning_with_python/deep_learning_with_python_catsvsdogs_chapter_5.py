@@ -6,10 +6,10 @@ import os
 import collections
 import shutil
 import matplotlib.pyplot as plt
-from keras import layers
-from keras import models
-from keras import optimizers
-from keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras import layers
+from tensorflow.keras import models
+from tensorflow.keras import optimizers
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
 def prepare_image_dirs(source_dir, dest_base_dir):
@@ -115,7 +115,7 @@ def run_experiment(train_generator, validation_generator, parameters):
                   optimizer=optimizers.RMSprop(lr=1e-4),
                   metrics=['acc'])
 
-    history = model.fit_generator(
+    history = model.fit(
         train_generator,
         steps_per_epoch=parameters.steps_per_epoch,
         epochs=parameters.epochs,

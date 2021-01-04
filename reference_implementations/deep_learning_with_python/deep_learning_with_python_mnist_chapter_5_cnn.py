@@ -2,10 +2,10 @@
 
 This is the MINST CNN example in the book.
 """
-from keras import models
-from keras import layers
-from keras.utils import to_categorical
-from keras.datasets import mnist
+from tensorflow.keras import models
+from tensorflow.keras import layers
+from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.datasets import mnist
 
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
 
