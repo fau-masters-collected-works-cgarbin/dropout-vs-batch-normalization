@@ -53,6 +53,8 @@ More analysis could be done on those results.
 
 This report was later published in [Springer's Multimedia Tools and Applications](https://link.springer.com/article/10.1007/s11042-019-08453-9).
 
+The free version of the paper is [available here](https://drive.google.com/file/d/1PyRUgSXqpl_OvJkWrR4HCWLDaEexzWd9/view).
+
 ## Results from experiments
 
 Raw data generated from the experiments executed for the report are available
