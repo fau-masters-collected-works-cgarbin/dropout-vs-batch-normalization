@@ -1,23 +1,17 @@
-# Deep Learning Term Project
+# Batch Normalization vs. Dropout
 
-This repository has the code used for Florida Atlantic University's CAP-6619 Deep Learning class
-term project, Fall 2018.
-
-The objective of the term project was to compare [Dropout](https://arxiv.org/abs/1207.0580) and
-[Batch Normalization](https://arxiv.org/pdf/1502.03167.pdf):
+Code to compare [Dropout](https://arxiv.org/abs/1207.0580) and [Batch Normalization](https://arxiv.org/pdf/1502.03167.pdf):
 
 - Effect on training time
 - Effect on test (inference) time
 - Effect on accuracy
 - Effect on memory usage
 
-Python and Keras were used to test several network configurations. See more details below.
+This was a term project for for Florida Atlantic University's CAP-6619 Deep Learning class term project, Fall 2018.
 
-The report is available [here](./report/CAP6619_term_project_cgarbin.pdf). Note that this is not
-the report I delivered for the class. Every so often I correct a mistake in it or improve an
-item. To see the original report, go to the first version in the file history.
+The report is available [here](./report/CAP6619_term_project_cgarbin.pdf). It was also published in [Springer's Multimedia Tools and Applications](https://link.springer.com/article/10.1007/s11042-019-08453-9). A free version of the paper is [available here](https://drive.google.com/file/d/1PyRUgSXqpl_OvJkWrR4HCWLDaEexzWd9/view).
 
-Since its publication, the project has been updated to use TensorFlow 2.x. There are no changes to
+Since its first release, the project has been updated to use TensorFlow 2.x. There are no changes to
 the logic, just enough changes to adapt to TensorFlow 2.x. Migration notes are available
 [in this file](./upgrade-to-tensorflow-2.0.md). The TensorFlow 1.x is available through the
 [v1.2 tag in the code](https://github.com/fau-masters-collected-works-cgarbin/cap6619-deep-learning-term-project/releases/tag/v1.2).
@@ -48,12 +42,6 @@ the [report](./report/CAP6619_term_project_cgarbin.pdf) for more details.
 The raw results are available [in this folder](./test_results). The
 [report](./report/CAP6619_term_project_cgarbin.pdf) has some analysis of those results.
 More analysis could be done on those results.
-
-### Publication in Springer's Multimedia Tools and Applications
-
-This report was later published in [Springer's Multimedia Tools and Applications](https://link.springer.com/article/10.1007/s11042-019-08453-9).
-
-The free version of the paper is [available here](https://drive.google.com/file/d/1PyRUgSXqpl_OvJkWrR4HCWLDaEexzWd9/view).
 
 ## Results from experiments
 
