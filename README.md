@@ -1,57 +1,44 @@
 # Batch Normalization vs. Dropout
 
-Code to compare [Dropout](https://arxiv.org/abs/1207.0580) and [Batch Normalization](https://arxiv.org/pdf/1502.03167.pdf):
+Code to compare [Dropout](https://arxiv.org/abs/1207.0580) and [Batch Normalization](https://arxiv.org/pdf/1502.03167.pdf), published in the paper _[Dropout vs. batch normalization: an empirical study of their impact to deep learning](https://link.springer.com/article/10.1007/s11042-019-08453-9)_. A free version of the paper is [available here](https://drive.google.com/file/d/1PyRUgSXqpl_OvJkWrR4HCWLDaEexzWd9/view).
 
-- Effect on training time
-- Effect on test (inference) time
-- Effect on accuracy
-- Effect on memory usage
+The experiments compare dropout and batch normalization effect on:
 
-This was a term project for for Florida Atlantic University's CAP-6619 Deep Learning class term project, Fall 2018.
+- Training time
+- Test (inference) time
+- Accuracy
+- Memory usage
 
-The report is available [here](./report/CAP6619_term_project_cgarbin.pdf). It was also published in [Springer's Multimedia Tools and Applications](https://link.springer.com/article/10.1007/s11042-019-08453-9). A free version of the paper is [available here](https://drive.google.com/file/d/1PyRUgSXqpl_OvJkWrR4HCWLDaEexzWd9/view).
+Originally, this work was a term project for for Florida Atlantic University's CAP-6619 Deep Learning class term project, Fall 2018. The report that originated the paper is available [here](./report/CAP6619_term_project_cgarbin.pdf).
 
-Since its first release, the project has been updated to use TensorFlow 2.x. There are no changes to
-the logic, just enough changes to adapt to TensorFlow 2.x. Migration notes are available
-[in this file](./upgrade-to-tensorflow-2.0.md). The TensorFlow 1.x is available through the
-[v1.2 tag in the code](https://github.com/fau-masters-collected-works-cgarbin/cap6619-deep-learning-term-project/releases/tag/v1.2).
+Since its first release, the project has been updated to use TensorFlow 2.x. There are no changes to the logic, just enough changes to adapt to TensorFlow 2.x. Migration notes are available [in this file](./upgrade-to-tensorflow-2.0.md). The TensorFlow 1.x is available through the [v1.2 tag in the code](https://github.com/fau-masters-collected-works-cgarbin/cap6619-deep-learning-term-project/releases/tag/v1.2).
 
-## What the report covers
+## What the experiments cover
 
-The report compares the performance and accuracy of [Dropout](https://arxiv.org/abs/1207.0580) and
-[Batch Normalization](https://arxiv.org/pdf/1502.03167.pdf):
+The report compares the performance and accuracy of [Dropout](https://arxiv.org/abs/1207.0580) and [Batch Normalization](https://arxiv.org/pdf/1502.03167.pdf):
 
 - How long it takes to train a network (to run a specific number of epochs, to be more precise).
 - How long it takes to make a prediction with a trained network.
 - How much memory the network uses, measured indirectly with Keras' `param_count()`.
 
-To gather those numbers the code runs a series of tests with different network configurations
-and different hyperparameters.
+To gather those numbers the code runs a series of tests with different network configurations and different hyperparameters.
 
 The network configurations tested:
 
 - MLP - multilayer perceptron network (only densely connected layers) was tested with [MNIST](http://yann.lecun.com/exdb/mnist/).
-- CNN - convolutional neural network (convolutional and max-pooling layers) was tested with
-[CIFAR-10](https://www.cs.toronto.edu/~kriz/cifar.html).
+- CNN - convolutional neural network (convolutional and max-pooling layers) was tested with [CIFAR-10](https://www.cs.toronto.edu/~kriz/cifar.html).
 
-Several hyperparameters were tested: number of layers, number of units in each layer,
-learning rate, weight decay, dropout rates for input layer and hidden layer. The MLP network
-was also tested with a non-adaptive optimizer (SGD) and an adaptive optimizer (RMSProp). See
-the [report](./report/CAP6619_term_project_cgarbin.pdf) for more details.
+Several hyperparameters were tested: number of layers, number of units in each layer, learning rate, weight decay, dropout rates for input layer and hidden layer. The MLP network was also tested with a non-adaptive optimizer (SGD) and an adaptive optimizer (RMSProp). See the [report](./report/CAP6619_term_project_cgarbin.pdf) for more details.
 
-The raw results are available [in this folder](./test_results). The
-[report](./report/CAP6619_term_project_cgarbin.pdf) has some analysis of those results.
-More analysis could be done on those results.
+The raw results are available [in this folder](./test_results). The [report](./report/CAP6619_term_project_cgarbin.pdf) has some analysis of those results. More analysis could be done on those results.
 
 ## Results from experiments
 
-Raw data generated from the experiments executed for the report are available
-[in this directory](./test_results).
+Raw data generated from the experiments executed for the report are available [in this directory](./test_results).
 
 Analysis of the results is available [in the report](./report/CAP6619_term_project_cgarbin.pdf).
 
-More analysis could be done with the data collected. That's what I could do
-based on the time I had and my limited knowledge at that point.
+More analysis could be done with the data collected. That's what I could do based on the time I had and my limited knowledge at that point.
 
 ## How to install the environment and run the experiments
 
@@ -61,10 +48,7 @@ based on the time I had and my limited knowledge at that point.
 
 The project uses Python 3.
 
-Verify that you have Python 3.x installed: `python --version` should print `Python 3.x.y`. If
-it prints `Python 2.x.y`, try `python3 --version`. If that still doesn't work, please install
-Python 3.x before proceeding. The official Python download site is
-[here](https://www.python.org/downloads/).
+Verify that you have Python 3.x installed: `python --version` should print `Python 3.x.y`. If it prints `Python 2.x.y`, try `python3 --version`. If that still doesn't work, please install Python 3.x before proceeding. The official Python download site is [here](https://www.python.org/downloads/).
 
 From this point on, the instructions assume that **Python 3 is installed as `python3`**.
 
@@ -80,9 +64,7 @@ The repository is now in the directory `cap6619-deep-learning-term-project`.
 
 **IMPORTANT**: The project is configured for TensorFlow without GPU. If you are using it on a GPU-enabled system, open `requirements.txt` and follow th instructions there to use the GPU version of TensorFlow.
 
-The project depends on specific versions of Keras and TensorFlow. The safest way to install the
-correct versions, without affecting other projects you have on your computer, is to create a Python
-virtual environment specifically for this project.
+The project depends on specific versions TensorFlow and other packages. The safest way to install the correct versions, without affecting other projects you have on your computer, is to create a Python virtual environment specifically for this project.
 
 The official guide to Python virtual environment is [here](https://docs.python.org/3/tutorial/venv.html).
 
@@ -94,15 +76,11 @@ Execute these commands to create and activate a virtual environment for the proj
 
 #### Install the dependencies
 
-The project dependencies are listed in the `requirements.txt` file. To install them,
-execute this command:
+The project dependencies are listed in the `requirements.txt` file. To install them, execute this command:
 
 `pip install -r requirements.txt`
-
-This may take several minutes to complete. Once it is done, you are ready to run the
-experiments.
-
-### How to run the experiments
+ This may take several minutes to complete. Once it is done, you are ready to run the experiments.
+ ### How to run the experiments
 
 The code is split into these directories:
 
@@ -113,9 +91,7 @@ Within each directory, the files are named with the network configuration they t
 
 #### MLP experiments
 
-The experiments are driven by the combination of parameters defined in the test generator
-file. The parameters are specified in named tuples. This is the one used to generate MLP
-Batch Normalization tests with the SGD optimizer:
+The experiments are driven by the combination of parameters defined in the test generator file. The parameters are specified in named tuples. This is the one used to generate MLP Batch Normalization tests with the SGD optimizer:
 
 ```python
     batchnorm_sgd = Parameters(
@@ -181,8 +157,7 @@ python3 CAP6619_term_project_mnist_mlp_dropout_test_generator.py
 
 #### CNN experiments
 
-The experiments are driven by command line parameters. Shell scripts encapsulate the
-experiements.
+The experiments are driven by command line parameters. Shell scripts encapsulate the experiements.
 
 ```bash
 cd cnn
@@ -208,8 +183,7 @@ Results are saved in these files:
 
 ## What needs to be improved
 
-Gathering the data was a great learning experience. Knowing what I know now, I'd
-have done a few things differently:
+Gathering the data was a great learning experience. Knowing what I know now, I'd have done a few things differently:
 
 - Force overfit: Dropout and Batch Normalization fight overfitting. Therefore,
   more interesting data would have been produced if first I had made sure the
@@ -227,17 +201,14 @@ have done a few things differently:
 - See more "TODO" in the code: there are few "TODO" in the code, pointing to
   more specific improvements that could be done.
 
-## License
+## License and citation
 
-Licensed as [MIT](./LICENSE). If you use parts of this project, I'd linking back to
-this repository and a citation of the
-[Springer Multimedia Tools and Applications paper](https://link.springer.com/article/10.1007/s11042-019-08453-9#citeas).
+Licensed as [MIT](./LICENSE). If you use parts of this project, please link back to this repository and cite the paper ([how to cite](https://link.springer.com/article/10.1007/s11042-019-08453-9#citeas)).
 
 And please let me know you are referring to it - personal curiosity.
 
 ## Miscellanea
 
-This was my first real-file (of sorts) experience with machine learning and the first time
-I wrote a significant amount of Python and Keras code. It's not a polished result by any means.
+This was my first real-file (of sorts) experience with machine learning and the first time I wrote a significant amount of Python and Keras code. It's not a polished result by any means.
 
 Suggestions for improvements are always appreciated.
